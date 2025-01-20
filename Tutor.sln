@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutor", "Tutor\Tutor.csproj", "{AD382F62-8ED3-4C27-A7FF-6E29BD118B97}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F1AAAA01-ADA1-4D63-8E9D-F0B0B17D28A1}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutor.DbContext", "Tutor.DbContext\Tutor.DbContext.csproj", "{A43110E0-502F-4DED-86DD-8D5709BA23D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD382F62-8ED3-4C27-A7FF-6E29BD118B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD382F62-8ED3-4C27-A7FF-6E29BD118B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD382F62-8ED3-4C27-A7FF-6E29BD118B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD382F62-8ED3-4C27-A7FF-6E29BD118B97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A43110E0-502F-4DED-86DD-8D5709BA23D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A43110E0-502F-4DED-86DD-8D5709BA23D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A43110E0-502F-4DED-86DD-8D5709BA23D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A43110E0-502F-4DED-86DD-8D5709BA23D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
