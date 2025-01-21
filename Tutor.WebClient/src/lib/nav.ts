@@ -1,19 +1,24 @@
 const _nav = {
-  main: {
-    main: "/",
-    settings: "/settings",
-    profile: "/profile",
-    login: "/login",
-    register: "/register",
-  },
+  main: "/",
+  settings: "/settings",
+  profile: "/profile",
+  login: "/login",
+  register: "/register",
+  addStudent: "/add-student",
 }
 
-function createPathProxy() {
-  return new Proxy(_nav, {
-    get: (target, prop) => {
-      return target[prop as keyof typeof target]
-    },
-  })
-}
+// const createPathProxy = (obj: any, path: any[] = []): any => {
+//   return new Proxy(obj, {
+//     get(target, prop) {
+//       const newPath = [...path, prop]
 
-export const nav: typeof _nav = createPathProxy()
+//       if (typeof target[prop] === "object") {
+//         return createPathProxy(target[prop], newPath)
+//       }
+
+//       return newPath.join("/")
+//     },
+//   })
+// }
+
+export const nav: typeof _nav = _nav // createPathProxy(_nav)

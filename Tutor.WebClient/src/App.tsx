@@ -4,10 +4,11 @@ import { Settings } from "./features/settings/settings"
 import { Login } from "./features/auth/login"
 import { Register } from "./features/auth/register"
 import { AddStudent } from "./features/add-student/add-student"
+import { nav } from "./lib/nav"
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: nav.main,
     element: <Shared />,
     children: [
       {
@@ -15,19 +16,19 @@ const router = createBrowserRouter([
         element: <Main />,
       },
       {
-        path: "/settings",
+        path: nav.settings,
         element: <Settings />,
       },
       {
-        path: "/login",
+        path: nav.login,
         element: <Login />,
       },
       {
-        path: "/register",
+        path: nav.register,
         element: <Register />,
       },
       {
-        path: "/add-student",
+        path: nav.addStudent,
         element: <AddStudent />,
       },
     ],
@@ -45,7 +46,7 @@ function App() {
 function Shared() {
   return (
     <>
-      <div style={{ position: "absolute", top: 0 }}>
+      <div style={{ position: "absolute", top: 0, display: "flex", gap: 10 }}>
         <Link to="/settings">Настройки</Link>
         <Link to="/">Главная</Link>
         <Link to="/register">Регистрация</Link>
