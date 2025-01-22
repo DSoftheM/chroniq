@@ -2,12 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutor", "Tutor\Tutor.csproj", "{AD382F62-8ED3-4C27-A7FF-6E29BD118B97}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F1AAAA01-ADA1-4D63-8E9D-F0B0B17D28A1}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yaml = docker-compose.yaml
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutor.Storage", "Tutor.Storage\Tutor.Storage.csproj", "{A43110E0-502F-4DED-86DD-8D5709BA23D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutor.DbContext", "Tutor.DbContext\Tutor.DbContext.csproj", "{A43110E0-502F-4DED-86DD-8D5709BA23D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutor.Models", "Tutor.Models\Tutor.Models.csproj", "{C5057EEE-B229-4317-80CE-C2EC3C7618AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutor.Services", "Tutor.Services\Tutor.Services.csproj", "{2C074E6D-76E3-4965-BABD-D2C2EBE55F4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,5 +22,13 @@ Global
 		{A43110E0-502F-4DED-86DD-8D5709BA23D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A43110E0-502F-4DED-86DD-8D5709BA23D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A43110E0-502F-4DED-86DD-8D5709BA23D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5057EEE-B229-4317-80CE-C2EC3C7618AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5057EEE-B229-4317-80CE-C2EC3C7618AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5057EEE-B229-4317-80CE-C2EC3C7618AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5057EEE-B229-4317-80CE-C2EC3C7618AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C074E6D-76E3-4965-BABD-D2C2EBE55F4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C074E6D-76E3-4965-BABD-D2C2EBE55F4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C074E6D-76E3-4965-BABD-D2C2EBE55F4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C074E6D-76E3-4965-BABD-D2C2EBE55F4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
