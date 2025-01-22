@@ -1,6 +1,6 @@
 import styled from "styled-components"
-import { Class } from "./types/class"
-import { ClassStatus } from "./types/class-status"
+import { Lesson } from "./types/lesson"
+import { LessonStatus } from "./types/lesson-status"
 
 const Cell = styled.div`
   padding: 5px;
@@ -26,8 +26,8 @@ const Info = styled(Cell)`
   color: white;
 `
 
-export function ClassItemView(props: { classItem: Class }) {
-  if (props.classItem.status === ClassStatus.Completed) {
+export function ClassItemView(props: { classItem: Lesson }) {
+  if (props.classItem.status === LessonStatus.Completed) {
     if (props.classItem.paid) {
       return <Success>Оплачено</Success>
     } else {
@@ -35,11 +35,11 @@ export function ClassItemView(props: { classItem: Class }) {
     }
   }
 
-  if (props.classItem.status === ClassStatus.InProgress) {
+  if (props.classItem.status === LessonStatus.InProgress) {
     return <Warning>В процессе</Warning>
   }
 
-  if (props.classItem.status === ClassStatus.Scheduled) {
+  if (props.classItem.status === LessonStatus.Scheduled) {
     return <Info>Запланировано</Info>
   }
 

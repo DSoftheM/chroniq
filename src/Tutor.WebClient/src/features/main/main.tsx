@@ -1,11 +1,13 @@
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
-import { ClassStatus } from "./types/class-status"
+import { LessonStatus } from "./types/lesson-status"
 import { Student } from "./types/student"
-import { Class } from "./types/class"
+import { Lesson } from "./types/lesson"
 import { ClassItemView } from "./class-item-view"
-import { TimePicker } from "antd"
+import { Button, Modal, TimePicker, Input, Checkbox, InputNumber } from "antd"
 import dayjs from "dayjs"
+
+const { TextArea } = Input
 
 const Table = styled.div<{ studentsCount: number }>`
   display: grid;
@@ -71,53 +73,71 @@ const students: Student[] = [
 ]
 
 export function Main() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   let today = getPrevDay(new Date())
 
   return (
-    <Table studentsCount={students.length}>
-      <div></div>
+    <>
+      <Table studentsCount={students.length}>
+        <div></div>
 
-      {students.map((student) => {
-        return (
-          <React.Fragment key={student.name}>
-            <div>{student.name}</div>
-          </React.Fragment>
-        )
-      })}
+        {students.map((student) => {
+          return (
+            <React.Fragment key={student.name}>
+              <div>{student.name}</div>
+            </React.Fragment>
+          )
+        })}
 
-      {Array.from({ length: 10 }).flatMap(() => {
-        today = getNextDay(today)
-        return (
-          <React.Fragment key={toDateOnly(today)}>
-            <div style={{ backgroundColor: isToday(today) ? "green" : "" }}>{toDateOnly(today)}</div>
-            {students.map((student) => {
-              const classes = classesToDictionary(student.classes)
-              const classItem = classes[toDateOnly(today)]
+        {Array.from({ length: 10 }).flatMap(() => {
+          today = getNextDay(today)
+          return (
+            <React.Fragment key={toDateOnly(today)}>
+              <div style={{ backgroundColor: isToday(today) ? "green" : "" }}>{toDateOnly(today)}</div>
+              {students.map((student) => {
+                const classes = classesToDictionary(student.classes)
+                const classItem = classes[toDateOnly(today)]
 
-              return (
-                <React.Fragment key={student.name}>
-                  {classItem ? (
-                    <ClassItemView classItem={classItem} />
-                  ) : (
-                    <div>
-                      <TimePicker format={"HH:mm"} minuteStep={15} onChange={console.log} />
-                    </div>
-                  )}
-                </React.Fragment>
-              )
-            })}
-          </React.Fragment>
-        )
-      })}
-    </Table>
+                return (
+                  <React.Fragment key={student.name}>
+                    {classItem ? (
+                      <ClassItemView classItem={classItem} />
+                    ) : (
+                      <div>
+                        <Button onClick={() => setIsModalOpen(true)}>+</Button>
+                      </div>
+                    )}
+                  </React.Fragment>
+                )
+              })}
+            </React.Fragment>
+          )
+        })}
+      </Table>
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}
+      >
+        <p>Во сколько</p>
+        <TimePicker format={"HH:mm"} minuteStep={15} onChange={console.log} />
+        <p>Длительность</p>
+        <TimePicker format={"HH:mm"} minuteStep={15} onChange={console.log} />
+        <p>Стоимость</p>
+        <InputNumber min={1} max={10} defaultValue={3} onChange={console.log} />
+        <TextArea />
+        <Checkbox onChange={console.log}>Оплачено</Checkbox>
+      </Modal>
+    </>
   )
 }
 
-function classesToDictionary(classes: Class[]) {
+function classesToDictionary(classes: Lesson[]) {
   return classes.reduce((acc, classItem) => {
     acc[toDateOnly(classItem.date)] = classItem
     return acc
-  }, {} as Record<string, Class>)
+  }, {} as Record<string, Lesson>)
 }
 
 function getPrevDay(date: Date) {

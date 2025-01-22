@@ -1,6 +1,6 @@
-import { Class } from "./class"
+import { Lesson } from "./lesson"
 
 export type Student = {
   name: string
-  classes: Class[]
+  classes: Lesson[]
 }
