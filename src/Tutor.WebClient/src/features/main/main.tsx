@@ -18,6 +18,7 @@ const Table = styled.div<{ studentsCount: number }>`
     border: 1px solid #000;
   }
 `
+//
 
 export function Main() {
   const scheduleQuery = useScheduleQuery()
