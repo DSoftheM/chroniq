@@ -4,23 +4,28 @@ import { Nullish } from "./types/lib"
 import { useUpdateStudentMutation } from "./api/use-update-student-mutation"
 import { useCreateStudentMutation } from "./api/use-create-student-mutation"
 import { useImmer } from "use-immer"
+import { useEffect } from "react"
+import { useScheduleQuery } from "./api/use-schedule-query"
+import { useNavigate, useParams } from "react-router-dom"
+import { nav } from "../../lib/nav"
 
 const { TextArea } = Input
 
-type Props = {
-  student: Student | Nullish
-  isModalOpen: boolean
-  onClose: () => void
-}
+export function CreateOrUpdateStudentModal() {
+  const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
+  const { studentId } = useParams<{ studentId: string }>()
+  const initialStudent = scheduleQuery.data?.items.find(({ student }) => student.id === studentId)?.student
 
-export function CreateOrUpdateStudentModal(props: Props) {
-  const [student, updateStudent] = useImmer<Student>(props.student ?? createStudent())
+  const [student, updateStudent] = useImmer<Student>(initialStudent ?? createStudent())
+  useEffect(() => initialStudent && updateStudent(initialStudent), [initialStudent])
 
-  const isEdit = Boolean(props.student)
+  const isEdit = Boolean(initialStudent)
   const updateStudentMutation = useUpdateStudentMutation()
   const createStudentMutation = useCreateStudentMutation()
 
   const [api, contextHolder] = notification.useNotification()
+  const navigate = useNavigate()
+  const close = () => navigate(nav.main)
 
   const openNotification = () => {
     api.info({
@@ -31,12 +36,15 @@ export function CreateOrUpdateStudentModal(props: Props) {
     })
   }
 
+  if (scheduleQuery.isPending) return <div>Загрузка...</div>
+  if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
+
   return (
     <>
       {contextHolder}
       <Modal
         title={isEdit ? "Редактировать" : "Добавить"}
-        open={props.isModalOpen}
+        open
         onOk={async () => {
           if (isEdit) {
             await updateStudentMutation.mutateAsync(student)
@@ -44,9 +52,9 @@ export function CreateOrUpdateStudentModal(props: Props) {
             await createStudentMutation.mutateAsync(student)
           }
           openNotification()
-          props.onClose()
+          close()
         }}
-        onCancel={() => props.onClose()}
+        onCancel={() => close()}
       >
         <Form.Item label="Имя">
           <Input value={student.name} onChange={(e) => updateStudent((draft) => (draft.name = e.target.value))} />

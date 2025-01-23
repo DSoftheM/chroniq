@@ -6,6 +6,8 @@ import { CreateOrUpdateStudentModal } from "./add-or-edit-student-modal"
 import { getPrevDay, getNextDay, toDateOnly, isToday, classesToDictionary, uuid } from "./lib"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import { PlusOutlined } from "@ant-design/icons"
+import { useNavigate } from "react-router-dom"
+import { nav } from "../../lib/nav"
 
 const Table = styled.div<{ studentsCount: number }>`
   display: grid;
@@ -17,21 +19,11 @@ const Table = styled.div<{ studentsCount: number }>`
   }
 `
 
-type SelectedLesson = null | {
-  studentId: string
-  lessonId: string | null
-}
-
 export function Main() {
   const scheduleQuery = useScheduleQuery()
-  const [selectedLesson, setSelectedLesson] = useState<SelectedLesson>(null)
+  const navigate = useNavigate()
 
-  const isModalOpen = Boolean(selectedLesson?.studentId) && Boolean(selectedLesson?.lessonId)
   let today = getPrevDay(new Date())
-  const student = selectedLesson?.lessonId
-    ? scheduleQuery.data?.items.find((item) => item.student.id === selectedLesson?.studentId)?.student
-    : null
-
   return (
     <>
       <Table studentsCount={scheduleQuery.data?.items.length ?? 0}>
@@ -59,11 +51,11 @@ export function Main() {
                     {classItem ? (
                       <ClassItemView
                         classItem={classItem}
-                        onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: classItem.id })}
+                        onEdit={() => navigate(nav.updateLesson(student.id, classItem.id))}
                       />
                     ) : (
                       <div>
-                        <PlusOutlined onClick={() => setSelectedLesson({ studentId: student.id, lessonId: null })} />
+                        <PlusOutlined onClick={() => navigate(nav.createLesson)} />
                         {/* <Button onClick={() => }>+</Button> */}
                       </div>
                     )}
@@ -74,7 +66,6 @@ export function Main() {
           )
         })}
       </Table>
-      <CreateOrUpdateStudentModal isModalOpen={isModalOpen} onClose={() => setSelectedLesson(null)} student={student} />
     </>
   )
 }

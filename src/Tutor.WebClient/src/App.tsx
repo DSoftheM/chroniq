@@ -3,8 +3,9 @@ import { Main } from "./features/main/main"
 import { Settings } from "./features/settings/settings"
 import { Login } from "./features/auth/login"
 import { Register } from "./features/auth/register"
-import { AddStudent } from "./features/add-student/add-student"
 import { nav } from "./lib/nav"
+import { CreateOrUpdateStudentModal } from "./features/main/add-or-edit-student-modal"
+import { CreateOrUpdateLessonModal } from "./features/main/create-or-update-lesson-modal"
 
 const router = createBrowserRouter([
   {
@@ -32,13 +33,36 @@ const router = createBrowserRouter([
         element: (
           <>
             <Main />
-            <AddStudent />
+            <CreateOrUpdateStudentModal />
           </>
         ),
       },
       {
-        path: nav.createStudent,
-        element: <AddStudent />,
+        path: nav.updateStudent(":studentId"),
+        element: (
+          <>
+            <Main />
+            <CreateOrUpdateStudentModal />
+          </>
+        ),
+      },
+      {
+        path: nav.createLesson,
+        element: (
+          <>
+            <Main />
+            <CreateOrUpdateLessonModal />
+          </>
+        ),
+      },
+      {
+        path: nav.updateLesson(":studentId", ":lessonId"),
+        element: (
+          <>
+            <Main />
+            <CreateOrUpdateLessonModal />
+          </>
+        ),
       },
     ],
   },

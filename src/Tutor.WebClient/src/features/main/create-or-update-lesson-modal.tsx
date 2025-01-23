@@ -3,20 +3,17 @@ import { Student } from "./types/student"
 import { Nullish } from "./types/lib"
 import { useUpdateStudentMutation } from "./api/use-update-student-mutation"
 import { useCreateStudentMutation } from "./api/use-create-student-mutation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { uuid } from "./lib"
 import { createLesson, Lesson } from "./types/lesson"
 import { api } from "../../api/provider"
 import { useMutation } from "@tanstack/react-query"
 import { useImmer } from "use-immer"
+import { useScheduleQuery } from "./api/use-schedule-query"
+import { useNavigate, useParams } from "react-router-dom"
+import { nav } from "../../lib/nav"
 
 const { TextArea } = Input
-
-type Props = {
-  lesson: Lesson | Nullish
-  isModalOpen: boolean
-  onClose: () => void
-}
 
 function useUpdateLessonMutation() {
   return useMutation({
@@ -30,14 +27,22 @@ function useCreateLessonMutation() {
   })
 }
 
-export function CreateOrUpdateLessonModal(props: Props) {
-  const [lesson, updateLesson] = useImmer<Lesson>(props.lesson ?? createLesson())
+export function CreateOrUpdateLessonModal() {
+  const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
+  const { lessonId, studentId } = useParams<{ studentId: string; lessonId: string }>()
+  const student = scheduleQuery.data?.items.find(({ student }) => student.id === studentId)?.student
+  const initialLesson = student?.lessons.find(({ id }) => id === lessonId)
+  const navigate = useNavigate()
 
-  const isEdit = Boolean(props.lesson)
+  const [lesson, updateLesson] = useImmer<Lesson>(initialLesson ?? createLesson())
+  useEffect(() => initialLesson && updateLesson(initialLesson), [initialLesson])
+
+  const isEdit = Boolean(initialLesson)
   const updateLessonMutation = useUpdateLessonMutation()
   const createLessonMutation = useCreateLessonMutation()
 
   const [api, contextHolder] = notification.useNotification()
+  const close = () => navigate(nav.main)
 
   const openNotification = () => {
     api.info({
@@ -48,12 +53,15 @@ export function CreateOrUpdateLessonModal(props: Props) {
     })
   }
 
+  if (scheduleQuery.isPending) return <div>Загрузка...</div>
+  if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
+
   return (
     <>
       {contextHolder}
       <Modal
         title={isEdit ? "Редактировать" : "Добавить"}
-        open={props.isModalOpen}
+        open
         onOk={async () => {
           if (isEdit) {
             await updateLessonMutation.mutateAsync(lesson)
@@ -61,9 +69,9 @@ export function CreateOrUpdateLessonModal(props: Props) {
             await createLessonMutation.mutateAsync(lesson)
           }
           openNotification()
-          props.onClose()
+          close()
         }}
-        onCancel={() => props.onClose()}
+        onCancel={() => close()}
       >
         <Form.Item label="Во сколько">
           <TimePicker format={"HH:mm"} minuteStep={15} onChange={console.log} />

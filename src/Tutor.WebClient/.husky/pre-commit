@@ -1,0 +1,1 @@
+yarn husky add .husky/pre-commit "yarn eslint --fix $(git diff --cached --name-only)"
