@@ -7,7 +7,9 @@
     "dev": "vite --open",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "preview": "vite preview",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.0",
