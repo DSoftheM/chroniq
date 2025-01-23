@@ -1,9 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
 import styled from "styled-components"
 import { ClassItemView } from "./class-item-view"
-import { Button } from "antd"
-import { CreateOrUpdateStudentModal } from "./add-or-edit-student-modal"
-import { getPrevDay, getNextDay, toDateOnly, isToday, classesToDictionary, uuid } from "./lib"
+import { getPrevDay, getNextDay, toDateOnly, isToday, classesToDictionary } from "./lib"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import { PlusOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom"
@@ -18,7 +16,6 @@ const Table = styled.div<{ studentsCount: number }>`
     border: 1px solid #000;
   }
 `
-//
 
 export function Main() {
   const scheduleQuery = useScheduleQuery()
