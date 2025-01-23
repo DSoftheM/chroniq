@@ -2,11 +2,11 @@ namespace Tutor.Models;
 
 public class Schedule
 {
-    public List<ScheduleItem> Items { get; set; }
+    public List<ScheduleItemSiteDto> Items { get; set; } = [];
 }
 
-public class ScheduleItem
+public class ScheduleItemSiteDto
 {
-    public Student Student { get; set; }
-    public List<Lesson> Lessons { get; set; }
+    public StudentSiteDto Student { get; set; }
+    public List<LessonSiteDto> Lessons { get; set; }
 }

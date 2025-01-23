@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Tutor.Models;
+using Tutor.Services.Exceptions;
 using Tutor.Storage;
 
 namespace Tutor.Services;
 
-public class LessonService(AppDbContext context)
+public class LessonService(AppDbContext context, StudentService studentService)
 {
     public async Task<List<Lesson>> GetAll()
     {
@@ -18,7 +19,9 @@ public class LessonService(AppDbContext context)
     
     public async Task<Lesson> Create(LessonSiteDto dto)
     {
-        var lesson = new Lesson() { Id = dto.Id, Date = dto.Date, Duration = dto.Duration, Description = dto.Description, Student = dto.Student, Paid = dto.Paid };
+        var student = await studentService.GetById(dto.Student.Id);
+        if (student == null) throw new NotFoundException();
+        var lesson = new Lesson() { Id = dto.Id, Date = dto.Date, Duration = dto.Duration, Description = dto.Description, Student = student, Paid = dto.Paid };
         context.Lessons.Add(lesson);
         await context.SaveChangesAsync();
         return lesson;

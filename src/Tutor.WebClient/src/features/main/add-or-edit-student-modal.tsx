@@ -1,4 +1,4 @@
-import { Modal, InputNumber, Input, Form, Button, notification } from "antd"
+import { Modal, InputNumber, Input, Form, notification } from "antd"
 import { createStudent, Student } from "./types/student"
 import { useUpdateStudentMutation } from "./api/use-update-student-mutation"
 import { useCreateStudentMutation } from "./api/use-create-student-mutation"
@@ -56,7 +56,14 @@ export function CreateOrUpdateStudentModal() {
         onCancel={() => close()}
       >
         <Form.Item label="Имя">
-          <Input value={student.name} onChange={(e) => updateStudent((draft) => (draft.name = e.target.value))} />
+          <Input
+            value={student.name}
+            onChange={(e) =>
+              updateStudent((draft) => {
+                draft.name = e.target.value
+              })
+            }
+          />
         </Form.Item>
 
         <Form.Item label="Обычная цена">
@@ -91,8 +98,6 @@ export function CreateOrUpdateStudentModal() {
             }
           />
         </Form.Item>
-
-        <Button>{isEdit ? "Сохранить" : "Создать"}</Button>
 
         {updateStudentMutation.isError && <p>{updateStudentMutation.error.message}</p>}
         {createStudentMutation.isError && <p>{createStudentMutation.error.message}</p>}

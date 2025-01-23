@@ -6,6 +6,7 @@ import { Register } from "./features/auth/register"
 import { nav } from "./lib/nav"
 import { CreateOrUpdateStudentModal } from "./features/main/add-or-edit-student-modal"
 import { CreateOrUpdateLessonModal } from "./features/main/create-or-update-lesson-modal"
+import { Page404 } from "./features/_404/page404"
 
 const router = createBrowserRouter([
   {
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: nav.createLesson,
+        path: nav.createLesson(":studentId"),
         element: (
           <>
             <Main />
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
             <CreateOrUpdateLessonModal />
           </>
         ),
+      },
+      {
+        path: "*",
+        element: <Page404 />,
       },
     ],
   },

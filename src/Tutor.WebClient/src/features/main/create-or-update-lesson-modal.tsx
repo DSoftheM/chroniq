@@ -25,12 +25,17 @@ function useCreateLessonMutation() {
 export function CreateOrUpdateLessonModal() {
   const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
   const { lessonId, studentId } = useParams<{ studentId: string; lessonId: string }>()
-  const student = scheduleQuery.data?.items.find(({ student }) => student.id === studentId)?.student
-  const initialLesson = student?.lessons.find(({ id }) => id === lessonId)
+  const scheduleItem = scheduleQuery.data?.items.find(({ student }) => student.id === studentId)
+  const student = scheduleItem?.student
+
+  const initialLesson =
+    scheduleItem?.lessons.find(({ id }) => id === lessonId) ?? (student ? createLesson({ student }) : null)
   const navigate = useNavigate()
 
-  const [lesson, updateLesson] = useImmer<Lesson>(initialLesson ?? createLesson())
-  useEffect(() => initialLesson && updateLesson(initialLesson), [initialLesson])
+  const [lesson, updateLesson] = useImmer<Lesson | null>(initialLesson)
+  useEffect(() => {
+    if (initialLesson && !lesson) updateLesson(initialLesson)
+  }, [initialLesson])
 
   const isEdit = Boolean(initialLesson)
   const updateLessonMutation = useUpdateLessonMutation()
@@ -50,6 +55,7 @@ export function CreateOrUpdateLessonModal() {
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
+  if (!student || !lesson) return <div>Ученик не найден</div>
 
   return (
     <>
@@ -73,11 +79,30 @@ export function CreateOrUpdateLessonModal() {
         </Form.Item>
 
         <Form.Item label="Длительность">
-          <TimePicker format={"HH:mm"} minuteStep={15} onChange={console.log} />
+          <TimePicker
+            format={"HH:mm"}
+            minuteStep={15}
+            onChange={(val) => {
+              updateLesson((draft) => {
+                if (!draft) return
+                draft.duration = val ? getDuration(val.toDate()) : ""
+              })
+            }}
+          />
         </Form.Item>
 
         <Form.Item label="Стоимость">
-          <InputNumber min={1} max={10} defaultValue={3} onChange={console.log} />
+          <InputNumber
+            min={1}
+            max={10000}
+            value={student.defaultPrice}
+            onChange={(val) => {
+              updateLesson((draft) => {
+                if (!draft) return
+                draft.price = val ?? 1
+              })
+            }}
+          />
         </Form.Item>
 
         <Form.Item label="Описание">
@@ -85,6 +110,7 @@ export function CreateOrUpdateLessonModal() {
             value={lesson.description}
             onChange={(e) =>
               updateLesson((draft) => {
+                if (!draft) return
                 draft.description = e.target.value
               })
             }
@@ -92,7 +118,15 @@ export function CreateOrUpdateLessonModal() {
         </Form.Item>
 
         <Form.Item label="Занятие оплачено">
-          <Checkbox value={lesson.paid} onChange={(e) => updateLesson((draft) => (draft.paid = e.target.checked))}>
+          <Checkbox
+            checked={lesson.paid}
+            onChange={(e) =>
+              updateLesson((draft) => {
+                if (!draft) return
+                draft.paid = e.target.checked
+              })
+            }
+          >
             Да/Нет
           </Checkbox>
         </Form.Item>
@@ -104,4 +138,11 @@ export function CreateOrUpdateLessonModal() {
       </Modal>
     </>
   )
+}
+
+function getDuration(date: Date) {
+  return date.toLocaleTimeString("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
 }

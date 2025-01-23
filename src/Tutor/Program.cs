@@ -15,7 +15,16 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
 var app = builder.Build();
+
+var dbcontext = app.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
+dbcontext.Database.Migrate();
+
 app.MapControllers();
+
+app.UseCors(policyBuilder =>
+{
+    policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

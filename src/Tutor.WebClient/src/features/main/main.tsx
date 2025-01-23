@@ -6,10 +6,11 @@ import { useScheduleQuery } from "./api/use-schedule-query"
 import { PlusOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom"
 import { nav } from "../../lib/nav"
+import { ContentPlaceholder } from "./content-placeholder"
 
-const Table = styled.div<{ studentsCount: number }>`
+const Table = styled.div<{ $studentsCount: number }>`
   display: grid;
-  grid-template-columns: 200px repeat(${(props) => props.studentsCount}, 1fr);
+  grid-template-columns: 200px repeat(${(props) => props.$studentsCount}, 1fr);
   gap: 10px;
 
   & > * {
@@ -17,15 +18,23 @@ const Table = styled.div<{ studentsCount: number }>`
   }
 `
 
+const EmptyCell = () => <div />
+
 export function Main() {
   const scheduleQuery = useScheduleQuery()
   const navigate = useNavigate()
 
   let today = getPrevDay(new Date())
+
+  if (scheduleQuery.isPending) return <div>Загрузка...</div>
+  if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
+
+  if (!scheduleQuery.data?.items.length) return <ContentPlaceholder />
+
   return (
     <>
-      <Table studentsCount={scheduleQuery.data?.items.length ?? 0}>
-        <div hidden>empty cell</div>
+      <Table $studentsCount={scheduleQuery.data?.items.length ?? 0}>
+        <EmptyCell />
 
         {scheduleQuery.data?.items.map(({ student }) => {
           return (
@@ -40,8 +49,8 @@ export function Main() {
           return (
             <React.Fragment key={toDateOnly(today)}>
               <div style={{ backgroundColor: isToday(today) ? "green" : "" }}>{toDateOnly(today)}</div>
-              {scheduleQuery.data?.items.map(({ student }) => {
-                const classes = classesToDictionary(student.lessons)
+              {scheduleQuery.data?.items.map(({ student, lessons }) => {
+                const classes = classesToDictionary(lessons)
                 const classItem = classes[toDateOnly(today)]
 
                 return (
@@ -53,8 +62,7 @@ export function Main() {
                       />
                     ) : (
                       <div>
-                        <PlusOutlined onClick={() => navigate(nav.createLesson)} />
-                        {/* <Button onClick={() => }>+</Button> */}
+                        <PlusOutlined onClick={() => navigate(nav.createLesson(student.id))} />
                       </div>
                     )}
                   </React.Fragment>

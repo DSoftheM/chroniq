@@ -32,4 +32,9 @@ public class StudentService(AppDbContext context)
     {
         return await context.Students.AsNoTracking().ToListAsync();
     }
+    
+    public async Task<Student?> GetById(Guid id)
+    {
+        return await context.Students.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+    }
 }

@@ -10,6 +10,7 @@ public class LessonController(LessonService lessonService)
 {
     public async Task<List<Lesson>> GetAllLessons() => await lessonService.GetAll();
     
-    [Route("create")]
+    [Route("")]
+    [HttpPost]
     public async Task CreateLesson(LessonSiteDto dto) => await lessonService.Create(dto);
 }

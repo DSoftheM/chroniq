@@ -13,9 +13,10 @@ public class ScheduleService(AppDbContext context, StudentService studentService
         foreach (var student in allStudents)
         {
             var lessons = await lessonService.GetByStudentId(student.Id);
-            schedule.Items.Add(new ScheduleItem() { Student = student, Lessons = lessons });
+            schedule.Items.Add(new ScheduleItemSiteDto()
+                { Student = student.ToSiteDto(), Lessons = lessons.Select(x => x.ToSiteDto()).ToList() });
         }
-        
+
         return schedule;
     }
 }

@@ -8,12 +8,11 @@ public class AppDbContext : DbContext
 {
     public DbSet<Student> Students { get; set; }
     public DbSet<Lesson> Lessons { get; set; }
-    
+
     public AppDbContext(DbContextOptions options) : base(options)
     {
-        Database.Migrate();
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

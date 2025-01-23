@@ -9,7 +9,8 @@ namespace Tutor.Controllers;
 [ApiController]
 public class StudentController(StudentService studentService)
 {
-    [Route("/create")]
+    [Route("")]
+    [HttpPost]
     public Task CreateStudent(Student student)
     {
         return studentService.Create(student);
