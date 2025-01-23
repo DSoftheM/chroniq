@@ -28,7 +28,16 @@ const router = createBrowserRouter([
         element: <Register />,
       },
       {
-        path: nav.addStudent,
+        path: nav.createStudent,
+        element: (
+          <>
+            <Main />
+            <AddStudent />
+          </>
+        ),
+      },
+      {
+        path: nav.createStudent,
         element: <AddStudent />,
       },
     ],

@@ -4,7 +4,10 @@ const _nav = {
   profile: "/profile",
   login: "/login",
   register: "/register",
-  addStudent: "/add-student",
+  createStudent: "student/create",
+  updateStudent: (studentId: string) => `student/update/${studentId}`,
+  createLesson: "lesson/create",
+  updateLesson: (studentId: string, lessonId: string) => `lesson/update/${studentId}/${lessonId}`,
 }
 
 // const createPathProxy = (obj: any, path: any[] = []): any => {

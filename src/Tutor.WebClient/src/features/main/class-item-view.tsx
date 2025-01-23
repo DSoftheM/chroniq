@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { Lesson } from "./types/lesson"
 import { LessonStatus } from "./types/lesson-status"
+import { EditOutlined } from "@ant-design/icons"
 
 const Cell = styled.div`
   padding: 5px;
@@ -26,22 +27,33 @@ const Info = styled(Cell)`
   color: white;
 `
 
-export function ClassItemView(props: { classItem: Lesson }) {
-  if (props.classItem.status === LessonStatus.Completed) {
-    if (props.classItem.paid) {
-      return <Success>Оплачено</Success>
-    } else {
-      return <Error>Не оплачено</Error>
+type Props = {
+  classItem: Lesson
+  onEdit: () => void
+}
+
+export function ClassItemView(props: Props) {
+  function renderStatus() {
+    if (props.classItem.status === LessonStatus.Completed) {
+      if (props.classItem.paid) {
+        return <Success>Оплачено</Success>
+      } else {
+        return <Error>Не оплачено</Error>
+      }
+    }
+
+    if (props.classItem.status === LessonStatus.InProgress) {
+      return <Warning>В процессе</Warning>
+    }
+
+    if (props.classItem.status === LessonStatus.Scheduled) {
+      return <Info>Запланировано</Info>
     }
   }
 
-  if (props.classItem.status === LessonStatus.InProgress) {
-    return <Warning>В процессе</Warning>
-  }
-
-  if (props.classItem.status === LessonStatus.Scheduled) {
-    return <Info>Запланировано</Info>
-  }
-
-  return ""
+  return (
+    <div>
+      {renderStatus()} <EditOutlined onClick={() => props.onEdit()} />{" "}
+    </div>
+  )
 }

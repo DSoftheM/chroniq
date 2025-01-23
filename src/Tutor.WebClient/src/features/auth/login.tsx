@@ -19,7 +19,7 @@ export function Login() {
         onClick={() =>
           api
             .login(login, password)
-            .then(() => navigate(nav.main.main))
+            .then(() => navigate(nav.main))
             .catch((e) => setError(e.message))
         }
       >

@@ -1,13 +1,11 @@
 import React, { useState } from "react"
 import styled from "styled-components"
-import { LessonStatus } from "./types/lesson-status"
-import { Student } from "./types/student"
-import { Lesson } from "./types/lesson"
 import { ClassItemView } from "./class-item-view"
-import { Button, Modal, TimePicker, Input, Checkbox, InputNumber } from "antd"
-import dayjs from "dayjs"
-
-const { TextArea } = Input
+import { Button } from "antd"
+import { CreateOrUpdateStudentModal } from "./add-or-edit-student-modal"
+import { getPrevDay, getNextDay, toDateOnly, isToday, classesToDictionary, uuid } from "./lib"
+import { useScheduleQuery } from "./api/use-schedule-query"
+import { PlusOutlined } from "@ant-design/icons"
 
 const Table = styled.div<{ studentsCount: number }>`
   display: grid;
@@ -19,69 +17,27 @@ const Table = styled.div<{ studentsCount: number }>`
   }
 `
 
-const students: Student[] = [
-  {
-    name: "John Doe",
-    classes: [],
-  },
-  // {
-  //   name: "John Doe",
-  //   classes: [
-  //     {
-  //       status: ClassStatus.Scheduled,
-  //       date: new Date("2025-01-20"),
-  //       price: 100,
-  //       paid: false,
-  //     },
-  //     {
-  //       status: ClassStatus.InProgress,
-  //       date: new Date("2025-01-22"),
-  //       price: 100,
-  //       paid: false,
-  //     },
-  //     {
-  //       status: ClassStatus.InProgress,
-  //       date: new Date("2025-01-29"),
-  //       price: 100,
-  //       paid: false,
-  //     },
-  //     {
-  //       status: ClassStatus.Completed,
-  //       date: new Date("2025-01-25"),
-  //       price: 100,
-  //       paid: false,
-  //     },
-  //   ],
-  // },
-  // {
-  //   name: "Jane Doe",
-  //   classes: [
-  //     {
-  //       status: ClassStatus.Completed,
-  //       date: new Date(),
-  //       price: 100,
-  //       paid: true,
-  //     },
-  //     {
-  //       status: ClassStatus.InProgress,
-  //       date: new Date("2025-01-25"),
-  //       price: 100,
-  //       paid: false,
-  //     },
-  //   ],
-  // },
-]
+type SelectedLesson = null | {
+  studentId: string
+  lessonId: string | null
+}
 
 export function Main() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const scheduleQuery = useScheduleQuery()
+  const [selectedLesson, setSelectedLesson] = useState<SelectedLesson>(null)
+
+  const isModalOpen = Boolean(selectedLesson?.studentId) && Boolean(selectedLesson?.lessonId)
   let today = getPrevDay(new Date())
+  const student = selectedLesson?.lessonId
+    ? scheduleQuery.data?.items.find((item) => item.student.id === selectedLesson?.studentId)?.student
+    : null
 
   return (
     <>
-      <Table studentsCount={students.length}>
-        <div></div>
+      <Table studentsCount={scheduleQuery.data?.items.length ?? 0}>
+        <div hidden>empty cell</div>
 
-        {students.map((student) => {
+        {scheduleQuery.data?.items.map(({ student }) => {
           return (
             <React.Fragment key={student.name}>
               <div>{student.name}</div>
@@ -94,17 +50,21 @@ export function Main() {
           return (
             <React.Fragment key={toDateOnly(today)}>
               <div style={{ backgroundColor: isToday(today) ? "green" : "" }}>{toDateOnly(today)}</div>
-              {students.map((student) => {
-                const classes = classesToDictionary(student.classes)
+              {scheduleQuery.data?.items.map(({ student }) => {
+                const classes = classesToDictionary(student.lessons)
                 const classItem = classes[toDateOnly(today)]
 
                 return (
                   <React.Fragment key={student.name}>
                     {classItem ? (
-                      <ClassItemView classItem={classItem} />
+                      <ClassItemView
+                        classItem={classItem}
+                        onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: classItem.id })}
+                      />
                     ) : (
                       <div>
-                        <Button onClick={() => setIsModalOpen(true)}>+</Button>
+                        <PlusOutlined onClick={() => setSelectedLesson({ studentId: student.id, lessonId: null })} />
+                        {/* <Button onClick={() => }>+</Button> */}
                       </div>
                     )}
                   </React.Fragment>
@@ -114,56 +74,7 @@ export function Main() {
           )
         })}
       </Table>
-      <Modal
-        title="Basic Modal"
-        open={isModalOpen}
-        onOk={() => setIsModalOpen(false)}
-        onCancel={() => setIsModalOpen(false)}
-      >
-        <p>Во сколько</p>
-        <TimePicker format={"HH:mm"} minuteStep={15} onChange={console.log} />
-        <p>Длительность</p>
-        <TimePicker format={"HH:mm"} minuteStep={15} onChange={console.log} />
-        <p>Стоимость</p>
-        <InputNumber min={1} max={10} defaultValue={3} onChange={console.log} />
-        <TextArea />
-        <Checkbox onChange={console.log}>Оплачено</Checkbox>
-      </Modal>
+      <CreateOrUpdateStudentModal isModalOpen={isModalOpen} onClose={() => setSelectedLesson(null)} student={student} />
     </>
   )
-}
-
-function classesToDictionary(classes: Lesson[]) {
-  return classes.reduce((acc, classItem) => {
-    acc[toDateOnly(classItem.date)] = classItem
-    return acc
-  }, {} as Record<string, Lesson>)
-}
-
-function getPrevDay(date: Date) {
-  return new Date(date.getTime() - 24 * 60 * 60 * 1000)
-}
-
-function getNextDay(date: Date) {
-  return new Date(date.getTime() + 24 * 60 * 60 * 1000)
-}
-
-function isToday(date: Date) {
-  return toDateOnly(date) === toDateOnly(new Date())
-}
-
-// function fillGapsInClasses(classes: Class[], targetLength: number): (Class | null)[] {
-//     const _classes = [...classes].sort((a, b) => a.date.getTime() - b.date.getTime())
-//     const result: (Class | null)[] = new Array(targetLength).fill(null)
-
-//     for (let i = 0; i < targetLength; i++) {
-
-//     }
-//     return result
-
-// }
-
-function toDateOnly(date: Date) {
-  // return date.toISOString().split("T")[0]
-  return date.toLocaleDateString("ru", { month: "short", day: "numeric", year: "numeric" })
 }
