@@ -1,12 +1,11 @@
-import { uuid } from "../lib"
-import { LessonStatus } from "./lesson-status"
+import { now, uuid } from "../lib"
+import { DateTime } from "./lib"
 import { Student } from "./student"
 
 export type Lesson = {
   id: string
   description: string
-  status: LessonStatus
-  date: Date
+  date: DateTime
   price: number
   paid: boolean
   student: Student
@@ -16,8 +15,7 @@ export type Lesson = {
 export function createLesson(lesson: Partial<Lesson> & { student: Student }): Lesson {
   return {
     id: uuid(),
-    status: LessonStatus.Scheduled,
-    date: new Date(),
+    date: now(),
     price: 1500,
     description: "",
     duration: "01:00",

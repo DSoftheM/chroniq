@@ -7,6 +7,7 @@ import { useImmer } from "use-immer"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import dayjs from "dayjs"
 import { toDateOnly } from "./lib"
+import { DateTime } from "./types/lib"
 
 const { TextArea } = Input
 
@@ -25,7 +26,7 @@ function useCreateLessonMutation() {
 type Props = {
   lessonId: string | null
   studentId: string
-  creationDate: Date | undefined
+  creationDate: DateTime | undefined
   close: () => void
 }
 

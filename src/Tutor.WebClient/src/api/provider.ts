@@ -14,5 +14,5 @@ export const api = {
   updateStudent: (student: Student) => http.post("/student", student),
 
   createLesson: (lesson: Lesson) => http.post("/lesson", lesson),
-  updateLesson: (lesson: Lesson) => http.post("/lesson", lesson),
+  updateLesson: (lesson: Lesson) => http.post("/lesson/update", lesson),
 }

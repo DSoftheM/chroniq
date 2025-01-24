@@ -1,11 +1,12 @@
 import React, { useRef } from "react"
 import styled from "styled-components"
-import { ClassItemView } from "./class-item-view"
+import { LessonView } from "./lesson-view"
 import { getPrevDay, getNextDay, toDateOnly, isToday, classesToDictionary } from "./lib"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import { PlusOutlined } from "@ant-design/icons"
 import { ContentPlaceholder } from "./content-placeholder"
 import { CreateOrUpdateLessonModal } from "./create-or-update-lesson-modal"
+import { DateTime } from "./types/lib"
 
 const Table = styled.div<{ $studentsCount: number }>`
   display: grid;
@@ -26,7 +27,7 @@ const EmptyCell = () => <div />
 
 export function Main() {
   const [selectedLesson, setSelectedLesson] = React.useState<SelectedLesson | null>(null)
-  const selectedDateRef = useRef<Date | undefined>(undefined)
+  const selectedDateRef = useRef<DateTime | undefined>(undefined)
   const scheduleQuery = useScheduleQuery()
 
   let today = getPrevDay(new Date())
@@ -69,15 +70,15 @@ export function Main() {
                 return (
                   <React.Fragment key={student.name}>
                     {classItem ? (
-                      <ClassItemView
-                        classItem={classItem}
+                      <LessonView
+                        lesson={classItem}
                         onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: classItem.id })}
                       />
                     ) : (
                       <PlusOutlined
                         onClick={() => {
                           setSelectedLesson({ studentId: student.id, lessonId: null })
-                          selectedDateRef.current = _today
+                          selectedDateRef.current = _today.getTime()
                         }}
                       />
                     )}

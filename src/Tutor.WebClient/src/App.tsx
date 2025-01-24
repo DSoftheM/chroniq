@@ -4,8 +4,7 @@ import { Settings } from "./features/settings/settings"
 import { Login } from "./features/auth/login"
 import { Register } from "./features/auth/register"
 import { nav } from "./lib/nav"
-import { CreateOrUpdateStudentModal } from "./features/main/add-or-edit-student-modal"
-import { CreateOrUpdateLessonModal } from "./features/main/create-or-update-lesson-modal"
+import { CreateOrUpdateStudentModal } from "./features/main/create-or-update-student-modal"
 import { Page404 } from "./features/_404/page404"
 
 const router = createBrowserRouter([

@@ -1,4 +1,5 @@
 import { Lesson } from "./types/lesson"
+import { DateTime } from "./types/lib"
 
 export function classesToDictionary(classes: Lesson[]) {
   return classes.reduce((acc, classItem) => {
@@ -15,11 +16,11 @@ export function getNextDay(date: Date) {
   return new Date(date.getTime() + 24 * 60 * 60 * 1000)
 }
 
-export function isToday(date: Date) {
-  return toDateOnly(date) === toDateOnly(new Date())
+export function isToday(date: DateTime | Date) {
+  return new Date(date).toDateString() === new Date().toDateString()
 }
 
-export function toDateOnly(date: Date) {
+export function toDateOnly(date: DateTime | Date) {
   return new Date(date).toLocaleDateString("ru", { month: "short", day: "numeric", year: "numeric" })
 }
 
@@ -29,4 +30,9 @@ export function uuid() {
       v = c == "x" ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
+}
+
+// export function getUnixTimeMilliseconds()
+export function now() {
+  return new Date().getTime()
 }
