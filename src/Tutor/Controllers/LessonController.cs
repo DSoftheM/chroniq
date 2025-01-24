@@ -12,5 +12,5 @@ public class LessonController(LessonService lessonService)
     
     [Route("")]
     [HttpPost]
-    public async Task CreateLesson(LessonSiteDto dto) => await lessonService.Create(dto);
+    public async Task CreateLesson(CreateLessonSiteDto dto) => await lessonService.Create(dto);
 }

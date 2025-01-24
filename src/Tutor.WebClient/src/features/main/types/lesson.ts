@@ -20,7 +20,7 @@ export function createLesson(lesson: Partial<Lesson> & { student: Student }): Le
     date: new Date(),
     price: 1500,
     description: "",
-    duration: "",
+    duration: "01:00",
     paid: false,
     ...lesson,
     student: lesson.student,

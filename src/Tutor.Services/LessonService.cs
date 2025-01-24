@@ -17,11 +17,11 @@ public class LessonService(AppDbContext context, StudentService studentService)
         return await context.Lessons.AsNoTracking().Where(x => x.Student.Id == id).ToListAsync();
     }
     
-    public async Task<Lesson> Create(LessonSiteDto dto)
+    public async Task<Lesson> Create(CreateLessonSiteDto dto)
     {
         var student = await studentService.GetById(dto.Student.Id);
         if (student == null) throw new NotFoundException();
-        var lesson = new Lesson() { Id = dto.Id, Date = dto.Date, Duration = dto.Duration, Description = dto.Description, Student = student, Paid = dto.Paid };
+        var lesson = new Lesson() { Id = dto.Id, Date = dto.Date, Duration = dto.Duration, Description = dto.Description, Student = student, Paid = dto.Paid, Status = dto.Status };
         context.Lessons.Add(lesson);
         await context.SaveChangesAsync();
         return lesson;

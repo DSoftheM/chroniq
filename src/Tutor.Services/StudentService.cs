@@ -35,6 +35,6 @@ public class StudentService(AppDbContext context)
     
     public async Task<Student?> GetById(Guid id)
     {
-        return await context.Students.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        return await context.Students.FirstOrDefaultAsync(x => x.Id == id);
     }
 }

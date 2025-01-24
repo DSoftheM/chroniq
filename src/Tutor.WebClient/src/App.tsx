@@ -48,24 +48,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: nav.createLesson(":studentId"),
-        element: (
-          <>
-            <Main />
-            <CreateOrUpdateLessonModal />
-          </>
-        ),
-      },
-      {
-        path: nav.updateLesson(":studentId", ":lessonId"),
-        element: (
-          <>
-            <Main />
-            <CreateOrUpdateLessonModal />
-          </>
-        ),
-      },
-      {
         path: "*",
         element: <Page404 />,
       },
@@ -89,7 +71,7 @@ function Shared() {
         <Link to="/">Главная</Link>
         <Link to="/register">Регистрация</Link>
         <Link to="/login">Вход</Link>
-        <Link to="/add-student">Добавить ученика</Link>
+        <Link to={nav.createStudent}>Добавить ученика</Link>
       </div>
       <Outlet />
     </>

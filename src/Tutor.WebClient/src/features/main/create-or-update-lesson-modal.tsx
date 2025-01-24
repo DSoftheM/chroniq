@@ -5,8 +5,8 @@ import { api } from "../../api/provider"
 import { useMutation } from "@tanstack/react-query"
 import { useImmer } from "use-immer"
 import { useScheduleQuery } from "./api/use-schedule-query"
-import { useNavigate, useParams } from "react-router-dom"
-import { nav } from "../../lib/nav"
+import dayjs from "dayjs"
+import { toDateOnly } from "./lib"
 
 const { TextArea } = Input
 
@@ -22,27 +22,35 @@ function useCreateLessonMutation() {
   })
 }
 
-export function CreateOrUpdateLessonModal() {
+type Props = {
+  lessonId: string | null
+  studentId: string
+  creationDate: Date | undefined
+  close: () => void
+}
+
+export function CreateOrUpdateLessonModal(props: Props) {
   const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
-  const { lessonId, studentId } = useParams<{ studentId: string; lessonId: string }>()
-  const scheduleItem = scheduleQuery.data?.items.find(({ student }) => student.id === studentId)
+  const scheduleItem = scheduleQuery.data?.items.find(({ student }) => student.id === props.studentId)
   const student = scheduleItem?.student
 
-  const initialLesson =
-    scheduleItem?.lessons.find(({ id }) => id === lessonId) ?? (student ? createLesson({ student }) : null)
-  const navigate = useNavigate()
+  const initialLesson = props.lessonId
+    ? scheduleItem?.lessons.find(({ id }) => id === props.lessonId)
+    : student
+    ? createLesson({ student, date: props.creationDate })
+    : null
 
-  const [lesson, updateLesson] = useImmer<Lesson | null>(initialLesson)
+  const [lesson, updateLesson] = useImmer<Lesson | null>(initialLesson ?? null)
+
   useEffect(() => {
     if (initialLesson && !lesson) updateLesson(initialLesson)
   }, [initialLesson])
 
-  const isEdit = Boolean(initialLesson)
+  const isEdit = Boolean(props.lessonId)
   const updateLessonMutation = useUpdateLessonMutation()
   const createLessonMutation = useCreateLessonMutation()
 
   const [api, contextHolder] = notification.useNotification()
-  const close = () => navigate(nav.main)
 
   const openNotification = () => {
     api.info({
@@ -61,7 +69,7 @@ export function CreateOrUpdateLessonModal() {
     <>
       {contextHolder}
       <Modal
-        title={isEdit ? "Редактировать" : "Добавить"}
+        title={isEdit ? "Редактировать" : `Создать занятие для ${student.name} на ${toDateOnly(lesson.date)}`}
         open
         onOk={async () => {
           if (isEdit) {
@@ -70,71 +78,74 @@ export function CreateOrUpdateLessonModal() {
             await createLessonMutation.mutateAsync(lesson)
           }
           openNotification()
-          close()
+          props.close()
         }}
-        onCancel={() => close()}
+        onCancel={() => props.close()}
       >
-        <Form.Item label="Во сколько">
-          <TimePicker format={"HH:mm"} minuteStep={15} onChange={console.log} />
-        </Form.Item>
+        <Form layout="vertical">
+          <Form.Item label="Во сколько">
+            <TimePicker value={dayjs(lesson.date)} format={"HH:mm"} minuteStep={15} onChange={console.log} />
+          </Form.Item>
 
-        <Form.Item label="Длительность">
-          <TimePicker
-            format={"HH:mm"}
-            minuteStep={15}
-            onChange={(val) => {
-              updateLesson((draft) => {
-                if (!draft) return
-                draft.duration = val ? getDuration(val.toDate()) : ""
-              })
-            }}
-          />
-        </Form.Item>
+          <Form.Item label="Длительность">
+            <TimePicker
+              format={"HH:mm"}
+              value={dayjs(lesson.duration, "HH:mm")}
+              minuteStep={15}
+              onChange={(val) => {
+                updateLesson((draft) => {
+                  if (!draft) return
+                  draft.duration = val ? getDuration(val.toDate()) : ""
+                })
+              }}
+            />
+          </Form.Item>
 
-        <Form.Item label="Стоимость">
-          <InputNumber
-            min={1}
-            max={10000}
-            value={student.defaultPrice}
-            onChange={(val) => {
-              updateLesson((draft) => {
-                if (!draft) return
-                draft.price = val ?? 1
-              })
-            }}
-          />
-        </Form.Item>
+          <Form.Item label="Стоимость">
+            <InputNumber
+              min={1}
+              max={10000}
+              value={student.defaultPrice}
+              onChange={(val) => {
+                updateLesson((draft) => {
+                  if (!draft) return
+                  draft.price = val ?? 1
+                })
+              }}
+            />
+          </Form.Item>
 
-        <Form.Item label="Описание">
-          <TextArea
-            value={lesson.description}
-            onChange={(e) =>
-              updateLesson((draft) => {
-                if (!draft) return
-                draft.description = e.target.value
-              })
-            }
-          />
-        </Form.Item>
+          <Form.Item label="Описание">
+            <TextArea
+              value={lesson.description}
+              onChange={(e) =>
+                updateLesson((draft) => {
+                  if (!draft) return
+                  draft.description = e.target.value
+                })
+              }
+            />
+          </Form.Item>
 
-        <Form.Item label="Занятие оплачено">
-          <Checkbox
-            checked={lesson.paid}
-            onChange={(e) =>
-              updateLesson((draft) => {
-                if (!draft) return
-                draft.paid = e.target.checked
-              })
-            }
-          >
-            Да/Нет
-          </Checkbox>
-        </Form.Item>
+          <Form.Item label="Занятие оплачено">
+            <Checkbox
+              checked={lesson.paid}
+              onChange={(e) =>
+                updateLesson((draft) => {
+                  if (!draft) return
+                  draft.paid = e.target.checked
+                })
+              }
+            >
+              Да/Нет
+            </Checkbox>
+          </Form.Item>
 
-        <Button>{isEdit ? "Сохранить" : "Создать"}</Button>
+          <Button>{isEdit ? "Сохранить" : "Создать"}</Button>
 
-        {updateLessonMutation.isError && <p>{updateLessonMutation.error.message}</p>}
-        {createLessonMutation.isError && <p>{createLessonMutation.error.message}</p>}
+          {updateLessonMutation.isError && <p>{updateLessonMutation.error.message}</p>}
+          {createLessonMutation.isError && <p>{createLessonMutation.error.message}</p>}
+        </Form>
       </Modal>
     </>
   )

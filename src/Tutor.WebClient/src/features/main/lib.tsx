@@ -20,7 +20,7 @@ export function isToday(date: Date) {
 }
 
 export function toDateOnly(date: Date) {
-  return date.toLocaleDateString("ru", { month: "short", day: "numeric", year: "numeric" })
+  return new Date(date).toLocaleDateString("ru", { month: "short", day: "numeric", year: "numeric" })
 }
 
 export function uuid() {

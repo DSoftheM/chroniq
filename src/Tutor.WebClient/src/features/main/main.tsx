@@ -1,12 +1,11 @@
-import React from "react"
+import React, { useRef } from "react"
 import styled from "styled-components"
 import { ClassItemView } from "./class-item-view"
 import { getPrevDay, getNextDay, toDateOnly, isToday, classesToDictionary } from "./lib"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import { PlusOutlined } from "@ant-design/icons"
-import { useNavigate } from "react-router-dom"
-import { nav } from "../../lib/nav"
 import { ContentPlaceholder } from "./content-placeholder"
+import { CreateOrUpdateLessonModal } from "./create-or-update-lesson-modal"
 
 const Table = styled.div<{ $studentsCount: number }>`
   display: grid;
@@ -18,21 +17,34 @@ const Table = styled.div<{ $studentsCount: number }>`
   }
 `
 
+type SelectedLesson = {
+  studentId: string
+  lessonId: string | null
+}
+
 const EmptyCell = () => <div />
 
 export function Main() {
+  const [selectedLesson, setSelectedLesson] = React.useState<SelectedLesson | null>(null)
+  const selectedDateRef = useRef<Date | undefined>(undefined)
   const scheduleQuery = useScheduleQuery()
-  const navigate = useNavigate()
 
   let today = getPrevDay(new Date())
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
-
   if (!scheduleQuery.data?.items.length) return <ContentPlaceholder />
 
   return (
     <>
+      {selectedLesson && (
+        <CreateOrUpdateLessonModal
+          creationDate={selectedDateRef.current}
+          close={() => setSelectedLesson(null)}
+          lessonId={selectedLesson.lessonId}
+          studentId={selectedLesson.studentId}
+        />
+      )}
       <Table $studentsCount={scheduleQuery.data?.items.length ?? 0}>
         <EmptyCell />
 
@@ -52,18 +64,22 @@ export function Main() {
               {scheduleQuery.data?.items.map(({ student, lessons }) => {
                 const classes = classesToDictionary(lessons)
                 const classItem = classes[toDateOnly(today)]
+                const _today = new Date(today)
 
                 return (
                   <React.Fragment key={student.name}>
                     {classItem ? (
                       <ClassItemView
                         classItem={classItem}
-                        onEdit={() => navigate(nav.updateLesson(student.id, classItem.id))}
+                        onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: classItem.id })}
                       />
                     ) : (
-                      <div>
-                        <PlusOutlined onClick={() => navigate(nav.createLesson(student.id))} />
-                      </div>
+                      <PlusOutlined
+                        onClick={() => {
+                          setSelectedLesson({ studentId: student.id, lessonId: null })
+                          selectedDateRef.current = _today
+                        }}
+                      />
                     )}
                   </React.Fragment>
                 )

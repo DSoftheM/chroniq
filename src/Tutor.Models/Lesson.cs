@@ -8,6 +8,7 @@ public class Lesson
     public required string Description { get; set; } = string.Empty;
     public required Student Student { get; set; }
     public required bool Paid { get; set; }
+    public required LessonStatus Status { get; set; }
 }
 
 public class LessonSiteDto
@@ -16,8 +17,19 @@ public class LessonSiteDto
     public required TimeSpan Duration { get; set; }
     public required DateTime Date { get; set; }
     public required string Description { get; set; } = string.Empty;
+    public required bool Paid { get; set; }
+    public required LessonStatus Status { get; set; }
+}
+
+public class CreateLessonSiteDto
+{
+    public required Guid Id { get; set; }
+    public required TimeSpan Duration { get; set; }
+    public required DateTime Date { get; set; }
+    public required string Description { get; set; } = string.Empty;
     public required StudentSiteDto Student { get; set; }
     public required bool Paid { get; set; }
+    public required LessonStatus Status { get; set; }
 }
 
 public static class LessonExtensions
@@ -27,10 +39,10 @@ public static class LessonExtensions
         return new LessonSiteDto
         {
             Id = lesson.Id,
+            Status = lesson.Status,
             Duration = lesson.Duration,
             Date = lesson.Date,
             Description = lesson.Description,
-            Student = lesson.Student.ToSiteDto(),
             Paid = lesson.Paid,
         };
     }

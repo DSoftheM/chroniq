@@ -6,8 +6,8 @@ const _nav = {
   register: "/register",
   createStudent: "student/create",
   updateStudent: (studentId: string) => `student/update/${studentId}`,
-  createLesson: (studentId: string) => `lesson/update/${studentId}`,
-  updateLesson: (studentId: string, lessonId: string) => `lesson/update/${studentId}/${lessonId}`,
+
+  // viewLesson: (studentId: string, lessonId: string) => `lesson/update/${studentId}/${lessonId}`,
 }
 
 // const createPathProxy = (obj: any, path: any[] = []): any => {
