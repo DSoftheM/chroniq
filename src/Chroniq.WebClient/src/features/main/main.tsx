@@ -8,10 +8,8 @@ import { ContentPlaceholder } from "./content-placeholder"
 import { CreateOrUpdateLessonModal } from "./create-or-update-lesson-modal"
 import { DateTime } from "./types/lib"
 import { CreateOrUpdateStudentModal } from "./create-or-update-student-modal"
-import { Button, Flex, theme } from "antd"
+import { Button, Flex } from "antd"
 import { StudentCellView } from "./student-cell-view"
-
-console.log(theme)
 
 const Table = styled.div<{ $studentsCount: number }>`
   display: grid;
