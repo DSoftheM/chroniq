@@ -1,30 +1,29 @@
-import { Modal, InputNumber, Input, Form, notification } from "antd"
+import { Modal, InputNumber, Input, Form, notification, Flex, Avatar, Popover } from "antd"
 import { createStudent, Student } from "./types/student"
 import { useUpdateStudentMutation } from "./api/use-update-student-mutation"
 import { useCreateStudentMutation } from "./api/use-create-student-mutation"
 import { useImmer } from "use-immer"
-import { useEffect } from "react"
 import { useScheduleQuery } from "./api/use-schedule-query"
-import { useNavigate, useParams } from "react-router-dom"
-import { nav } from "../../lib/nav"
+import { Nullish } from "./types/lib"
+import { SyncOutlined } from "@ant-design/icons"
 
 const { TextArea } = Input
 
-export function CreateOrUpdateStudentModal() {
+type Props = {
+  close: () => void
+  initialStudent: Student | Nullish
+}
+
+export function CreateOrUpdateStudentModal(props: Props) {
   const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
-  const { studentId } = useParams<{ studentId: string }>()
-  const initialStudent = scheduleQuery.data?.items.find(({ student }) => student.id === studentId)?.student
 
-  const [student, updateStudent] = useImmer<Student>(initialStudent ?? createStudent())
-  useEffect(() => initialStudent && updateStudent(initialStudent), [initialStudent])
+  const [student, updateStudent] = useImmer<Student>(props.initialStudent ?? createStudent())
 
-  const isEdit = Boolean(initialStudent)
+  const isEdit = Boolean(props.initialStudent)
   const updateStudentMutation = useUpdateStudentMutation()
   const createStudentMutation = useCreateStudentMutation()
 
   const [api, contextHolder] = notification.useNotification()
-  const navigate = useNavigate()
-  const close = () => navigate(nav.main)
 
   const openNotification = () => {
     api.info({
@@ -42,7 +41,9 @@ export function CreateOrUpdateStudentModal() {
     <>
       {contextHolder}
       <Modal
-        title={isEdit ? "Редактировать" : "Добавить"}
+        cancelText="Отменить"
+        okText="Сохранить"
+        title={isEdit ? `Редактировать ученика ${student.name}` : "Добавить"}
         open
         onOk={async () => {
           if (isEdit) {
@@ -51,56 +52,79 @@ export function CreateOrUpdateStudentModal() {
             await createStudentMutation.mutateAsync(student)
           }
           openNotification()
-          close()
+          props.close()
         }}
-        onCancel={() => close()}
+        onCancel={() => props.close()}
       >
-        <Form.Item label="Имя">
-          <Input
-            value={student.name}
-            onChange={(e) =>
-              updateStudent((draft) => {
-                draft.name = e.target.value
-              })
-            }
-          />
-        </Form.Item>
+        <Form layout="vertical">
+          <Form.Item label="Имя">
+            <Input
+              value={student.name}
+              onChange={(e) =>
+                updateStudent((draft) => {
+                  draft.name = e.target.value
+                })
+              }
+            />
+          </Form.Item>
 
-        <Form.Item label="Обычная цена">
-          <InputNumber
-            value={student.defaultPrice}
-            onChange={(value) =>
-              updateStudent((draft) => {
-                draft.defaultPrice = value ?? 0
-              })
-            }
-          />
-        </Form.Item>
+          <Form.Item label="Обычная цена">
+            <InputNumber
+              value={student.defaultPrice}
+              onChange={(value) =>
+                updateStudent((draft) => {
+                  draft.defaultPrice = value ?? 0
+                })
+              }
+            />
+          </Form.Item>
 
-        <Form.Item label="Ссылка на фото">
-          <Input
-            value={student.avatarUrl}
-            onChange={(e) =>
-              updateStudent((draft) => {
-                draft.avatarUrl = e.target.value
-              })
-            }
-          />
-        </Form.Item>
+          <Form.Item
+            label="Ссылка на фото"
+            tooltip={{
+              title: "Использовать случайную фотографию 500x500",
+              icon: (
+                <div>
+                  <SyncOutlined
+                    onClick={() => {
+                      updateStudent((draft) => {
+                        draft.avatarUrl = `https://lipsum.app/random/500x500?random=${Math.random()}`
+                      })
+                    }}
+                  />
+                </div>
+              ),
+            }}
+          >
+            <Flex gap={10}>
+              <Input
+                value={student.avatarUrl}
+                onChange={(e) =>
+                  updateStudent((draft) => {
+                    draft.avatarUrl = e.target.value
+                  })
+                }
+              />
+              <Popover placement="top" content={<img src={student.avatarUrl} />}>
+                <Avatar src={student.avatarUrl} />
+              </Popover>
+            </Flex>
+          </Form.Item>
 
-        <Form.Item label="Описание">
-          <TextArea
-            value={student.description}
-            onChange={(e) =>
-              updateStudent((draft) => {
-                draft.description = e.target.value
-              })
-            }
-          />
-        </Form.Item>
+          <Form.Item label="Описание">
+            <TextArea
+              value={student.description}
+              onChange={(e) =>
+                updateStudent((draft) => {
+                  draft.description = e.target.value
+                })
+              }
+            />
+          </Form.Item>
 
-        {updateStudentMutation.isError && <p>{updateStudentMutation.error.message}</p>}
-        {createStudentMutation.isError && <p>{createStudentMutation.error.message}</p>}
+          {updateStudentMutation.isError && <p>{updateStudentMutation.error.message}</p>}
+          {createStudentMutation.isError && <p>{createStudentMutation.error.message}</p>}
+        </Form>
       </Modal>
     </>
   )

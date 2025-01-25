@@ -2,22 +2,22 @@ namespace Chroniq.Models;
 
 public class Student
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string? Description { get; set; }
-    public string? avatarUrl { get; set; }
-    public int DefaultPrice { get; set; }
-    public List<Lesson> Lessons { get; set; } = [];
+    public required Guid Id { get; set; }
+    public required string Name { get; set; }
+    public required string? Description { get; set; }
+    public required string? avatarUrl { get; set; }
+    public required int DefaultPrice { get; set; }
+    public required List<Lesson> Lessons { get; set; } = [];
 }
 
 
 public class StudentSiteDto
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string? Description { get; set; }
-    public string? avatarUrl { get; set; }
-    public int DefaultPrice { get; set; }
+    public required Guid Id { get; set; }
+    public required string Name { get; set; }
+    public required string? Description { get; set; }
+    public required string? avatarUrl { get; set; }
+    public required int DefaultPrice { get; set; }
 }
 
 public static class StudentExtensions

@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import styled from "styled-components"
 import { LessonView } from "./lesson-view"
 import { getPrevDay, getNextDay, toDateOnly, isToday, classesToDictionary } from "./lib"
@@ -7,6 +7,11 @@ import { PlusOutlined } from "@ant-design/icons"
 import { ContentPlaceholder } from "./content-placeholder"
 import { CreateOrUpdateLessonModal } from "./create-or-update-lesson-modal"
 import { DateTime } from "./types/lib"
+import { CreateOrUpdateStudentModal } from "./create-or-update-student-modal"
+import { Button, Flex, theme } from "antd"
+import { StudentCellView } from "./student-cell-view"
+
+console.log(theme)
 
 const Table = styled.div<{ $studentsCount: number }>`
   display: grid;
@@ -15,6 +20,7 @@ const Table = styled.div<{ $studentsCount: number }>`
 
   & > * {
     border: 1px solid #000;
+    padding: 5px;
   }
 `
 
@@ -23,10 +29,21 @@ type SelectedLesson = {
   lessonId: string | null
 }
 
+const AddLessonButton = styled(Button)`
+  width: 100%;
+  opacity: 0;
+  transition: all 0.3s ease 0s;
+
+  &:hover {
+    opacity: 1;
+  }
+`
+
 const EmptyCell = () => <div />
 
 export function Main() {
-  const [selectedLesson, setSelectedLesson] = React.useState<SelectedLesson | null>(null)
+  const [selectedLesson, setSelectedLesson] = useState<SelectedLesson | null>(null)
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null | "create">(null)
   const selectedDateRef = useRef<DateTime | undefined>(undefined)
   const scheduleQuery = useScheduleQuery()
 
@@ -37,7 +54,7 @@ export function Main() {
   if (!scheduleQuery.data?.items.length) return <ContentPlaceholder />
 
   return (
-    <>
+    <div style={{ padding: 20 }}>
       {selectedLesson && (
         <CreateOrUpdateLessonModal
           creationDate={selectedDateRef.current}
@@ -46,14 +63,20 @@ export function Main() {
           studentId={selectedLesson.studentId}
         />
       )}
+
+      {selectedStudentId && (
+        <CreateOrUpdateStudentModal
+          close={() => setSelectedStudentId(null)}
+          initialStudent={scheduleQuery.data.items.find(({ student }) => student.id === selectedStudentId)?.student}
+        />
+      )}
+
       <Table $studentsCount={scheduleQuery.data?.items.length ?? 0}>
         <EmptyCell />
 
         {scheduleQuery.data?.items.map(({ student }) => {
           return (
-            <React.Fragment key={student.name}>
-              <div>{student.name}</div>
-            </React.Fragment>
+            <StudentCellView key={student.name} student={student} onEdit={() => setSelectedStudentId(student.id)} />
           )
         })}
 
@@ -62,26 +85,40 @@ export function Main() {
           return (
             <React.Fragment key={toDateOnly(today)}>
               <div style={{ backgroundColor: isToday(today) ? "green" : "" }}>{toDateOnly(today)}</div>
+
               {scheduleQuery.data?.items.map(({ student, lessons }) => {
                 const classes = classesToDictionary(lessons)
-                const classItem = classes[toDateOnly(today)]
+                const lessons2 = classes[toDateOnly(today)] ?? []
                 const _today = new Date(today)
 
                 return (
                   <React.Fragment key={student.name}>
-                    {classItem ? (
-                      <LessonView
-                        lesson={classItem}
-                        onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: classItem.id })}
-                      />
-                    ) : (
-                      <PlusOutlined
-                        onClick={() => {
-                          setSelectedLesson({ studentId: student.id, lessonId: null })
-                          selectedDateRef.current = _today.getTime()
-                        }}
-                      />
-                    )}
+                    <div>
+                      <Flex gap={2} vertical>
+                        {lessons2.map((x) => {
+                          return (
+                            <LessonView
+                              key={x.id}
+                              lesson={x}
+                              onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: x.id })}
+                            />
+                          )
+                        })}
+
+                        <AddLessonButton
+                          style={{ width: "100%" }}
+                          variant="link"
+                          color="green"
+                          onClick={() => {
+                            setSelectedLesson({ studentId: student.id, lessonId: null })
+                            selectedDateRef.current = _today.getTime()
+                          }}
+                          icon={<PlusOutlined />}
+                        >
+                          Добавить занятие
+                        </AddLessonButton>
+                      </Flex>
+                    </div>
                   </React.Fragment>
                 )
               })}
@@ -89,6 +126,10 @@ export function Main() {
           )
         })}
       </Table>
-    </>
+
+      <Button type="primary" onClick={() => setSelectedStudentId("create")}>
+        Добавить ученика
+      </Button>
+    </div>
   )
 }

@@ -6,3 +6,9 @@ declare global {
     getTime(): DateTime
   }
 }
+
+declare module "dayjs" {
+  interface Dayjs {
+    unix(): DateTime
+  }
+}

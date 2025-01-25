@@ -47,7 +47,6 @@ public class LessonService(AppDbContext context, StudentService studentService)
             Paid = dto.Paid,
         };
 
-        // context.Lessons.Attach(lesson);
         context.Entry(lesson).State = EntityState.Modified;
 
         await context.SaveChangesAsync();

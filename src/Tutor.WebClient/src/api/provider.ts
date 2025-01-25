@@ -11,7 +11,7 @@ export const api = {
   getSchedule: () => http.get<Schedule>("/schedule").then((res) => res.data),
 
   createStudent: (student: Student) => http.post("/student", student),
-  updateStudent: (student: Student) => http.post("/student", student),
+  updateStudent: (student: Student) => http.post("/student/update", student),
 
   createLesson: (lesson: Lesson) => http.post("/lesson", lesson),
   updateLesson: (lesson: Lesson) => http.post("/lesson/update", lesson),

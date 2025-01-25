@@ -4,7 +4,6 @@ import { Settings } from "./features/settings/settings"
 import { Login } from "./features/auth/login"
 import { Register } from "./features/auth/register"
 import { nav } from "./lib/nav"
-import { CreateOrUpdateStudentModal } from "./features/main/create-or-update-student-modal"
 import { Page404 } from "./features/_404/page404"
 
 const router = createBrowserRouter([
@@ -27,24 +26,6 @@ const router = createBrowserRouter([
       {
         path: nav.register,
         element: <Register />,
-      },
-      {
-        path: nav.createStudent,
-        element: (
-          <>
-            <Main />
-            <CreateOrUpdateStudentModal />
-          </>
-        ),
-      },
-      {
-        path: nav.updateStudent(":studentId"),
-        element: (
-          <>
-            <Main />
-            <CreateOrUpdateStudentModal />
-          </>
-        ),
       },
       {
         path: "*",
@@ -70,7 +51,6 @@ function Shared() {
         <Link to="/">Главная</Link>
         <Link to="/register">Регистрация</Link>
         <Link to="/login">Вход</Link>
-        <Link to={nav.createStudent}>Добавить ученика</Link>
       </div>
       <Outlet />
     </>

@@ -3,9 +3,10 @@ import { DateTime } from "./types/lib"
 
 export function classesToDictionary(classes: Lesson[]) {
   return classes.reduce((acc, classItem) => {
-    acc[toDateOnly(classItem.date)] = classItem
+    if (!acc[toDateOnly(classItem.date)]) acc[toDateOnly(classItem.date)] = []
+    acc[toDateOnly(classItem.date)].push(classItem)
     return acc
-  }, {} as Record<string, Lesson>)
+  }, {} as Record<string, Lesson[]>)
 }
 
 export function getPrevDay(date: Date) {

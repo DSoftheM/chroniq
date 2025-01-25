@@ -4,28 +4,33 @@ import { getLessonStatus, LessonStatus } from "./types/lesson-status"
 import { EditOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
 
-const Cell = styled.div`
+const Cell = styled.div<{ status: LessonStatus }>`
   padding: 5px;
-`
+  border-radius: 5px;
 
-const Success = styled(Cell)`
-  background-color: green;
-  color: white;
-`
+  background-color: ${(props) => {
+    console.log(props.theme)
 
-const Error = styled(Cell)`
-  background-color: red;
-  color: white;
-`
+    switch (props.status) {
+      case LessonStatus.Completed:
+        return "green"
+      case LessonStatus.InProgress:
+        return "yellow"
+      case LessonStatus.Scheduled:
+        return props.theme.colorInfo
+    }
+  }};
 
-const Warning = styled(Cell)`
-  background-color: yellow;
-  color: black;
-`
-
-const Info = styled(Cell)`
-  background-color: blue;
-  color: white;
+  color: ${(props) => {
+    switch (props.status) {
+      case LessonStatus.Completed:
+        return "white"
+      case LessonStatus.InProgress:
+        return "black"
+      case LessonStatus.Scheduled:
+        return "white"
+    }
+  }};
 `
 
 type Props = {
@@ -36,27 +41,27 @@ type Props = {
 export function LessonView(props: Props) {
   const status = getLessonStatus(props.lesson)
 
-  function renderStatus() {
+  function getText() {
     if (status === LessonStatus.Completed) {
       if (props.lesson.paid) {
-        return <Success>Оплачено</Success>
+        return "Оплачено"
       } else {
-        return <Error>Не оплачено</Error>
+        return "Не оплачено"
       }
     }
 
     if (status === LessonStatus.InProgress) {
-      return <Warning>В процессе</Warning>
+      return "В процессе"
     }
 
     if (status === LessonStatus.Scheduled) {
-      return <Info>Запланировано на {dayjs(props.lesson.date).format("HH:mm")}</Info>
+      return `Запланировано на ${dayjs(props.lesson.date).format("HH:mm")}`
     }
   }
 
   return (
-    <div>
-      {renderStatus()} <EditOutlined onClick={() => props.onEdit()} />{" "}
-    </div>
+    <Cell status={status}>
+      {getText()} <EditOutlined onClick={() => props.onEdit()} />
+    </Cell>
   )
 }

@@ -11,8 +11,15 @@ public class StudentController(StudentService studentService)
 {
     [Route("")]
     [HttpPost]
-    public Task CreateStudent(Student student)
+    public Task CreateStudent(StudentSiteDto student)
     {
         return studentService.Create(student);
+    }
+    
+    [Route("update")]
+    [HttpPost]
+    public Task UpdateStudent(StudentSiteDto student)
+    {
+        return studentService.Update(student);
     }
 }

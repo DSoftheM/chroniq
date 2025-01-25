@@ -1,27 +1,14 @@
 import { Modal, TimePicker, InputNumber, Checkbox, Input, Button, notification, Form } from "antd"
 import { useEffect } from "react"
 import { createLesson, Lesson } from "./types/lesson"
-import { api } from "../../api/provider"
-import { useMutation } from "@tanstack/react-query"
 import { useImmer } from "use-immer"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import dayjs from "dayjs"
 import { toDateOnly } from "./lib"
 import { DateTime } from "./types/lib"
+import { useCreateLessonMutation, useUpdateLessonMutation } from "./api/1"
 
 const { TextArea } = Input
-
-function useUpdateLessonMutation() {
-  return useMutation({
-    mutationFn: api.updateLesson,
-  })
-}
-
-function useCreateLessonMutation() {
-  return useMutation({
-    mutationFn: api.createLesson,
-  })
-}
 
 type Props = {
   lessonId: string | null
@@ -85,7 +72,17 @@ export function CreateOrUpdateLessonModal(props: Props) {
       >
         <Form layout="vertical">
           <Form.Item label="Во сколько">
-            <TimePicker value={dayjs(lesson.date)} format={"HH:mm"} minuteStep={15} onChange={console.log} />
+            <TimePicker
+              value={dayjs(lesson.date)}
+              format={"HH:mm"}
+              minuteStep={15}
+              onChange={(val) => {
+                updateLesson((draft) => {
+                  if (!draft || !val) return
+                  draft.date = val.unix()
+                })
+              }}
+            />
           </Form.Item>
 
           <Form.Item label="Длительность">
