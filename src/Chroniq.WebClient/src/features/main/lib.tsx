@@ -2,11 +2,16 @@ import { Lesson } from "./types/lesson"
 import { DateTime } from "./types/lib"
 
 export function classesToDictionary(classes: Lesson[]) {
-  return classes.reduce((acc, classItem) => {
+  console.time("classesToDictionary")
+
+  const res = classes.reduce((acc, classItem) => {
     if (!acc[toDateOnly(classItem.date)]) acc[toDateOnly(classItem.date)] = []
     acc[toDateOnly(classItem.date)].push(classItem)
     return acc
   }, {} as Record<string, Lesson[]>)
+  console.timeEnd("classesToDictionary")
+
+  return res
 }
 
 export function getPrevDay(date: Date) {
@@ -22,6 +27,7 @@ export function isToday(date: DateTime | Date) {
 }
 
 export function toDateOnly(date: DateTime | Date) {
+  if (date instanceof Date) return date.toLocaleDateString("ru", { month: "short", day: "numeric", year: "numeric" })
   return new Date(date).toLocaleDateString("ru", { month: "short", day: "numeric", year: "numeric" })
 }
 
@@ -31,9 +37,4 @@ export function uuid() {
       v = c == "x" ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
-}
-
-// export function getUnixTimeMilliseconds()
-export function now() {
-  return new Date().getTime()
 }

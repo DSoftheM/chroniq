@@ -31,7 +31,10 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapControllers();
+
+app.UseDefaultFiles();
 app.UseStaticFiles();
+
 app.UseCors(policyBuilder => { policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin(); });
 
 // Configure the HTTP request pipeline.

@@ -52,4 +52,12 @@ public class LessonService(AppDbContext context, StudentService studentService)
         await context.SaveChangesAsync();
         return lesson;
     }
+    
+    public async Task Delete(Guid id)
+    {
+        var lesson = await context.Lessons.FirstOrDefaultAsync(x => x.Id == id);
+        if (lesson == null) throw new NotFoundException();
+        context.Lessons.Remove(lesson);
+        await context.SaveChangesAsync();
+    }
 }

@@ -12,6 +12,7 @@ import { Button, Flex } from "antd"
 import { StudentCellView } from "./student-cell-view"
 import { ScheduleItem } from "./types/schedule"
 import { Student } from "./types/student"
+import { Lesson } from "./types/lesson"
 
 const Table = styled.div<{ $studentsCount: number }>`
   display: grid;
@@ -49,16 +50,18 @@ const Cell = styled.div`
   }
 `
 
-const EmptyCell = styled.div``
+const EmptyCell = styled.div`
+  padding: 0;
+`
 
 function TableHeader({ items, onEdit, hide }: { items: ScheduleItem[]; onEdit: (s: Student) => void; hide?: boolean }) {
   return (
     <>
-      <EmptyCell style={{ height: hide ? "0" : "auto" }} />
+      <EmptyCell style={{ height: hide ? "0" : "auto", border: "none" }} />
 
       {items.map(({ student }) => {
         return (
-          <div style={{ height: hide ? "0" : "auto", overflow: "hidden" }}>
+          <div style={{ height: hide ? "0" : "auto", overflow: "hidden", padding: 0, border: "none" }} key={student.id}>
             <StudentCellView key={student.name} student={student} onEdit={() => onEdit(student)} />
           </div>
         )
@@ -78,6 +81,12 @@ export function Main() {
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
   if (!scheduleQuery.data?.items.length) return <ContentPlaceholder />
+
+  const dict: Record<string, Record<string, Lesson[]>> = {}
+
+  scheduleQuery.data.items.forEach(({ student, lessons }) => {
+    dict[student.id] = classesToDictionary(lessons)
+  })
 
   return (
     <div style={{ padding: 20 }}>
@@ -104,15 +113,14 @@ export function Main() {
       <Table $studentsCount={scheduleQuery.data?.items.length ?? 0}>
         <TableHeader hide items={scheduleQuery.data?.items ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
 
-        {Array.from({ length: 100 }).flatMap(() => {
+        {Array.from({ length: 10 }).map(() => {
           today = getNextDay(today)
           return (
             <React.Fragment key={toDateOnly(today)}>
               <div style={{ backgroundColor: isToday(today) ? "green" : "" }}>{toDateOnly(today)}</div>
 
-              {scheduleQuery.data?.items.map(({ student, lessons }) => {
-                const classes = classesToDictionary(lessons)
-                const lessons2 = classes[toDateOnly(today)] ?? []
+              {scheduleQuery.data?.items.map(({ student }) => {
+                const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []
                 const _today = new Date(today)
 
                 return (

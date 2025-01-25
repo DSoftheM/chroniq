@@ -1,12 +1,13 @@
-import { Modal, TimePicker, InputNumber, Checkbox, Input, Button, notification, Form } from "antd"
-import { useEffect } from "react"
+import { Modal, TimePicker, InputNumber, Checkbox, Input, Form, Button, Typography, Space } from "antd"
+import { useEffect, useState } from "react"
 import { createLesson, Lesson } from "./types/lesson"
 import { useImmer } from "use-immer"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import dayjs from "dayjs"
 import { toDateOnly } from "./lib"
-import { DateTime } from "./types/lib"
-import { useCreateLessonMutation, useUpdateLessonMutation } from "./api/1"
+import { DateTime, TimeSpan } from "./types/lib"
+import { useCreateLessonMutation, useDeleteLessonMutation, useUpdateLessonMutation } from "./api/lesson-api"
+import { useNotification } from "../../global/notification-provider"
 
 const { TextArea } = Input
 
@@ -21,6 +22,8 @@ export function CreateOrUpdateLessonModal(props: Props) {
   const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
   const scheduleItem = scheduleQuery.data?.items.find(({ student }) => student.id === props.studentId)
   const student = scheduleItem?.student
+  const isEdit = Boolean(props.lessonId)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const initialLesson = props.lessonId
     ? scheduleItem?.lessons.find(({ id }) => id === props.lessonId)
@@ -34,20 +37,26 @@ export function CreateOrUpdateLessonModal(props: Props) {
     if (initialLesson && !lesson) updateLesson(initialLesson)
   }, [initialLesson])
 
-  const isEdit = Boolean(props.lessonId)
-  const updateLessonMutation = useUpdateLessonMutation()
-  const createLessonMutation = useCreateLessonMutation()
+  const updateLessonMutation = useUpdateLessonMutation({
+    onSuccess: () => {
+      api.success({ message: `Успешно`, description: "Занятие обновлено", placement: "topRight" })
+      props.close()
+    },
+  })
+  const createLessonMutation = useCreateLessonMutation({
+    onSuccess: () => {
+      api.success({ message: `Успешно`, description: "Занятие создано", placement: "topRight" })
+      props.close()
+    },
+  })
+  const deleteLessonMutation = useDeleteLessonMutation({
+    onSuccess: () => {
+      api.success({ message: `Успешно`, description: "Занятие удалено", placement: "topRight" })
+      props.close()
+    },
+  })
 
-  const [api, contextHolder] = notification.useNotification()
-
-  const openNotification = () => {
-    api.info({
-      message: `Успешно`,
-      type: "success",
-      description: isEdit ? "Занятие обновлено" : "Занятие создано",
-      placement: "topRight",
-    })
-  }
+  const api = useNotification()
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
@@ -55,19 +64,47 @@ export function CreateOrUpdateLessonModal(props: Props) {
 
   return (
     <>
-      {contextHolder}
       <Modal
+        footer={
+          !showDeleteConfirm ? (
+            [
+              isEdit && (
+                <Button key="delete" danger onClick={() => setShowDeleteConfirm(true)}>
+                  Удалить
+                </Button>
+              ),
+              <Button key="cancel" onClick={() => props.close()}>
+                Отменить
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                onClick={async () => {
+                  if (isEdit) {
+                    await updateLessonMutation.mutateAsync(lesson)
+                  } else {
+                    await createLessonMutation.mutateAsync(lesson)
+                  }
+                  props.close()
+                }}
+              >
+                Сохранить
+              </Button>,
+            ]
+          ) : (
+            <Space direction="vertical">
+              <Typography.Text>Вы действительно хотите удалить занятие?</Typography.Text>
+              <Space>
+                <Button danger type="primary" onClick={() => deleteLessonMutation.mutateAsync(lesson.id)}>
+                  Удалить
+                </Button>
+                <Button onClick={() => setShowDeleteConfirm(false)}>Отменить</Button>
+              </Space>
+            </Space>
+          )
+        }
         title={isEdit ? "Редактировать" : `Создать занятие для ${student.name} на ${toDateOnly(lesson.date)}`}
         open
-        onOk={async () => {
-          if (isEdit) {
-            await updateLessonMutation.mutateAsync(lesson)
-          } else {
-            await createLessonMutation.mutateAsync(lesson)
-          }
-          openNotification()
-          props.close()
-        }}
         onCancel={() => props.close()}
       >
         <Form layout="vertical">
@@ -93,7 +130,7 @@ export function CreateOrUpdateLessonModal(props: Props) {
               onChange={(val) => {
                 updateLesson((draft) => {
                   if (!draft) return
-                  draft.duration = val ? getDuration(val.toDate()) : ""
+                  draft.duration = val ? getDuration(val.toDate()) : "0:0"
                 })
               }}
             />
@@ -139,8 +176,6 @@ export function CreateOrUpdateLessonModal(props: Props) {
             </Checkbox>
           </Form.Item>
 
-          <Button>{isEdit ? "Сохранить" : "Создать"}</Button>
-
           {updateLessonMutation.isError && <p>{updateLessonMutation.error.message}</p>}
           {createLessonMutation.isError && <p>{createLessonMutation.error.message}</p>}
         </Form>
@@ -149,9 +184,9 @@ export function CreateOrUpdateLessonModal(props: Props) {
   )
 }
 
-function getDuration(date: Date) {
+function getDuration(date: Date): TimeSpan {
   return date.toLocaleTimeString("ru-RU", {
     hour: "2-digit",
     minute: "2-digit",
-  })
+  }) as TimeSpan
 }

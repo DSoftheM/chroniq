@@ -17,4 +17,8 @@ public class LessonController(LessonService lessonService)
     [Route("update")]
     [HttpPost]
     public async Task UpdateLesson(LessonSiteDto dto) => await lessonService.Update(dto);
+    
+    [Route("delete/{lessonId:guid}")]
+    [HttpGet]
+    public async Task DeleteLesson(Guid lessonId) => await lessonService.Delete(lessonId);
 }

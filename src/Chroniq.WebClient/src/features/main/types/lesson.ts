@@ -1,5 +1,5 @@
-import { now, uuid } from "../lib"
-import { DateTime } from "./lib"
+import { uuid } from "../lib"
+import { DateTime, TimeSpan } from "./lib"
 import { Student } from "./student"
 
 export type Lesson = {
@@ -9,13 +9,13 @@ export type Lesson = {
   price: number
   paid: boolean
   student: Student
-  duration: string
+  duration: TimeSpan
 }
 
 export function createLesson(lesson: Partial<Lesson> & { student: Student }): Lesson {
   return {
     id: uuid(),
-    date: now(),
+    date: Date.now(),
     price: 1500,
     description: "",
     duration: "01:00",

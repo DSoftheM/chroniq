@@ -17,4 +17,5 @@ export const api = {
 
   createLesson: (lesson: Lesson) => http.post("/lesson", lesson),
   updateLesson: (lesson: Lesson) => http.post("/lesson/update", lesson),
+  deleteLesson: (lessonId: string) => http.get("/lesson/delete/" + lessonId),
 }
