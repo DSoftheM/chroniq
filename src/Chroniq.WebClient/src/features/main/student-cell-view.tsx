@@ -5,11 +5,13 @@ import { Avatar, Flex } from "antd"
 
 type Props = {
   student: Student
+  hide?: boolean
   onEdit: () => void
 }
 
-const Cell = styled.div`
-  padding: 5px;
+const Cell = styled.div<{ hide?: boolean }>`
+  padding: ${(props) => (props.hide ? "0" : "5px")};
+  background-color: slateblue;
 `
 
 const Ellipsis = styled.div`

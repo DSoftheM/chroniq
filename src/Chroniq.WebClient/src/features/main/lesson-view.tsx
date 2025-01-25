@@ -9,8 +9,6 @@ const Cell = styled.div<{ status: LessonStatus }>`
   border-radius: 5px;
 
   background-color: ${(props) => {
-    console.log(props.theme)
-
     switch (props.status) {
       case LessonStatus.Completed:
         return "green"

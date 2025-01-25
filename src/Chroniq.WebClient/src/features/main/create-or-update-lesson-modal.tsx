@@ -79,7 +79,7 @@ export function CreateOrUpdateLessonModal(props: Props) {
               onChange={(val) => {
                 updateLesson((draft) => {
                   if (!draft || !val) return
-                  draft.date = val.unix()
+                  draft.date = (val.unix() * 1000) as DateTime
                 })
               }}
             />

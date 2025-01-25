@@ -10,11 +10,14 @@ import { DateTime } from "./types/lib"
 import { CreateOrUpdateStudentModal } from "./create-or-update-student-modal"
 import { Button, Flex } from "antd"
 import { StudentCellView } from "./student-cell-view"
+import { ScheduleItem } from "./types/schedule"
+import { Student } from "./types/student"
 
 const Table = styled.div<{ $studentsCount: number }>`
   display: grid;
   grid-template-columns: 200px repeat(${(props) => props.$studentsCount}, 1fr);
   gap: 10px;
+  position: relative;
 
   & > * {
     border: 1px solid #000;
@@ -31,13 +34,38 @@ const AddLessonButton = styled(Button)`
   width: 100%;
   opacity: 0;
   transition: all 0.3s ease 0s;
+`
 
-  &:hover {
+const Cell = styled.div`
+  display: flex;
+  align-items: center;
+
+  &:hover ${AddLessonButton} {
     opacity: 1;
+  }
+
+  & > * {
+    flex: 1;
   }
 `
 
-const EmptyCell = () => <div />
+const EmptyCell = styled.div``
+
+function TableHeader({ items, onEdit, hide }: { items: ScheduleItem[]; onEdit: (s: Student) => void; hide?: boolean }) {
+  return (
+    <>
+      <EmptyCell style={{ height: hide ? "0" : "auto" }} />
+
+      {items.map(({ student }) => {
+        return (
+          <div style={{ height: hide ? "0" : "auto", overflow: "hidden" }}>
+            <StudentCellView key={student.name} student={student} onEdit={() => onEdit(student)} />
+          </div>
+        )
+      })}
+    </>
+  )
+}
 
 export function Main() {
   const [selectedLesson, setSelectedLesson] = useState<SelectedLesson | null>(null)
@@ -69,16 +97,14 @@ export function Main() {
         />
       )}
 
+      <Table $studentsCount={scheduleQuery.data?.items.length ?? 0} style={{ position: "sticky" }}>
+        <TableHeader items={scheduleQuery.data?.items ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
+      </Table>
+
       <Table $studentsCount={scheduleQuery.data?.items.length ?? 0}>
-        <EmptyCell />
+        <TableHeader hide items={scheduleQuery.data?.items ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
 
-        {scheduleQuery.data?.items.map(({ student }) => {
-          return (
-            <StudentCellView key={student.name} student={student} onEdit={() => setSelectedStudentId(student.id)} />
-          )
-        })}
-
-        {Array.from({ length: 10 }).flatMap(() => {
+        {Array.from({ length: 100 }).flatMap(() => {
           today = getNextDay(today)
           return (
             <React.Fragment key={toDateOnly(today)}>
@@ -91,17 +117,19 @@ export function Main() {
 
                 return (
                   <React.Fragment key={student.name}>
-                    <div>
+                    <Cell>
                       <Flex gap={2} vertical>
-                        {lessons2.map((x) => {
-                          return (
-                            <LessonView
-                              key={x.id}
-                              lesson={x}
-                              onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: x.id })}
-                            />
-                          )
-                        })}
+                        {lessons2
+                          .toSorted((x, y) => x.date - y.date)
+                          .map((x) => {
+                            return (
+                              <LessonView
+                                key={x.id}
+                                lesson={x}
+                                onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: x.id })}
+                              />
+                            )
+                          })}
 
                         <AddLessonButton
                           style={{ width: "100%" }}
@@ -116,7 +144,7 @@ export function Main() {
                           Добавить занятие
                         </AddLessonButton>
                       </Flex>
-                    </div>
+                    </Cell>
                   </React.Fragment>
                 )
               })}

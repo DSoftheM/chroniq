@@ -1,4 +1,4 @@
-import { createBrowserRouter, Link, Outlet, RouterProvider } from "react-router-dom"
+import { createHashRouter, Link, Outlet, RouterProvider } from "react-router-dom"
 import { Main } from "./features/main/main"
 import { Settings } from "./features/settings/settings"
 import { Login } from "./features/auth/login"
@@ -6,7 +6,7 @@ import { Register } from "./features/auth/register"
 import { nav } from "./lib/nav"
 import { Page404 } from "./features/_404/page404"
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: nav.main,
     element: <Shared />,
