@@ -20,7 +20,8 @@ type Props = {
 
 export function CreateOrUpdateLessonModal(props: Props) {
   const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
-  const scheduleItem = scheduleQuery.data?.items.find(({ student }) => student.id === props.studentId)
+  const scheduleItems = scheduleQuery.data?.pages.flatMap(({ items }) => items)
+  const scheduleItem = scheduleItems?.find(({ student }) => student.id === props.studentId)
   const student = scheduleItem?.student
   const isEdit = Boolean(props.lessonId)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -116,7 +117,8 @@ export function CreateOrUpdateLessonModal(props: Props) {
               onChange={(val) => {
                 updateLesson((draft) => {
                   if (!draft || !val) return
-                  draft.date = (val.unix() * 1000) as DateTime
+                  const [h, m] = [val.hour(), val.minute()]
+                  draft.date = (dayjs(draft.date).set("hour", h).set("minute", m).unix() * 1000) as DateTime
                 })
               }}
             />

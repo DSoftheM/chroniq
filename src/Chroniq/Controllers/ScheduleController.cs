@@ -9,5 +9,5 @@ namespace Chroniq.Controllers;
 public class ScheduleController(ScheduleService scheduleService)
 {
     [Route("")]
-    public async Task<Schedule> GetSchedule() => await scheduleService.GetAll();
+    public async Task<Schedule> GetSchedule(Period period) => await scheduleService.GetAll(period);
 }

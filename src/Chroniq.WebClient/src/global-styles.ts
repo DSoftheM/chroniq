@@ -6,6 +6,15 @@ export const GlobalStyles = createGlobalStyle`
         padding: 0px;
         box-sizing: border-box;
     }
+
+    body {
+        height: 100vh;
+        font-family: Roboto;
+    }
+
+    #root {
+        height: 100%;
+    }
     
     img, i {
         vertical-align: top;

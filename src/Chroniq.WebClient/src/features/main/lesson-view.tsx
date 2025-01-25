@@ -8,17 +8,16 @@ import { Space, Tooltip } from "antd"
 import { useUpdateLessonMutation } from "./api/lesson-api"
 import { useNotification } from "../../global/notification-provider"
 
-const Cell = styled.div<{ status: LessonStatus; paid: boolean }>`
+const Cell = styled.div<{ status: LessonStatus; $paid: boolean }>`
   padding: 5px;
   border-radius: 5px;
   display: flex;
   justify-content: space-between;
 
   background-color: ${(props) => {
-    console.log(props.theme)
     switch (props.status) {
       case LessonStatus.Completed:
-        if (props.paid) return "green"
+        if (props.$paid) return "green"
         return props.theme.red
       case LessonStatus.InProgress:
         return props.theme.yellow
@@ -69,7 +68,7 @@ export function LessonView(props: Props) {
   }
 
   return (
-    <Cell status={status} paid={props.lesson.paid}>
+    <Cell status={status} $paid={props.lesson.paid}>
       {getText()}{" "}
       <Space>
         {status === LessonStatus.Completed && !props.lesson.paid && (

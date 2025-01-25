@@ -2,14 +2,11 @@ import { Lesson } from "./types/lesson"
 import { DateTime } from "./types/lib"
 
 export function classesToDictionary(classes: Lesson[]) {
-  console.time("classesToDictionary")
-
   const res = classes.reduce((acc, classItem) => {
     if (!acc[toDateOnly(classItem.date)]) acc[toDateOnly(classItem.date)] = []
     acc[toDateOnly(classItem.date)].push(classItem)
     return acc
   }, {} as Record<string, Lesson[]>)
-  console.timeEnd("classesToDictionary")
 
   return res
 }

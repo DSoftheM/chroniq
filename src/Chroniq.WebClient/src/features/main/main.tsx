@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react"
 import styled from "styled-components"
 import { LessonView } from "./lesson-view"
-import { getPrevDay, getNextDay, toDateOnly, isToday, classesToDictionary } from "./lib"
+import { getNextDay, toDateOnly, isToday, classesToDictionary } from "./lib"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import { PlusOutlined } from "@ant-design/icons"
 import { ContentPlaceholder } from "./content-placeholder"
@@ -13,11 +13,13 @@ import { StudentCellView } from "./student-cell-view"
 import { ScheduleItem } from "./types/schedule"
 import { Student } from "./types/student"
 import { Lesson } from "./types/lesson"
+import { Scroll } from "../../components/scroll"
+import dayjs from "dayjs"
+import { Period } from "./types/period"
 
-const Table = styled.div<{ $studentsCount: number }>`
+const Table = styled(Scroll)<{ $studentsCount: number }>`
   display: grid;
   grid-template-columns: 200px repeat(${(props) => props.$studentsCount}, 1fr);
-  gap: 10px;
   position: relative;
 
   & > * {
@@ -39,7 +41,6 @@ const AddLessonButton = styled(Button)`
 
 const Cell = styled.div`
   display: flex;
-  align-items: center;
 
   &:hover ${AddLessonButton} {
     opacity: 1;
@@ -48,6 +49,14 @@ const Cell = styled.div`
   & > * {
     flex: 1;
   }
+`
+
+const DateCell = styled.div<{ $isToday: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ${(props) => props.$isToday && `background-color: green;`}
 `
 
 const EmptyCell = styled.div`
@@ -75,21 +84,28 @@ export function Main() {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null | "create">(null)
   const selectedDateRef = useRef<DateTime | undefined>(undefined)
   const scheduleQuery = useScheduleQuery()
+  const scheduleItems = scheduleQuery.data?.items // .pages.flatMap(({ items }) => items)
 
-  let today = getPrevDay(new Date())
+  let today = dayjs().add(-10, "day").toDate()
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
-  if (!scheduleQuery.data?.items.length) return <ContentPlaceholder />
+  if (!scheduleItems?.length) return <ContentPlaceholder />
 
   const dict: Record<string, Record<string, Lesson[]>> = {}
 
-  scheduleQuery.data.items.forEach(({ student, lessons }) => {
+  scheduleItems.forEach(({ student, lessons }) => {
     dict[student.id] = classesToDictionary(lessons)
   })
 
+  const firstDay = dayjs((scheduleQuery.data.pageParams[0] as Period).start)
+  const lastDay = dayjs((scheduleQuery.data.pageParams.at(-1) as Period).end)
+  const days = Array.from({ length: lastDay.diff(firstDay, "day") + 1 }, (_, i) => firstDay.add(i, "day"))
+
+  console.log(selectedLesson)
+
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20, height: "100%", display: "flex", flexDirection: "column" }}>
       {selectedLesson && (
         <CreateOrUpdateLessonModal
           creationDate={selectedDateRef.current}
@@ -102,24 +118,33 @@ export function Main() {
       {selectedStudentId && (
         <CreateOrUpdateStudentModal
           close={() => setSelectedStudentId(null)}
-          initialStudent={scheduleQuery.data.items.find(({ student }) => student.id === selectedStudentId)?.student}
+          initialStudent={scheduleItems.find(({ student }) => student.id === selectedStudentId)?.student}
         />
       )}
 
-      <Table $studentsCount={scheduleQuery.data?.items.length ?? 0} style={{ position: "sticky" }}>
-        <TableHeader items={scheduleQuery.data?.items ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
+      <Button type="primary" onClick={() => setSelectedStudentId("create")}>
+        Добавить ученика
+      </Button>
+
+      <Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
+        <TableHeader items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
       </Table>
 
-      <Table $studentsCount={scheduleQuery.data?.items.length ?? 0}>
-        <TableHeader hide items={scheduleQuery.data?.items ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
+      <Table
+        $studentsCount={scheduleItems.length ?? 0}
+        style={{ height: "100%", overflow: "auto" }}
+        onReachEnd={() => scheduleQuery.hasNextPage && scheduleQuery.fetchNextPage()}
+        onReachStart={() => scheduleQuery.hasPreviousPage && scheduleQuery.fetchPreviousPage()}
+      >
+        <TableHeader hide items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
 
-        {Array.from({ length: 10 }).map(() => {
+        {days.map(() => {
           today = getNextDay(today)
           return (
             <React.Fragment key={toDateOnly(today)}>
-              <div style={{ backgroundColor: isToday(today) ? "green" : "" }}>{toDateOnly(today)}</div>
+              <DateCell $isToday={isToday(today)}>{toDateOnly(today)}</DateCell>
 
-              {scheduleQuery.data?.items.map(({ student }) => {
+              {scheduleItems.map(({ student }) => {
                 const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []
                 const _today = new Date(today)
 
@@ -160,10 +185,6 @@ export function Main() {
           )
         })}
       </Table>
-
-      <Button type="primary" onClick={() => setSelectedStudentId("create")}>
-        Добавить ученика
-      </Button>
     </div>
   )
 }
