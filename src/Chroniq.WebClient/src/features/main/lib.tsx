@@ -3,8 +3,13 @@ import { DateTime } from "./types/lib"
 
 export function classesToDictionary(classes: Lesson[]) {
   const res = classes.reduce((acc, classItem) => {
-    if (!acc[toDateOnly(classItem.date)]) acc[toDateOnly(classItem.date)] = []
-    acc[toDateOnly(classItem.date)].push(classItem)
+    const dateOnly = toDateOnly(classItem.date)
+
+    if (!acc[dateOnly]) {
+      acc[dateOnly] = []
+    }
+    acc[dateOnly].push(classItem)
+
     return acc
   }, {} as Record<string, Lesson[]>)
 
@@ -19,13 +24,13 @@ export function getNextDay(date: Date) {
   return new Date(date.getTime() + 24 * 60 * 60 * 1000)
 }
 
-export function isToday(date: DateTime | Date) {
+export function isToday(date: DateTime | Date | string) {
   return new Date(date).toDateString() === new Date().toDateString()
 }
 
 export function toDateOnly(date: DateTime | Date) {
-  if (date instanceof Date) return date.toLocaleDateString("ru", { month: "short", day: "numeric", year: "numeric" })
-  return new Date(date).toLocaleDateString("ru", { month: "short", day: "numeric", year: "numeric" })
+  if (date instanceof Date) return date.toLocaleDateString("ru", { month: "2-digit", day: "2-digit", year: "2-digit" })
+  return new Date(date).toLocaleDateString("ru", { month: "2-digit", day: "2-digit", year: "2-digit" })
 }
 
 export function uuid() {

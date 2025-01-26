@@ -8,35 +8,25 @@ import { toDateOnly } from "./lib"
 import { DateTime, TimeSpan } from "./types/lib"
 import { useCreateLessonMutation, useDeleteLessonMutation, useUpdateLessonMutation } from "./api/lesson-api"
 import { useNotification } from "../../global/notification-provider"
+import { Student } from "./types/student"
 
 const { TextArea } = Input
 
 type Props = {
-  lessonId: string | null
-  studentId: string
+  initialLesson: Lesson | null
+  student: Student
   creationDate: DateTime | undefined
   close: () => void
 }
 
 export function CreateOrUpdateLessonModal(props: Props) {
   const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
-  const scheduleItems = scheduleQuery.data?.pages.flatMap(({ items }) => items)
-  const scheduleItem = scheduleItems?.find(({ student }) => student.id === props.studentId)
-  const student = scheduleItem?.student
-  const isEdit = Boolean(props.lessonId)
+  const isEdit = Boolean(props.initialLesson)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  const initialLesson = props.lessonId
-    ? scheduleItem?.lessons.find(({ id }) => id === props.lessonId)
-    : student
-    ? createLesson({ student, date: props.creationDate })
-    : null
-
-  const [lesson, updateLesson] = useImmer<Lesson | null>(initialLesson ?? null)
-
-  useEffect(() => {
-    if (initialLesson && !lesson) updateLesson(initialLesson)
-  }, [initialLesson])
+  const [lesson, updateLesson] = useImmer<Lesson>(
+    props.initialLesson ?? createLesson({ student: props.student, date: props.creationDate })
+  )
 
   const updateLessonMutation = useUpdateLessonMutation({
     onSuccess: () => {
@@ -61,7 +51,6 @@ export function CreateOrUpdateLessonModal(props: Props) {
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
-  if (!student || !lesson) return <div>Ученик не найден</div>
 
   return (
     <>
@@ -104,7 +93,7 @@ export function CreateOrUpdateLessonModal(props: Props) {
             </Space>
           )
         }
-        title={isEdit ? "Редактировать" : `Создать занятие для ${student.name} на ${toDateOnly(lesson.date)}`}
+        title={isEdit ? "Редактировать" : `Создать занятие для ${props.student.name} на ${toDateOnly(lesson.date)}`}
         open
         onCancel={() => props.close()}
       >
@@ -142,7 +131,7 @@ export function CreateOrUpdateLessonModal(props: Props) {
             <InputNumber
               min={1}
               max={10000}
-              value={student.defaultPrice}
+              value={props.student.defaultPrice}
               onChange={(val) => {
                 updateLesson((draft) => {
                   if (!draft) return

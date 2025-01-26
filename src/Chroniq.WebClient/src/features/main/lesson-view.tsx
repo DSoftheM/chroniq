@@ -17,7 +17,7 @@ const Cell = styled.div<{ status: LessonStatus; $paid: boolean }>`
   background-color: ${(props) => {
     switch (props.status) {
       case LessonStatus.Completed:
-        if (props.$paid) return "green"
+        if (props.$paid) return props.theme.green
         return props.theme.red
       case LessonStatus.InProgress:
         return props.theme.yellow
@@ -69,6 +69,7 @@ export function LessonView(props: Props) {
 
   return (
     <Cell status={status} $paid={props.lesson.paid}>
+      {props.lesson.id}
       {getText()}{" "}
       <Space>
         {status === LessonStatus.Completed && !props.lesson.paid && (

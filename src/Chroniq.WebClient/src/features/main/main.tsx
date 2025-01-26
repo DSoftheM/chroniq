@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react"
 import styled from "styled-components"
 import { LessonView } from "./lesson-view"
-import { getNextDay, toDateOnly, isToday, classesToDictionary } from "./lib"
+import { toDateOnly, isToday, classesToDictionary } from "./lib"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import { PlusOutlined } from "@ant-design/icons"
 import { ContentPlaceholder } from "./content-placeholder"
@@ -56,7 +56,7 @@ const DateCell = styled.div<{ $isToday: boolean }>`
   align-items: center;
   justify-content: center;
 
-  ${(props) => props.$isToday && `background-color: green;`}
+  ${(props) => props.$isToday && `background-color: ${props.theme.green};`}
 `
 
 const EmptyCell = styled.div`
@@ -84,15 +84,13 @@ export function Main() {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null | "create">(null)
   const selectedDateRef = useRef<DateTime | undefined>(undefined)
   const scheduleQuery = useScheduleQuery()
-  const scheduleItems = scheduleQuery.data?.items // .pages.flatMap(({ items }) => items)
-
-  let today = dayjs().add(-10, "day").toDate()
+  const scheduleItems = scheduleQuery.data?.items
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
   if (!scheduleItems?.length) return <ContentPlaceholder />
 
-  const dict: Record<string, Record<string, Lesson[]>> = {}
+  const dict: { [studentId: string]: { [dateOnly: string]: Lesson[] } } = {}
 
   scheduleItems.forEach(({ student, lessons }) => {
     dict[student.id] = classesToDictionary(lessons)
@@ -102,6 +100,7 @@ export function Main() {
   const lastDay = dayjs((scheduleQuery.data.pageParams.at(-1) as Period).end)
   const days = Array.from({ length: lastDay.diff(firstDay, "day") + 1 }, (_, i) => firstDay.add(i, "day"))
 
+  console.log(dict)
   console.log(selectedLesson)
 
   return (
@@ -110,8 +109,14 @@ export function Main() {
         <CreateOrUpdateLessonModal
           creationDate={selectedDateRef.current}
           close={() => setSelectedLesson(null)}
-          lessonId={selectedLesson.lessonId}
-          studentId={selectedLesson.studentId}
+          student={scheduleItems.find(({ student }) => student.id === selectedLesson.studentId)!.student}
+          initialLesson={
+            selectedStudentId === "create"
+              ? null
+              : scheduleItems
+                  .find(({ student }) => student.id === selectedLesson.studentId)
+                  ?.lessons.find(({ id }) => id === selectedLesson.lessonId) ?? null
+          }
         />
       )}
 
@@ -138,52 +143,52 @@ export function Main() {
       >
         <TableHeader hide items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
 
-        {days.map(() => {
-          today = getNextDay(today)
-          return (
-            <React.Fragment key={toDateOnly(today)}>
-              <DateCell $isToday={isToday(today)}>{toDateOnly(today)}</DateCell>
+        {days
+          .map((x) => x.toDate().getTime())
+          .map((today) => {
+            return (
+              <React.Fragment key={today}>
+                <DateCell $isToday={isToday(today)}>{toDateOnly(today)}</DateCell>
 
-              {scheduleItems.map(({ student }) => {
-                const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []
-                const _today = new Date(today)
+                {scheduleItems.map(({ student }) => {
+                  const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []
 
-                return (
-                  <React.Fragment key={student.name}>
-                    <Cell>
-                      <Flex gap={2} vertical>
-                        {lessons2
-                          .toSorted((x, y) => x.date - y.date)
-                          .map((x) => {
-                            return (
-                              <LessonView
-                                key={x.id}
-                                lesson={x}
-                                onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: x.id })}
-                              />
-                            )
-                          })}
+                  return (
+                    <React.Fragment key={student.name}>
+                      <Cell>
+                        <Flex gap={2} vertical>
+                          {lessons2
+                            .toSorted((x, y) => x.date - y.date)
+                            .map((x) => {
+                              return (
+                                <LessonView
+                                  key={x.id}
+                                  lesson={x}
+                                  onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: x.id })}
+                                />
+                              )
+                            })}
 
-                        <AddLessonButton
-                          style={{ width: "100%" }}
-                          variant="link"
-                          color="green"
-                          onClick={() => {
-                            setSelectedLesson({ studentId: student.id, lessonId: null })
-                            selectedDateRef.current = _today.getTime()
-                          }}
-                          icon={<PlusOutlined />}
-                        >
-                          Добавить занятие
-                        </AddLessonButton>
-                      </Flex>
-                    </Cell>
-                  </React.Fragment>
-                )
-              })}
-            </React.Fragment>
-          )
-        })}
+                          <AddLessonButton
+                            style={{ width: "100%" }}
+                            variant="link"
+                            color="green"
+                            onClick={() => {
+                              setSelectedLesson({ studentId: student.id, lessonId: null })
+                              selectedDateRef.current = today
+                            }}
+                            icon={<PlusOutlined />}
+                          >
+                            Добавить занятие
+                          </AddLessonButton>
+                        </Flex>
+                      </Cell>
+                    </React.Fragment>
+                  )
+                })}
+              </React.Fragment>
+            )
+          })}
       </Table>
     </div>
   )

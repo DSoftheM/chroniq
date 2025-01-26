@@ -30,6 +30,7 @@ export function StudentCellView(props: Props) {
   const s = props.student
   return (
     <Cell>
+      {props.student.id}
       <Flex gap={20}>
         <div>
           {s.avatarUrl ? (
