@@ -16,11 +16,11 @@ import { Lesson } from "./types/lesson"
 import { Scroll } from "../../components/scroll"
 import dayjs from "dayjs"
 import { Period } from "./types/period"
-import { useDeleteAllLessonsMutation } from "./api/admin-api"
+import { useDeleteAllLessonsMutation, useDeleteStudentsMutation } from "./api/admin-api"
 
 const Table = styled(Scroll)<{ $studentsCount: number }>`
   display: grid;
-  grid-template-columns: 200px repeat(${(props) => props.$studentsCount}, 1fr);
+  grid-template-columns: 150px repeat(${(props) => props.$studentsCount}, minmax(100px, 1fr));
   position: relative;
 
   & > * {
@@ -87,6 +87,7 @@ export function Main() {
   const scheduleQuery = useScheduleQuery()
   const scheduleItems = scheduleQuery.data?.items
   const deleteAllLessons = useDeleteAllLessonsMutation()
+  const deleteAllStudents = useDeleteStudentsMutation()
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
@@ -131,6 +132,8 @@ export function Main() {
           Добавить ученика
         </Button>
         <Button onClick={() => deleteAllLessons.mutate()}>Удалить все занятия {deleteAllLessons.status}</Button>
+        <Button onClick={() => deleteAllStudents.mutate()}>Удалить всех учеников {deleteAllStudents.status}</Button>
+        <Button onClick={() => deleteAllStudents.mutate()}>Применить тестовые данные</Button>
       </Space>
       <Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
         <TableHeader items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />

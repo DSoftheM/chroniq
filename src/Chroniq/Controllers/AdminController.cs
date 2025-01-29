@@ -9,4 +9,7 @@ public class AdminController(AdminService adminService)
 {
     [Route("delete-all-lessons")]
     public Task DeleteAllLessons() => adminService.DeleteAllLessons();
+    
+    [Route("delete-all-students")]
+    public Task DeleteAllStudents() => adminService.DeleteAllStudents();
 }

@@ -9,4 +9,10 @@ public class AdminService(AppDbContext context)
         context.Lessons.RemoveRange(context.Lessons);
         await context.SaveChangesAsync();
     }
+    
+    public async Task DeleteAllStudents()
+    {
+        context.Students.RemoveRange(context.Students);
+        await context.SaveChangesAsync();
+    }
 }

@@ -12,3 +12,14 @@ export function useDeleteAllLessonsMutation() {
     },
   })
 }
+
+export function useDeleteStudentsMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: api.deleteAllStudents,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryName.ScheduleQuery] })
+    },
+  })
+}

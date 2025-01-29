@@ -4,7 +4,6 @@ import { Student } from "../features/main/types/student"
 import { Lesson } from "../features/main/types/lesson"
 import { Period } from "../features/main/types/period"
 import dayjs from "dayjs"
-import { toRoundedPeriod } from "../lib/date.lib"
 
 const http = axios.create({
   baseURL: import.meta.env.DEV ? `http://localhost:${import.meta.env.VITE_SERVER_PORT}/api` : "/api",
@@ -31,4 +30,5 @@ export const api = {
   deleteLesson: (lessonId: string) => http.get("/lesson/delete/" + lessonId),
 
   deleteAllLessons: () => http.get("/admin/delete-all-lessons"),
+  deleteAllStudents: () => http.get("/admin/delete-all-students"),
 }

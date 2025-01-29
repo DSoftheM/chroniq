@@ -69,7 +69,6 @@ export function LessonView(props: Props) {
 
   return (
     <Cell status={status} $paid={props.lesson.paid}>
-      {props.lesson.id}
       {getText()}{" "}
       <Space>
         {status === LessonStatus.Completed && !props.lesson.paid && (
