@@ -8,7 +8,7 @@ import { ContentPlaceholder } from "./content-placeholder"
 import { CreateOrUpdateLessonModal } from "./create-or-update-lesson-modal"
 import { DateTime } from "./types/lib"
 import { CreateOrUpdateStudentModal } from "./create-or-update-student-modal"
-import { Button, Flex } from "antd"
+import { Button, Flex, Space } from "antd"
 import { StudentCellView } from "./student-cell-view"
 import { ScheduleItem } from "./types/schedule"
 import { Student } from "./types/student"
@@ -16,6 +16,7 @@ import { Lesson } from "./types/lesson"
 import { Scroll } from "../../components/scroll"
 import dayjs from "dayjs"
 import { Period } from "./types/period"
+import { useDeleteAllLessonsMutation } from "./api/admin-api"
 
 const Table = styled(Scroll)<{ $studentsCount: number }>`
   display: grid;
@@ -85,6 +86,7 @@ export function Main() {
   const selectedDateRef = useRef<DateTime | undefined>(undefined)
   const scheduleQuery = useScheduleQuery()
   const scheduleItems = scheduleQuery.data?.items
+  const deleteAllLessons = useDeleteAllLessonsMutation()
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
@@ -99,9 +101,6 @@ export function Main() {
   const firstDay = dayjs((scheduleQuery.data.pageParams[0] as Period).start)
   const lastDay = dayjs((scheduleQuery.data.pageParams.at(-1) as Period).end)
   const days = Array.from({ length: lastDay.diff(firstDay, "day") + 1 }, (_, i) => firstDay.add(i, "day"))
-
-  console.log(dict)
-  console.log(selectedLesson)
 
   return (
     <div style={{ padding: 20, height: "100%", display: "flex", flexDirection: "column" }}>
@@ -127,10 +126,12 @@ export function Main() {
         />
       )}
 
-      <Button type="primary" onClick={() => setSelectedStudentId("create")}>
-        Добавить ученика
-      </Button>
-
+      <Space>
+        <Button type="primary" onClick={() => setSelectedStudentId("create")}>
+          Добавить ученика
+        </Button>
+        <Button onClick={() => deleteAllLessons.mutate()}>Удалить все занятия {deleteAllLessons.status}</Button>
+      </Space>
       <Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
         <TableHeader items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
       </Table>

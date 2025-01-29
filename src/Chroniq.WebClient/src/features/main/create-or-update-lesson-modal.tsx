@@ -1,5 +1,5 @@
 import { Modal, TimePicker, InputNumber, Checkbox, Input, Form, Button, Typography, Space } from "antd"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { createLesson, Lesson } from "./types/lesson"
 import { useImmer } from "use-immer"
 import { useScheduleQuery } from "./api/use-schedule-query"

@@ -5,26 +5,48 @@ import { Period } from "../types/period"
 import dayjs from "dayjs"
 import { Schedule } from "../types/schedule"
 import { Lesson } from "../types/lesson"
+import { DateTime } from "../types/lib"
+import { toRoundedPeriod } from "../../../lib/date.lib"
 
 export function useScheduleQuery(options?: { refetchOnMount?: boolean }) {
   const now = dayjs()
   const stepInDays = 10
 
   return useInfiniteQuery({
-    initialPageParam: {
-      start: now.add(-10, "day").unix() * 1000,
-      end: now.add(10, "day").unix() * 1000,
-    },
+    initialPageParam: toRoundedPeriod({
+      start: (now.add(-10, "day").unix() * 1000) as DateTime,
+      end: (now.add(10, "day").unix() * 1000) as DateTime,
+    }),
     getPreviousPageParam: (_firstPage: Schedule, _allPages, firstPageParam) => {
       return {
         start: firstPageParam.start,
-        end: dayjs(firstPageParam.start).subtract(stepInDays, "day").unix() * 1000,
+        end: (dayjs(firstPageParam.start).subtract(stepInDays, "day").unix() * 1000) as DateTime,
       }
     },
     getNextPageParam: (_lastPage: Schedule, _allPages, lastPageParam) => {
-      return {
+      const period = {
         start: lastPageParam.end,
-        end: dayjs(lastPageParam.end).add(stepInDays, "day").unix() * 1000,
+        end: lastPageParam.end,
+      }
+
+      // console.log(
+      //   `Before: ${dayjs(period.start).format("DD.MM.YYYY HH:mm:ss")}. After: ${dayjs(period.start)
+      //     .add(10, "seconds")
+      //     .format("DD.MM.YYYY HH:mm:ss")}`
+      // )
+
+      const x = {
+        start: (dayjs(period.start).add(1, "seconds").unix() * 1000) as DateTime,
+        end: (dayjs(period.end).add(stepInDays, "days").unix() * 1000) as DateTime,
+      }
+
+      // console.log(
+      //   `Запрос с ${dayjs(x.start).format("DD.MM.YYYY HH:mm:ss")} по ${dayjs(x.end).format("DD.MM.YYYY HH:mm:ss")}`
+      // )
+
+      return {
+        start: (dayjs(period.start).add(1, "second").unix() * 1000) as DateTime,
+        end: (dayjs(period.end).add(stepInDays, "day").unix() * 1000) as DateTime,
       }
     },
     select(data) {

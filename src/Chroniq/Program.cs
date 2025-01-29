@@ -17,6 +17,7 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddScoped<ScheduleService>();
 builder.Services.AddScoped<LessonService>();
 builder.Services.AddScoped<StudentService>();
+builder.Services.AddScoped<AdminService>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
