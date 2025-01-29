@@ -15,9 +15,9 @@ const Cell = styled.div<{ hide?: boolean }>`
 `
 
 const Ellipsis = styled.div`
-  /* overflow: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap; */
+  white-space: nowrap;
 `
 
 const colors = ["#f56a00", "#7265e6", "#ffbf00", "#00a2ae", "#87d068", "#108ee9", "#f50", "#2db7f5"]
@@ -30,7 +30,6 @@ export function StudentCellView(props: Props) {
   const s = props.student
   return (
     <Cell>
-      {props.student.id}
       <Flex gap={20}>
         <div>
           {s.avatarUrl ? (

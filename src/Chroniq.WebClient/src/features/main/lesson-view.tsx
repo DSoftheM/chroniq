@@ -29,7 +29,7 @@ const Cell = styled.div<{ status: LessonStatus; $paid: boolean }>`
   color: ${(props) => {
     switch (props.status) {
       case LessonStatus.Completed:
-        return props.theme.colorLink
+        return "white"
       case LessonStatus.InProgress:
         return "black"
       case LessonStatus.Scheduled:
@@ -47,7 +47,15 @@ const CheckCircleOutlinedStyled = styled(CheckCircleOutlined)`
   transition: all 0.3s ease 0s;
 
   &:hover {
-    color: #fff;
+    color: ${(props) => props.theme.green};
+  }
+`
+
+const EditOutlinedStyled = styled(EditOutlined)`
+  transition: all 0.3s ease 0s;
+
+  &:hover {
+    color: ${(props) => props.theme.blue};
   }
 `
 
@@ -76,7 +84,9 @@ export function LessonView(props: Props) {
             <CheckCircleOutlinedStyled onClick={() => updateLessonMutation.mutate({ ...props.lesson, paid: true })} />
           </Tooltip>
         )}
-        <EditOutlined onClick={() => props.onEdit()} />
+        <Tooltip title="Редактировать">
+          <EditOutlinedStyled onClick={() => props.onEdit()} />
+        </Tooltip>
       </Space>
     </Cell>
   )

@@ -23,3 +23,14 @@ export function useDeleteStudentsMutation() {
     },
   })
 }
+
+export function useApplyMockDataMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: api.applyMockData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryName.ScheduleQuery] })
+    },
+  })
+}

@@ -31,4 +31,5 @@ export const api = {
 
   deleteAllLessons: () => http.get("/admin/delete-all-lessons"),
   deleteAllStudents: () => http.get("/admin/delete-all-students"),
+  applyMockData: () => http.get("/admin/apply-mock-data"),
 }

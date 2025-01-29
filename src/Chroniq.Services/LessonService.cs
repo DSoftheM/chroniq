@@ -37,10 +37,10 @@ public class LessonService(AppDbContext context, StudentService studentService)
             .Include(lesson => lesson.Student)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == dto.Id);
-        
+
         if (foundLesson == null) throw new NotFoundException();
 
-        var lesson = new Lesson() 
+        var lesson = new Lesson()
         {
             Id = dto.Id, Date = dto.Date, Duration = dto.Duration, Description = dto.Description,
             Student = foundLesson.Student,
@@ -52,14 +52,13 @@ public class LessonService(AppDbContext context, StudentService studentService)
         await context.SaveChangesAsync();
         return lesson;
     }
-    
+
     public async Task<Lesson> Update(LessonSiteDto dto)
     {
         var foundLesson = await context.Lessons
             .Include(lesson => lesson.Student)
-            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == dto.Id);
-        
+
         if (foundLesson == null) throw new NotFoundException();
 
         foundLesson.Description = dto.Description;
@@ -70,7 +69,7 @@ public class LessonService(AppDbContext context, StudentService studentService)
         await context.SaveChangesAsync();
         return foundLesson;
     }
-    
+
     public async Task Delete(Guid id)
     {
         var lesson = await context.Lessons.FirstOrDefaultAsync(x => x.Id == id);
