@@ -1,14 +1,19 @@
 ﻿services:
-  tutor:
+  chroniq-postgres:
     image: postgres
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: tutor
+      POSTGRES_DB: chroniq
     volumes:
       - pgdata:/var/lib/postgresql/data
-
+  chroniq:
+    image: myapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - chroniq-postgres
 volumes:
   pgdata:

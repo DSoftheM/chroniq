@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react"
-import styled from "styled-components"
 import { LessonView } from "./lesson-view"
 import { toDateOnly, isToday, classesToDictionary } from "./lib"
 import { useScheduleQuery } from "./api/use-schedule-query"
@@ -13,61 +12,20 @@ import { StudentCellView } from "./student-cell-view"
 import { ScheduleItem } from "./types/schedule"
 import { Student } from "./types/student"
 import { Lesson } from "./types/lesson"
-import { Scroll } from "../../components/scroll"
 import dayjs from "dayjs"
 import { Period } from "./types/period"
 import { useApplyMockDataMutation, useDeleteAllLessonsMutation, useDeleteStudentsMutation } from "./api/admin-api"
-
-const Table = styled(Scroll)<{ $studentsCount: number }>`
-  display: grid;
-  grid-template-columns: 150px repeat(${(props) => props.$studentsCount}, minmax(100px, 1fr));
-  position: relative;
-
-  & > * {
-    border: 1px solid #000;
-    padding: 5px;
-  }
-`
+import { S } from "./styled"
 
 type SelectedLesson = {
   studentId: string
   lessonId: string | null
 }
 
-const AddLessonButton = styled(Button)`
-  width: 100%;
-  opacity: 0;
-  transition: all 0.3s ease 0s;
-`
-
-const Cell = styled.div`
-  display: flex;
-
-  &:hover ${AddLessonButton} {
-    opacity: 1;
-  }
-
-  & > * {
-    flex: 1;
-  }
-`
-
-const DateCell = styled.div<{ $isToday: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  ${(props) => props.$isToday && `background-color: ${props.theme.green};`}
-`
-
-const EmptyCell = styled.div`
-  padding: 0;
-`
-
 function TableHeader({ items, onEdit, hide }: { items: ScheduleItem[]; onEdit: (s: Student) => void; hide?: boolean }) {
   return (
     <>
-      <EmptyCell style={{ height: hide ? "0" : "auto", border: "none" }} />
+      <S.EmptyCell style={{ height: hide ? "0" : "auto", border: "none" }} />
 
       {items.map(({ student }) => {
         return (
@@ -92,7 +50,26 @@ export function Main() {
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
-  if (!scheduleItems?.length) return <ContentPlaceholder />
+  if (!scheduleItems?.length)
+    return (
+      <>
+        <ContentPlaceholder />
+        {renderActions()}
+      </>
+    )
+
+  function renderActions() {
+    return (
+      <Space>
+        <Button type="primary" onClick={() => setSelectedStudentId("create")}>
+          Добавить ученика
+        </Button>
+        <Button onClick={() => deleteAllLessons.mutate()}>Удалить все занятия {deleteAllLessons.status}</Button>
+        <Button onClick={() => deleteAllStudents.mutate()}>Удалить всех учеников {deleteAllStudents.status}</Button>
+        <Button onClick={() => applyMockData.mutate()}>Применить тестовые данные</Button>
+      </Space>
+    )
+  }
 
   const dict: { [studentId: string]: { [dateOnly: string]: Lesson[] } } = {}
 
@@ -128,19 +105,11 @@ export function Main() {
         />
       )}
 
-      <Space>
-        <Button type="primary" onClick={() => setSelectedStudentId("create")}>
-          Добавить ученика
-        </Button>
-        <Button onClick={() => deleteAllLessons.mutate()}>Удалить все занятия {deleteAllLessons.status}</Button>
-        <Button onClick={() => deleteAllStudents.mutate()}>Удалить всех учеников {deleteAllStudents.status}</Button>
-        <Button onClick={() => applyMockData.mutate()}>Применить тестовые данные</Button>
-      </Space>
-      <Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
+      <S.Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
         <TableHeader items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
-      </Table>
+      </S.Table>
 
-      <Table
+      <S.Table
         $studentsCount={scheduleItems.length ?? 0}
         style={{ height: "100%", overflow: "auto" }}
         onReachEnd={() => scheduleQuery.hasNextPage && scheduleQuery.fetchNextPage()}
@@ -153,14 +122,14 @@ export function Main() {
           .map((today) => {
             return (
               <React.Fragment key={today}>
-                <DateCell $isToday={isToday(today)}>{toDateOnly(today)}</DateCell>
+                <S.DateCell $isToday={isToday(today)}>{toDateOnly(today)}</S.DateCell>
 
                 {scheduleItems.map(({ student }) => {
                   const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []
 
                   return (
                     <React.Fragment key={student.name}>
-                      <Cell>
+                      <S.Cell>
                         <Flex gap={2} vertical>
                           {lessons2
                             .toSorted((x, y) => x.date - y.date)
@@ -174,7 +143,7 @@ export function Main() {
                               )
                             })}
 
-                          <AddLessonButton
+                          <S.AddLessonButton
                             style={{ width: "100%" }}
                             variant="link"
                             color="green"
@@ -185,16 +154,16 @@ export function Main() {
                             icon={<PlusOutlined />}
                           >
                             Добавить занятие
-                          </AddLessonButton>
+                          </S.AddLessonButton>
                         </Flex>
-                      </Cell>
+                      </S.Cell>
                     </React.Fragment>
                   )
                 })}
               </React.Fragment>
             )
           })}
-      </Table>
+      </S.Table>
     </div>
   )
 }
