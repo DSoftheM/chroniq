@@ -43,33 +43,13 @@ export function Main() {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null | "create">(null)
   const selectedDateRef = useRef<DateTime | undefined>(undefined)
   const scheduleQuery = useScheduleQuery()
-  const scheduleItems = scheduleQuery.data?.items
+  const scheduleItems = scheduleQuery.data?.items || []
   const deleteAllLessons = useDeleteAllLessonsMutation()
   const deleteAllStudents = useDeleteStudentsMutation()
   const applyMockData = useApplyMockDataMutation()
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
-  if (!scheduleItems?.length)
-    return (
-      <>
-        <ContentPlaceholder />
-        {renderActions()}
-      </>
-    )
-
-  function renderActions() {
-    return (
-      <Space>
-        <Button type="primary" onClick={() => setSelectedStudentId("create")}>
-          Добавить ученика
-        </Button>
-        <Button onClick={() => deleteAllLessons.mutate()}>Удалить все занятия {deleteAllLessons.status}</Button>
-        <Button onClick={() => deleteAllStudents.mutate()}>Удалить всех учеников {deleteAllStudents.status}</Button>
-        <Button onClick={() => applyMockData.mutate()}>Применить тестовые данные</Button>
-      </Space>
-    )
-  }
 
   const dict: { [studentId: string]: { [dateOnly: string]: Lesson[] } } = {}
 
@@ -83,6 +63,16 @@ export function Main() {
 
   return (
     <div style={{ padding: 20, height: "100%", display: "flex", flexDirection: "column" }}>
+      {!scheduleItems?.length && <ContentPlaceholder />}
+      <Space>
+        <Button type="primary" onClick={() => setSelectedStudentId("create")}>
+          Добавить ученика
+        </Button>
+        <Button onClick={() => deleteAllLessons.mutate()}>Удалить все занятия {deleteAllLessons.status}</Button>
+        <Button onClick={() => deleteAllStudents.mutate()}>Удалить всех учеников {deleteAllStudents.status}</Button>
+        <Button onClick={() => applyMockData.mutate()}>Применить тестовые данные</Button>
+      </Space>
+
       {selectedLesson && (
         <CreateOrUpdateLessonModal
           creationDate={selectedDateRef.current}
@@ -104,11 +94,9 @@ export function Main() {
           initialStudent={scheduleItems.find(({ student }) => student.id === selectedStudentId)?.student}
         />
       )}
-
       <S.Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
         <TableHeader items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
       </S.Table>
-
       <S.Table
         $studentsCount={scheduleItems.length ?? 0}
         style={{ height: "100%", overflow: "auto" }}
