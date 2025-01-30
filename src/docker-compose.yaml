@@ -1,5 +1,6 @@
 ﻿services:
   chroniq-postgres:
+    restart: unless-stopped
     image: postgres
     ports:
       - "5432:5432"
@@ -10,7 +11,8 @@
     volumes:
       - pgdata:/var/lib/postgresql/data
   chroniq:
-    image: myapp
+    restart: unless-stopped
+    image: chroniq
     ports:
       - "8080:8080"
     depends_on:
