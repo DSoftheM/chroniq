@@ -11,3 +11,7 @@ export type Student = {
 export function createStudent(student?: Partial<Student>): Student {
   return { id: uuid(), name: "", avatarUrl: "", description: "", defaultPrice: 1500, ...student }
 }
+
+export function isStudentValid(student: Student) {
+  return student.name.length > 0 && student.defaultPrice > 0
+}

@@ -1,5 +1,5 @@
-import { Modal, InputNumber, Input, Form, notification, Flex, Avatar, Popover } from "antd"
-import { createStudent, Student } from "./types/student"
+import { Modal, InputNumber, Input, Form, notification, Flex, Avatar } from "antd"
+import { createStudent, isStudentValid, Student } from "./types/student"
 import { useUpdateStudentMutation } from "./api/use-update-student-mutation"
 import { useCreateStudentMutation } from "./api/use-create-student-mutation"
 import { useImmer } from "use-immer"
@@ -43,6 +43,7 @@ export function CreateOrUpdateStudentModal(props: Props) {
       <Modal
         cancelText="Отменить"
         okText="Сохранить"
+        okButtonProps={{ disabled: !isStudentValid(student) }}
         title={isEdit ? `Редактировать ученика ${student.name}` : "Добавить"}
         open
         onOk={async () => {
@@ -57,7 +58,7 @@ export function CreateOrUpdateStudentModal(props: Props) {
         onCancel={() => props.close()}
       >
         <Form layout="vertical">
-          <Form.Item label="Имя">
+          <Form.Item label="Имя" rules={[{ required: true }]} name="name">
             <Input
               value={student.name}
               onChange={(e) =>
@@ -82,13 +83,15 @@ export function CreateOrUpdateStudentModal(props: Props) {
           <Form.Item
             label="Ссылка на фото"
             tooltip={{
-              title: "Использовать случайную фотографию 500x500",
+              title: "Случайный аватар",
               icon: (
                 <div>
                   <SyncOutlined
                     onClick={() => {
                       updateStudent((draft) => {
-                        draft.avatarUrl = `https://lipsum.app/random/500x500?random=${Math.random()}`
+                        draft.avatarUrl = `https://api.dicebear.com/9.x/adventurer/svg?seed=${
+                          student.id + "-" + Date.now()
+                        }`
                       })
                     }}
                   />
@@ -96,18 +99,18 @@ export function CreateOrUpdateStudentModal(props: Props) {
               ),
             }}
           >
-            <Flex gap={10}>
-              <Input
-                value={student.avatarUrl}
-                onChange={(e) =>
-                  updateStudent((draft) => {
-                    draft.avatarUrl = e.target.value
-                  })
-                }
-              />
-              <Popover placement="top" content={<img src={student.avatarUrl} />}>
-                <Avatar src={student.avatarUrl} />
-              </Popover>
+            <Flex gap={10} align="center">
+              <div style={{ flex: 1 }}>
+                <Input
+                  value={student.avatarUrl}
+                  onChange={(e) =>
+                    updateStudent((draft) => {
+                      draft.avatarUrl = e.target.value
+                    })
+                  }
+                />
+              </div>
+              <Avatar src={student.avatarUrl} size={150} />
             </Flex>
           </Form.Item>
 

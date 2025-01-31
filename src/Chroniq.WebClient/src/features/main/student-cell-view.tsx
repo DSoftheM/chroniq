@@ -1,7 +1,8 @@
 import { EditFilled } from "@ant-design/icons"
-import { Student } from "./types/student"
 import styled from "styled-components"
 import { Avatar, Flex } from "antd"
+import { getColorById } from "@/lib/color.lib"
+import { Student } from "./types/student"
 
 type Props = {
   student: Student
@@ -11,7 +12,7 @@ type Props = {
 
 const Cell = styled.div<{ hide?: boolean }>`
   padding: ${(props) => (props.hide ? "0" : "5px")};
-  background-color: slateblue;
+  border: 1px solid #000;
 `
 
 const Ellipsis = styled.div`
@@ -19,12 +20,6 @@ const Ellipsis = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
 `
-
-const colors = ["#f56a00", "#7265e6", "#ffbf00", "#00a2ae", "#87d068", "#108ee9", "#f50", "#2db7f5"]
-
-function getColorById(id: string) {
-  return colors[id.length % colors.length]
-}
 
 export function StudentCellView(props: Props) {
   const s = props.student
