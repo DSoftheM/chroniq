@@ -49,29 +49,30 @@ export function Main() {
         <Menu
           theme="dark"
           mode="inline"
+          selectedKeys={[pathname]}
           defaultSelectedKeys={["1"]}
           items={[
             {
-              key: "1",
+              key: nav.main,
               icon: <CalendarOutlined />,
               label: "Расписание",
               onClick: () => navigate(nav.main),
             },
             {
-              key: "2",
+              key: nav.archive,
               icon: <FolderOutlined />,
               label: "Архив",
               onClick: () => navigate(nav.archive),
             },
 
             {
-              key: "3",
+              key: nav.profile,
               icon: <UserOutlined />,
               label: "Профиль",
               onClick: () => navigate(nav.profile),
             },
             {
-              key: "4",
+              key: nav.settings,
               icon: <SettingOutlined />,
               label: "Настройки",
               onClick: () => navigate(nav.settings),

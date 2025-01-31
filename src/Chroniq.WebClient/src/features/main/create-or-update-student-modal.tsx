@@ -60,7 +60,7 @@ export function CreateOrUpdateStudentModal(props: Props) {
         onCancel={() => props.close()}
       >
         <Form layout="vertical">
-          <Form.Item label="Имя" rules={[{ required: true }]} name="name">
+          <Form.Item label="Имя" required>
             <Input
               value={student.name}
               onChange={(e) =>
