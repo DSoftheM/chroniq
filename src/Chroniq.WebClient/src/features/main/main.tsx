@@ -1,157 +1,105 @@
-import React, { useRef, useState } from "react"
-import { LessonView } from "./lesson-view"
-import { toDateOnly, isToday, classesToDictionary } from "./lib"
-import { useScheduleQuery } from "./api/use-schedule-query"
-import { PlusOutlined } from "@ant-design/icons"
-import { ContentPlaceholder } from "./content-placeholder"
-import { CreateOrUpdateLessonModal } from "./create-or-update-lesson-modal"
-import { DateTime } from "./types/lib"
-import { CreateOrUpdateStudentModal } from "./create-or-update-student-modal"
-import { Button, Flex, Space } from "antd"
-import { StudentCellView } from "./student-cell-view"
-import { ScheduleItem } from "./types/schedule"
-import { Student } from "./types/student"
-import { Lesson } from "./types/lesson"
-import dayjs from "dayjs"
-import { Period } from "./types/period"
-import { useApplyMockDataMutation, useDeleteAllLessonsMutation, useDeleteStudentsMutation } from "./api/admin-api"
-import { S } from "./styled"
+import { useState } from "react"
+import { Layout, Typography } from "antd"
+import { CalendarOutlined, FolderOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons"
+import { Menu, theme } from "antd"
+import { Outlet, useNavigate, useMatches } from "react-router-dom"
+import { nav } from "@/lib/nav"
+import { ZIndex } from "@/lib/styled.lib"
 
-type SelectedLesson = {
-  studentId: string
-  lessonId: string | null
-}
-
-function TableHeader({ items, onEdit, hide }: { items: ScheduleItem[]; onEdit: (s: Student) => void; hide?: boolean }) {
-  return (
-    <>
-      <S.EmptyCell style={{ height: hide ? "0" : "auto", border: "none" }} />
-
-      {items.map(({ student }) => {
-        return (
-          <div style={{ height: hide ? "0" : "auto", overflow: "hidden", padding: 0, border: "none" }} key={student.id}>
-            <StudentCellView key={student.name} student={student} onEdit={() => onEdit(student)} />
-          </div>
-        )
-      })}
-    </>
-  )
-}
+const { Sider, Content } = Layout
 
 export function Main() {
-  const [selectedLesson, setSelectedLesson] = useState<SelectedLesson | null>(null)
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null | "create">(null)
-  const selectedDateRef = useRef<DateTime | undefined>(undefined)
-  const scheduleQuery = useScheduleQuery()
-  const scheduleItems = scheduleQuery.data?.items || []
-  const deleteAllLessons = useDeleteAllLessonsMutation()
-  const deleteAllStudents = useDeleteStudentsMutation()
-  const applyMockData = useApplyMockDataMutation()
+  const [collapsed, setCollapsed] = useState(true)
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken()
 
-  if (scheduleQuery.isPending) return <div>Загрузка...</div>
-  if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
+  const navigate = useNavigate()
 
-  const dict: { [studentId: string]: { [dateOnly: string]: Lesson[] } } = {}
+  const titles = {
+    [nav.archive]: "Архив",
+    [nav.main]: "Расписание",
+    [nav.settings]: "Настройки",
+    [nav.profile]: "Профиль",
+  }
 
-  scheduleItems.forEach(({ student, lessons }) => {
-    dict[student.id] = classesToDictionary(lessons)
-  })
+  const pathname = useMatches().at(-1)?.pathname ?? nav.main
 
-  const firstDay = dayjs((scheduleQuery.data.pageParams[0] as Period).start)
-  const lastDay = dayjs((scheduleQuery.data.pageParams.at(-1) as Period).end)
-  const days = Array.from({ length: lastDay.diff(firstDay, "day") + 1 }, (_, i) => firstDay.add(i, "day"))
+  const title = titles[pathname]
 
   return (
-    <div style={{ padding: 20, height: "100%", display: "flex", flexDirection: "column" }}>
-      {!scheduleItems?.length && <ContentPlaceholder />}
-      <Space>
-        <Button type="primary" onClick={() => setSelectedStudentId("create")}>
-          Добавить ученика
-        </Button>
-        <Button onClick={() => deleteAllLessons.mutate()}>Удалить все занятия {deleteAllLessons.status}</Button>
-        <Button onClick={() => deleteAllStudents.mutate()}>Удалить всех учеников {deleteAllStudents.status}</Button>
-        <Button onClick={() => applyMockData.mutate()}>Применить тестовые данные</Button>
-      </Space>
-
-      {selectedLesson && (
-        <CreateOrUpdateLessonModal
-          creationDate={selectedDateRef.current}
-          close={() => setSelectedLesson(null)}
-          student={scheduleItems.find(({ student }) => student.id === selectedLesson.studentId)!.student}
-          initialLesson={
-            selectedStudentId === "create"
-              ? null
-              : scheduleItems
-                  .find(({ student }) => student.id === selectedLesson.studentId)
-                  ?.lessons.find(({ id }) => id === selectedLesson.lessonId) ?? null
-          }
-        />
-      )}
-
-      {selectedStudentId && (
-        <CreateOrUpdateStudentModal
-          close={() => setSelectedStudentId(null)}
-          initialStudent={scheduleItems.find(({ student }) => student.id === selectedStudentId)?.student}
-        />
-      )}
-      <S.Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
-        <TableHeader items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
-      </S.Table>
-      <S.Table
-        $studentsCount={scheduleItems.length ?? 0}
-        style={{ height: "100%", overflow: "auto" }}
-        onReachEnd={() => scheduleQuery.hasNextPage && scheduleQuery.fetchNextPage()}
-        onReachStart={() => scheduleQuery.hasPreviousPage && scheduleQuery.fetchPreviousPage()}
+    <Layout style={{ minHeight: "100vh", paddingLeft: 80 }}>
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        onMouseEnter={() => setCollapsed(false)}
+        onMouseLeave={() => setCollapsed(true)}
+        width={200}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          overflow: "auto",
+          height: "100vh",
+          zIndex: ZIndex.Sider,
+        }}
       >
-        <TableHeader hide items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={["1"]}
+          items={[
+            {
+              key: "1",
+              icon: <CalendarOutlined />,
+              label: "Расписание",
+              onClick: () => navigate(nav.main),
+            },
+            {
+              key: "2",
+              icon: <FolderOutlined />,
+              label: "Архив",
+              onClick: () => navigate(nav.archive),
+            },
 
-        {days
-          .map((x) => x.toDate().getTime())
-          .map((today) => {
-            return (
-              <React.Fragment key={today}>
-                <S.DateCell $isToday={isToday(today)}>{toDateOnly(today)}</S.DateCell>
-
-                {scheduleItems.map(({ student }) => {
-                  const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []
-
-                  return (
-                    <React.Fragment key={student.name}>
-                      <S.Cell>
-                        <Flex gap={2} vertical>
-                          {lessons2
-                            .toSorted((x, y) => x.date - y.date)
-                            .map((x) => {
-                              return (
-                                <LessonView
-                                  key={x.id}
-                                  lesson={x}
-                                  onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: x.id })}
-                                />
-                              )
-                            })}
-
-                          <S.AddLessonButton
-                            style={{ width: "100%" }}
-                            variant="link"
-                            color="green"
-                            onClick={() => {
-                              setSelectedLesson({ studentId: student.id, lessonId: null })
-                              selectedDateRef.current = today
-                            }}
-                            icon={<PlusOutlined />}
-                          >
-                            Добавить занятие
-                          </S.AddLessonButton>
-                        </Flex>
-                      </S.Cell>
-                    </React.Fragment>
-                  )
-                })}
-              </React.Fragment>
-            )
-          })}
-      </S.Table>
-    </div>
+            {
+              key: "3",
+              icon: <UserOutlined />,
+              label: "Профиль",
+              onClick: () => navigate(nav.profile),
+            },
+            {
+              key: "4",
+              icon: <SettingOutlined />,
+              label: "Настройки",
+              onClick: () => navigate(nav.settings),
+            },
+          ]}
+        />
+      </Sider>
+      <Layout style={{ paddingTop: 16 }}>
+        <Typography.Title
+          level={2}
+          style={{
+            padding: "0px 16px",
+          }}
+        >
+          {title}
+        </Typography.Title>
+        <Content
+          style={{
+            margin: "0px 16px",
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          <Outlet />
+        </Content>
+      </Layout>
+    </Layout>
   )
 }

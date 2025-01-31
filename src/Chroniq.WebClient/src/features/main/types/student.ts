@@ -6,10 +6,11 @@ export type Student = {
   defaultPrice: number
   avatarUrl: string
   description: string
+  isArchived: boolean
 }
 
 export function createStudent(student?: Partial<Student>): Student {
-  return { id: uuid(), name: "", avatarUrl: "", description: "", defaultPrice: 1500, ...student }
+  return { id: uuid(), name: "", avatarUrl: "", description: "", defaultPrice: 1500, isArchived: false, ...student }
 }
 
 export function isStudentValid(student: Student) {

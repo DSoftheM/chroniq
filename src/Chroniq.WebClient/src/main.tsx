@@ -7,7 +7,13 @@ import { ThemeProvider } from "styled-components"
 import { ConfigProvider, theme } from "antd"
 import { NotificationProvider } from "./global/notification-provider.tsx"
 
-const client = new QueryClient()
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+})
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

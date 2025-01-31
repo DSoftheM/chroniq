@@ -21,8 +21,8 @@ public class AdminService(AppDbContext context)
     {
         context.Students.Add(new Student()  
         {
-            Name = "John Doe", avatarUrl = "https://picsum.photos/200/300", DefaultPrice = 100,
-            Description = "Описание", Id = Guid.NewGuid(), Lessons = []
+            Name = "John Doe", AvatarUrl = "https://picsum.photos/200/300", DefaultPrice = 100, 
+            Description = "Описание", Id = Guid.NewGuid(), Lessons = [], IsArchived = false
         });
         await context.SaveChangesAsync();
     }

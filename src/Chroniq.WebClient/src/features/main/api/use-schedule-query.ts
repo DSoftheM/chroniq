@@ -8,7 +8,7 @@ import { Lesson } from "../types/lesson"
 import { DateTime } from "../types/lib"
 import { toRoundedPeriod } from "../../../lib/date.lib"
 
-export function useScheduleQuery(options?: { refetchOnMount?: boolean }) {
+export function useScheduleQuery(options: { refetchOnMount?: boolean; fetchArchived: boolean }) {
   const now = dayjs()
   const stepInDays = 10
 
@@ -49,8 +49,8 @@ export function useScheduleQuery(options?: { refetchOnMount?: boolean }) {
         })),
       }
     },
-    queryKey: [QueryName.ScheduleQuery],
-    queryFn: (context) => api.getSchedule(context.pageParam as Period),
+    queryKey: [QueryName.ScheduleQuery, options.fetchArchived],
+    queryFn: (context) => api.getSchedule(context.pageParam as Period, options.fetchArchived),
     ...options,
   })
 }

@@ -1,5 +1,6 @@
 const _nav = {
   main: "/",
+  archive: "/archive",
   settings: "/settings",
   profile: "/profile",
   login: "/login",

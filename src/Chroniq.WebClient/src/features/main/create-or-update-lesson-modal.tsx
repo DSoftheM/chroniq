@@ -9,6 +9,7 @@ import { DateTime, TimeSpan } from "./types/lib"
 import { useCreateLessonMutation, useDeleteLessonMutation, useUpdateLessonMutation } from "./api/lesson-api"
 import { useNotification } from "../../global/notification-provider"
 import { Student } from "./types/student"
+import { useIsArchiveRoute } from "../schedule/use-is-archive-route"
 
 const { TextArea } = Input
 
@@ -20,7 +21,8 @@ type Props = {
 }
 
 export function CreateOrUpdateLessonModal(props: Props) {
-  const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
+  const isArchiveRoute = useIsArchiveRoute()
+  const scheduleQuery = useScheduleQuery({ refetchOnMount: false, fetchArchived: isArchiveRoute })
   const isEdit = Boolean(props.initialLesson)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 

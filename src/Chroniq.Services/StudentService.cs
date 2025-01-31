@@ -25,9 +25,9 @@ public class StudentService(AppDbContext context)
 
         var newStudent = new Student()
         {
-            Id = dto.Id, Name = dto.Name, avatarUrl = dto.avatarUrl, Description = dto.Description,
+            Id = dto.Id, Name = dto.Name, AvatarUrl = dto.AvatarUrl, Description = dto.Description,
             Lessons = student.Lessons,
-            DefaultPrice = dto.DefaultPrice
+            DefaultPrice = dto.DefaultPrice, IsArchived = dto.IsArchived
         };
 
         context.Entry(newStudent).State = EntityState.Modified;
@@ -50,8 +50,8 @@ public class StudentService(AppDbContext context)
     {
         return new Student()
         {
-            Id = dto.Id, Name = dto.Name, avatarUrl = dto.avatarUrl, Description = dto.Description, Lessons = [],
-            DefaultPrice = dto.DefaultPrice
+            Id = dto.Id, Name = dto.Name, AvatarUrl = dto.AvatarUrl, Description = dto.Description, Lessons = [],
+            DefaultPrice = dto.DefaultPrice, IsArchived = false
         };
     }
 }

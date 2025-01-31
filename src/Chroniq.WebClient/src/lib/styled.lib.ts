@@ -6,3 +6,8 @@ export const HideScroll = css`
     display: none;
   }
 `
+
+export enum ZIndex {
+  _AntInput = 1,
+  Sider = 2,
+}

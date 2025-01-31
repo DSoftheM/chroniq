@@ -1,4 +1,4 @@
-import { Modal, InputNumber, Input, Form, notification, Flex, Avatar } from "antd"
+import { Modal, InputNumber, Input, Form, notification, Flex, Avatar, Checkbox } from "antd"
 import { createStudent, isStudentValid, Student } from "./types/student"
 import { useUpdateStudentMutation } from "./api/use-update-student-mutation"
 import { useCreateStudentMutation } from "./api/use-create-student-mutation"
@@ -6,6 +6,7 @@ import { useImmer } from "use-immer"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import { Nullish } from "./types/lib"
 import { SyncOutlined } from "@ant-design/icons"
+import { useIsArchiveRoute } from "../schedule/use-is-archive-route"
 
 const { TextArea } = Input
 
@@ -15,7 +16,8 @@ type Props = {
 }
 
 export function CreateOrUpdateStudentModal(props: Props) {
-  const scheduleQuery = useScheduleQuery({ refetchOnMount: false })
+  const isArchiveRoute = useIsArchiveRoute()
+  const scheduleQuery = useScheduleQuery({ refetchOnMount: false, fetchArchived: isArchiveRoute })
 
   const [student, updateStudent] = useImmer<Student>(props.initialStudent ?? createStudent())
 
@@ -123,6 +125,19 @@ export function CreateOrUpdateStudentModal(props: Props) {
                 })
               }
             />
+          </Form.Item>
+
+          <Form.Item label="Архивировать">
+            <Checkbox
+              checked={student.isArchived}
+              onChange={(e) =>
+                updateStudent((draft) => {
+                  draft.isArchived = e.target.checked
+                })
+              }
+            >
+              Да/Нет
+            </Checkbox>
           </Form.Item>
 
           {updateStudentMutation.isError && <p>{updateStudentMutation.error.message}</p>}

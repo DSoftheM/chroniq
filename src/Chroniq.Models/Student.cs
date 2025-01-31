@@ -5,8 +5,9 @@ public class Student
     public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required string? Description { get; set; }
-    public required string? avatarUrl { get; set; }
+    public required string? AvatarUrl { get; set; }
     public required int DefaultPrice { get; set; }
+    public required bool IsArchived { get; set; }
     public required List<Lesson> Lessons { get; set; } = [];
 }
 
@@ -16,9 +17,11 @@ public class StudentSiteDto
     public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required string? Description { get; set; }
-    public required string? avatarUrl { get; set; }
+    public required string? AvatarUrl { get; set; }
     public required int DefaultPrice { get; set; }
-}
+    public required bool IsArchived { get; set; }
+}   
+
 
 public static class StudentExtensions
 {
@@ -29,8 +32,9 @@ public static class StudentExtensions
             Id = student.Id,
             Name = student.Name,
             Description = student.Description,
-            avatarUrl = student.avatarUrl,
+            AvatarUrl = student.AvatarUrl,
             DefaultPrice = student.DefaultPrice,
+            IsArchived = student.IsArchived
         };
     }
 }
