@@ -118,12 +118,12 @@ export function CreateOrUpdateLessonModal(props: Props) {
           <Form.Item label="Длительность">
             <TimePicker
               format={"HH:mm"}
-              value={dayjs(lesson.duration, "HH:mm")}
+              value={dayjs(lesson.duration, "HH:mm:ss")}
               minuteStep={15}
               onChange={(val) => {
                 updateLesson((draft) => {
                   if (!draft) return
-                  draft.duration = val ? getDuration(val.toDate()) : "0:0"
+                  draft.duration = val ? getDuration(val.toDate()) : "00:00:00"
                 })
               }}
             />
@@ -181,5 +181,6 @@ function getDuration(date: Date): TimeSpan {
   return date.toLocaleTimeString("ru-RU", {
     hour: "2-digit",
     minute: "2-digit",
+    second: "2-digit",
   }) as TimeSpan
 }

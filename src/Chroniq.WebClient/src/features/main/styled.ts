@@ -38,6 +38,7 @@ const DateCell = styled.div<{ $isToday: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 
   ${(props) => props.$isToday && `background-color: ${props.theme.green};`}
 `

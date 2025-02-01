@@ -94,7 +94,10 @@ export function SchedulePage() {
           .map((today) => {
             return (
               <React.Fragment key={today}>
-                <S.DateCell $isToday={isToday(today)}>{toDateOnly(today)}</S.DateCell>
+                <S.DateCell $isToday={isToday(today)}>
+                  <p>{toDateOnly(today)}</p>
+                  <p>{new Date(today).toLocaleDateString("ru", { weekday: "long" })}</p>
+                </S.DateCell>
 
                 {scheduleItems.map(({ student }) => {
                   const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []

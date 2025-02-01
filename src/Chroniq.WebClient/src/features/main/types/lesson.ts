@@ -18,7 +18,7 @@ export function createLesson(lesson: Partial<Lesson> & { student: Student }): Le
     date: Date.now(),
     price: 1500,
     description: "",
-    duration: "01:00",
+    duration: "01:00:00",
     paid: false,
     ...lesson,
     student: lesson.student,

@@ -1,5 +1,5 @@
 ﻿# Этап для разработки и сборки клиента
-FROM node:23 AS client
+FROM node:23-alpine AS client
 WORKDIR /app
 COPY Chroniq.WebClient/package.json .
 RUN npm i

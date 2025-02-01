@@ -63,6 +63,6 @@ export function SettingsPage() {
   )
 }
 
-function toTimeSpan(hours: number, minutes: number): TimeSpan {
-  return `${hours}:${minutes < 10 ? `0${minutes}` : minutes}` as TimeSpan
+function toTimeSpan(hours: number, minutes: number, seconds = 0): TimeSpan {
+  return `${hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}` as TimeSpan
 }
