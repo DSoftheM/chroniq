@@ -7,11 +7,6 @@
       "label": "yarn dev",
       "type": "shell",
       "command": "yarn dev"
-    },
-    {
-      "label": "yarn build",
-      "type": "shell",
-      "command": "yarn build"
     }
   ]
 }
