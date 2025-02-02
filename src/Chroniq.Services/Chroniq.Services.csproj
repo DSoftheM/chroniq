@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Chroniq.DTOs\Chroniq.DTOs.csproj" />
       <ProjectReference Include="..\Chroniq.Storage\Chroniq.Storage.csproj" />
     </ItemGroup>
 
@@ -16,6 +17,10 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     </ItemGroup>
 
 </Project>

@@ -1,17 +1,27 @@
-import axios from "axios"
+import axios, { AxiosError, HttpStatusCode } from "axios"
 import { Schedule } from "../features/main/types/schedule"
 import { Student } from "../features/main/types/student"
 import { Lesson } from "../features/main/types/lesson"
 import { Period } from "../features/main/types/period"
 import { SaveSettingsData } from "./save-settings-data"
+import { nav } from "@/lib/nav"
 
 const http = axios.create({
   baseURL: import.meta.env.DEV ? `http://localhost:${import.meta.env.VITE_SERVER_PORT}/api` : "/api",
 })
 
+http.interceptors.response.use(undefined, (err: AxiosError) => {
+  if (err.status === HttpStatusCode.Unauthorized) {
+    window.location.href = "#" + nav.login
+  }
+
+  return Promise.reject(err)
+})
+
 export const api = {
-  login: (login: string, password: string) => http.post("/login", { login, password }),
-  register: (login: string, password: string) => http.post("/register", { login, password }),
+  login: (login: string, password: string) => http.post("/auth/login", { login, password }),
+  register: (login: string, password: string) => http.post("/auth/register", { login, password }),
+  logout: () => http.get("/auth/logout"),
 
   getSchedule: (period: Period, archived: boolean) =>
     http.post<Schedule>(`/schedule${archived ? "?archived=true" : ""}`, period).then((res) => res.data),

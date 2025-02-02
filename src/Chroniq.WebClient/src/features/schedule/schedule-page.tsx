@@ -52,9 +52,15 @@ export function SchedulePage() {
         <Button type="primary" onClick={() => setSelectedStudentId("create")}>
           Добавить ученика
         </Button>
-        <Button onClick={() => deleteAllLessons.mutate()}>Удалить все занятия {deleteAllLessons.status}</Button>
-        <Button onClick={() => deleteAllStudents.mutate()}>Удалить всех учеников {deleteAllStudents.status}</Button>
-        <Button onClick={() => applyMockData.mutate()}>Применить тестовые данные</Button>
+        <Button disabled onClick={() => deleteAllLessons.mutate()}>
+          Удалить все занятия {deleteAllLessons.status}
+        </Button>
+        <Button disabled onClick={() => deleteAllStudents.mutate()}>
+          Удалить всех учеников {deleteAllStudents.status}
+        </Button>
+        <Button disabled onClick={() => applyMockData.mutate()}>
+          Применить тестовые данные
+        </Button>
       </Space>
 
       {selectedLesson && (

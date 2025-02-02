@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Chroniq.Models;
 using Chroniq.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Chroniq.Controllers;
 
 [Route("api/schedule")]
-[ApiController]
+[ApiController]    
+[Authorize]
 public class ScheduleController(ScheduleService scheduleService)
 {
     [Route("")]

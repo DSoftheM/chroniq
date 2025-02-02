@@ -1,12 +1,12 @@
 import { createHashRouter } from "react-router-dom"
 import { Main } from "./features/main/main"
 import { SettingsPage } from "./features/settings/settings-page"
-import { Login } from "./features/auth/login"
-import { Register } from "./features/auth/register"
+import { LoginPage } from "./features/auth/login-page"
 import { nav } from "./lib/nav"
 import { Page404 } from "./features/_404/page404"
 import { SchedulePage } from "./features/schedule/schedule-page"
 import { ProfilePage } from "./features/profile/profile-page"
+import { RegisterPage } from "./features/auth/register-page"
 
 export const router = createHashRouter([
   {
@@ -34,11 +34,11 @@ export const router = createHashRouter([
 
   {
     path: nav.login,
-    element: <Login />,
+    element: <LoginPage />,
   },
   {
     path: nav.register,
-    element: <Register />,
+    element: <RegisterPage />,
   },
   {
     path: "*",
