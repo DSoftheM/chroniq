@@ -9,7 +9,7 @@ type Props = {
 
 export function DateCell(props: Props) {
   return (
-    <S.DateCell $isToday={isToday(props.date)} style={{ color: props.isHoliday ? "red" : "" }}>
+    <S.DateCell $isToday={isToday(props.date)} $isHoliday={props.isHoliday}>
       <p>{toDateOnly(props.date)}</p>
       <p>{new Date(props.date).toLocaleDateString("ru", { weekday: "long" })}</p>
     </S.DateCell>

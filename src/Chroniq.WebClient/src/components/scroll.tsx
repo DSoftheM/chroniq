@@ -17,7 +17,7 @@ export function Scroll(props: PropsWithChildren<Props>) {
       onScroll={({ target }) => {
         const t = target as HTMLDivElement
 
-        if (t.scrollHeight - t.scrollTop <= t.clientHeight + 1) {
+        if (Math.round(t.scrollHeight - t.scrollTop) <= t.clientHeight + 1) {
           onReachEnd?.()
         }
 

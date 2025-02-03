@@ -34,13 +34,15 @@ const Cell = styled.div`
   }
 `
 
-const DateCell = styled.div<{ $isToday: boolean }>`
+const DateCell = styled.div<{ $isToday: boolean; $isHoliday: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 
   ${(props) => props.$isToday && `background-color: ${props.theme.green};`}
+
+  ${(props) => props.$isHoliday && `border: 3px solid #8288d9; border-radius: 5px;`}
 `
 
 const EmptyCell = styled.div`
