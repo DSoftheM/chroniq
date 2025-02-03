@@ -4,5 +4,8 @@ namespace Chroniq.Services;
 
 public class WorkCalendarService
 {
-    public async Task<WorkCalendarSiteDto> GetWorkCalendar() { }
+    public async Task<WorkCalendarSiteDto?> GetWorkCalendar()
+    {
+        return null;
+    }
 }

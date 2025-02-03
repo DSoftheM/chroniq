@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react"
 import { LessonView } from "../main/lesson-view"
-import { toDateOnly, isToday, classesToDictionary } from "../main/lib"
+import { toDateOnly, classesToDictionary } from "../main/lib"
 import { useScheduleQuery } from "../main/api/use-schedule-query"
 import { PlusOutlined } from "@ant-design/icons"
 import { ContentPlaceholder } from "../main/content-placeholder"

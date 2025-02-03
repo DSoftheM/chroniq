@@ -44,7 +44,7 @@ export const api = {
   // getWorkCalendar: () =>
   //   axios.get<WordCalendar>("https://xmlcalendar.ru/data/ru/2025/calendar.json").then((res) => res.data),
 
-  getWorkCalendar: () => ({
+  getWorkCalendar: (): WordCalendar => ({
     year: 2025,
     months: [
       {

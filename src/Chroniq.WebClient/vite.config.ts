@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
         "@lib": "/src/lib",
       },
     },
-    build: { outDir: "../Chroniq/wwwroot" },
+    // build: { outDir: "../Chroniq/wwwroot" },
     server: {
       port: +env.VITE_CLIENT_PORT,
       proxy: {
