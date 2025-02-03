@@ -20,6 +20,7 @@ builder.Services.AddScoped<LessonService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<WorkCalendarService>();
 
 var jwtSecret = builder.Configuration.GetJwtSecretOrThrow();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

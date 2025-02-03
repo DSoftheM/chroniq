@@ -15,6 +15,8 @@ import { useApplyMockDataMutation, useDeleteAllLessonsMutation, useDeleteStudent
 import { S } from "../main/styled"
 import { TableHeader } from "./table-header"
 import { useIsArchiveRoute } from "./use-is-archive-route"
+import { useWorkCalendar } from "../main/api/use-work-calendar-query"
+import { DateCell } from "./date-cell"
 
 type SelectedLesson = {
   studentId: string
@@ -31,6 +33,7 @@ export function SchedulePage() {
   const deleteAllLessons = useDeleteAllLessonsMutation()
   const deleteAllStudents = useDeleteStudentsMutation()
   const applyMockData = useApplyMockDataMutation()
+  const { isHoliday } = useWorkCalendar()
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
@@ -100,10 +103,7 @@ export function SchedulePage() {
           .map((today) => {
             return (
               <React.Fragment key={today}>
-                <S.DateCell $isToday={isToday(today)}>
-                  <p>{toDateOnly(today)}</p>
-                  <p>{new Date(today).toLocaleDateString("ru", { weekday: "long" })}</p>
-                </S.DateCell>
+                <DateCell date={today} isHoliday={isHoliday(today)} />
 
                 {scheduleItems.map(({ student }) => {
                   const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []
