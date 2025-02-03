@@ -78,7 +78,7 @@ export function MainLayout() {
     })
 
   return (
-    <Layout style={{ minHeight: "100vh", paddingLeft: 80 }}>
+    <Layout style={{ height: "100vh", paddingLeft: 80 }}>
       <S.Sider
         trigger={null}
         collapsible
