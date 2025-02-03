@@ -1,5 +1,5 @@
 import { createHashRouter } from "react-router-dom"
-import { Main } from "./features/main/main"
+import { MainLayout } from "./features/main/main-layout"
 import { SettingsPage } from "./features/settings/settings-page"
 import { LoginPage } from "./features/auth/login-page"
 import { nav } from "./lib/nav"
@@ -11,7 +11,7 @@ import { RegisterPage } from "./features/auth/register-page"
 export const router = createHashRouter([
   {
     path: nav.main,
-    element: <Main />,
+    element: <MainLayout />,
     children: [
       {
         index: true,

@@ -27,6 +27,8 @@ const Footer = styled.div`
 export function LoginPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [login, setLogin] = useState("")
+  const [password, setPassword] = useState("")
   const navigate = useNavigate()
 
   const onFinish = async (values: { login: string; password: string }) => {
@@ -49,15 +51,19 @@ export function LoginPage() {
         {error && <Alert message={error} type="error" showIcon style={{ marginBottom: 16 }} />}
 
         <Form layout="vertical" onFinish={onFinish}>
-          <Form.Item name="login" label="Логин" rules={[{ required: true, message: "Введите логин" }]}>
-            <Input placeholder="Введите логин" />
+          <Form.Item name="login" label="Логин" required>
+            <Input placeholder="Введите логин" value={login} onChange={(e) => setLogin(e.target.value)} />
           </Form.Item>
 
-          <Form.Item name="password" label="Пароль" rules={[{ required: true, message: "Введите пароль" }]}>
-            <Input.Password placeholder="Введите пароль" />
+          <Form.Item name="password" label="Пароль" required>
+            <Input.Password
+              placeholder="Введите пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </Form.Item>
 
-          <Button type="primary" htmlType="submit" block loading={loading}>
+          <Button type="primary" htmlType="submit" block loading={loading} disabled={!login || !password}>
             Войти
           </Button>
         </Form>

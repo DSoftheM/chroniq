@@ -26,6 +26,7 @@ export default tseslint.config(
       "@typescript-eslint/no-empty-object-type": "warn",
       "react-hooks/exhaustive-deps": "off",
       "unused-imports/no-unused-imports": "warn",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   }
 )

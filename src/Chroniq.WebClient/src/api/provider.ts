@@ -7,7 +7,7 @@ import { SaveSettingsData } from "./save-settings-data"
 import { nav } from "@/lib/nav"
 
 const http = axios.create({
-  baseURL: import.meta.env.DEV ? `http://localhost:${import.meta.env.VITE_SERVER_PORT}/api` : "/api",
+  baseURL: "/api",
 })
 
 http.interceptors.response.use(undefined, (err: AxiosError) => {
@@ -20,7 +20,8 @@ http.interceptors.response.use(undefined, (err: AxiosError) => {
 
 export const api = {
   login: (login: string, password: string) => http.post("/auth/login", { login, password }),
-  register: (login: string, password: string) => http.post("/auth/register", { login, password }),
+  register: (login: string, password: string) =>
+    http.post("/auth/register", { login, password }, { withCredentials: true }),
   logout: () => http.get("/auth/logout"),
 
   getSchedule: (period: Period, archived: boolean) =>

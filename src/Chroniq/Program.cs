@@ -10,8 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -60,7 +58,13 @@ using (var scope = app.Services.CreateScope())
     await context.Database.MigrateAsync();
 }
 
-app.UseCors(policyBuilder => { policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin(); });
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors(policyBuilder =>
+    {
+        policyBuilder.AllowAnyHeader().AllowAnyMethod().WithOrigins(["http://localhost:5173"]).AllowCredentials();
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

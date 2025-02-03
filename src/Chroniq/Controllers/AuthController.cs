@@ -8,12 +8,14 @@ namespace Chroniq.Controllers;
 [ApiController]
 public class AuthController(AuthService authService) : Controller
 {
+    private static readonly CookieOptions CookiesOptions = new() {   };
+
     [Route("login")]
     [HttpPost]
     public async Task Login(AuthLoginPayload dto)
     {
         var tokens = await authService.Login(dto);
-        Response.Cookies.Append("access_token", tokens.AccessToken, new CookieOptions() { Secure = false, SameSite = SameSiteMode.None, HttpOnly = false, Path = "/", Domain = "127.0.0.1" });
+        Response.Cookies.Append("access_token", tokens.AccessToken, CookiesOptions);
     }
 
     [Route("register")]
@@ -21,7 +23,7 @@ public class AuthController(AuthService authService) : Controller
     public async Task Register(AuthLoginPayload dto)
     {
         var tokens = await authService.Register(dto);
-        Response.Cookies.Append("access_token", tokens.AccessToken);
+        Response.Cookies.Append("access_token", tokens.AccessToken, CookiesOptions);
     }
 
     [Route("refresh")]
@@ -29,7 +31,7 @@ public class AuthController(AuthService authService) : Controller
     public async Task RefreshTokens([FromBody] string refreshToken)
     {
         var tokens = await authService.RefreshTokens(refreshToken);
-        Response.Cookies.Append("access_token", tokens.AccessToken);
+        Response.Cookies.Append("access_token", tokens.AccessToken, CookiesOptions);
     }
 
     [Route("logout")]
