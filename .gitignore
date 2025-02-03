@@ -5,3 +5,4 @@ riderModule.iml
 /_ReSharper.Caches/
 src/Chroniq/appsettings.json
 src/Chroniq/appsettings.json
+src/Chroniq/wwwroot
