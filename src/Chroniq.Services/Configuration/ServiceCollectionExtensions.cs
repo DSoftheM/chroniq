@@ -6,6 +6,6 @@ public static class ServiceCollectionExtensions
 {
     public static void AddConfigurations(this IServiceCollection self)
     {
-        self.AddConfigurations<LoggingConfiguration>();
+        // self.AddConfigurations<LoggingConfiguration>();
     }
 }

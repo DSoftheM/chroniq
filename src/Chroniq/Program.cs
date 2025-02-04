@@ -7,9 +7,14 @@ using Chroniq.Services.Auth;
 using Chroniq.Services.WorkCalendar;
 using Chroniq.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder();
+
+var jwtSecret = builder.Configuration.GetJwtSecretOrThrow();
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
@@ -24,8 +29,9 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<WorkCalendarService>();
 builder.Services.AddScoped<HttpClient>();
 
-var jwtSecret = builder.Configuration.GetJwtSecretOrThrow();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy())
+    .AddNpgSql(connectionString);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -60,6 +66,25 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await context.Database.MigrateAsync();
 }
+
+app.MapHealthChecks("/health", new HealthCheckOptions()
+{
+    ResponseWriter = async (context, report) =>
+    {
+        var result = new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(e => new
+            {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                description = e.Value.Description
+            })
+        };
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(result);
+    }
+});
 
 if (app.Environment.IsDevelopment())
 {
