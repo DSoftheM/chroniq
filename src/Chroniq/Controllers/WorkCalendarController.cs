@@ -1,11 +1,16 @@
+using Chroniq.DTOs;
 using Chroniq.Services;
+using Chroniq.Services.WorkCalendar;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chroniq.Controllers;
 
-[Route("work-calendar")]
+[Route("api/work-calendar")]
 [ApiController]
 public class WorkCalendarController(WorkCalendarService workCalendarService)
 {
-    public async Task GetWorkCalendar() => await workCalendarService.GetWorkCalendar();
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<WorkCalendarSiteDto?> GetWorkCalendar() => await workCalendarService.GetWorkCalendar();
 }

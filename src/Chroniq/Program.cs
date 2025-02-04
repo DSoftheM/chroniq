@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Chroniq.Converters;
 using Chroniq.Services;
 using Chroniq.Services.Auth;
+using Chroniq.Services.WorkCalendar;
 using Chroniq.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -21,6 +22,7 @@ builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<WorkCalendarService>();
+builder.Services.AddScoped<HttpClient>();
 
 var jwtSecret = builder.Configuration.GetJwtSecretOrThrow();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

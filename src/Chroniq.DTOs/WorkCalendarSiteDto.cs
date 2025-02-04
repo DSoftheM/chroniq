@@ -5,7 +5,7 @@ public class WorkCalendarSiteDto
     public int Year { get; set; }
     public List<MonthItem> Months { get; set; }
     public List<Transition> Transitions { get; set; }
-    public Statistic Statistic { get; set; }
+    public Statistic Statistic { get; set; } 
 }
 
 public class MonthItem
@@ -22,10 +22,9 @@ public class Transition
 
 public class Statistic
 {
-    public int Workdays { get; set; }
-    public int Holidays { get; set; }
-    public int Hours40 { get; set; }
-    public int Hours36 { get; set; }
-    public int Hours24 { get; set; }
+    public double Workdays { get; set; }
+    public double Holidays { get; set; }
+    public double Hours40 { get; set; }
+    public double Hours36 { get; set; }
+    public double Hours24 { get; set; }
 }
-
