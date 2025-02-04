@@ -84,7 +84,7 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsJsonAsync(result);
     }
-});
+}).RequireAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
