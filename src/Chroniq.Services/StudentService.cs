@@ -1,33 +1,42 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using Chroniq.Models;
 using Chroniq.Services.Exceptions;
 using Chroniq.Storage;
+using Microsoft.AspNetCore.Http;
 
 namespace Chroniq.Services;
 
 public class StudentService(AppDbContext context)
 {
-    public async Task<StudentSiteDto> Create(StudentSiteDto student)
+    public async Task<StudentSiteDto> Create(StudentSiteDto student, HttpContext httpContext)
     {
-        context.Students.Add(ToModel(student));
+        var userId = httpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+        var user = await context.Users.FirstAsync(x => x.Id == Guid.Parse(userId));
+
+        context.Students.Add(ToModel(student, user));
         await context.SaveChangesAsync();
         return student;
     }
 
-    public async Task<Student> Update(StudentSiteDto dto)
+    public async Task<Student> Update(StudentSiteDto dto, HttpContext httpContext)
     {
         var student = await context.Students
             .AsNoTracking()
             .Include(student => student.Lessons)
             .FirstOrDefaultAsync(x => x.Id == dto.Id);
-        
+
         if (student == null) throw new NotFoundException();
+
+        var userId = httpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+        var user = await context.Users.FirstAsync(x => x.Id == Guid.Parse(userId));
 
         var newStudent = new Student()
         {
             Id = dto.Id, Name = dto.Name, AvatarUrl = dto.AvatarUrl, Description = dto.Description,
             Lessons = student.Lessons,
-            DefaultPrice = dto.DefaultPrice, IsArchived = dto.IsArchived
+            User = user,
+            DefaultPrice = dto.DefaultPrice, IsArchived = dto.IsArchived,
         };
 
         context.Entry(newStudent).State = EntityState.Modified;
@@ -46,12 +55,12 @@ public class StudentService(AppDbContext context)
         return await context.Students.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    private static Student ToModel(StudentSiteDto dto)
+    private static Student ToModel(StudentSiteDto dto, User user)
     {
         return new Student()
         {
             Id = dto.Id, Name = dto.Name, AvatarUrl = dto.AvatarUrl, Description = dto.Description, Lessons = [],
-            DefaultPrice = dto.DefaultPrice, IsArchived = false
+            DefaultPrice = dto.DefaultPrice, IsArchived = false, User = user
         };
     }
 }

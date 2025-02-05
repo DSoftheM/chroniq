@@ -9,6 +9,7 @@ public class Student
     public required int DefaultPrice { get; set; }
     public required bool IsArchived { get; set; }
     public required List<Lesson> Lessons { get; set; } = [];
+    public required User User { get; set; }
 }
 
 

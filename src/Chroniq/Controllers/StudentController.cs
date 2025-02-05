@@ -7,19 +7,19 @@ namespace Chroniq.Controllers;
 
 [Route("api/student")]
 [ApiController]
-public class StudentController(StudentService studentService)
+public class StudentController(StudentService studentService) : ControllerBase
 {
     [Route("")]
     [HttpPost]
     public Task CreateStudent(StudentSiteDto student)
     {
-        return studentService.Create(student);
+        return studentService.Create(student, HttpContext);
     }
-    
+
     [Route("update")]
     [HttpPost]
     public Task UpdateStudent(StudentSiteDto student)
     {
-        return studentService.Update(student);
+        return studentService.Update(student, HttpContext);
     }
 }

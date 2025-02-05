@@ -16,14 +16,4 @@ public class AdminService(AppDbContext context)
         context.Students.RemoveRange(context.Students);
         await context.SaveChangesAsync();
     }
-
-    public async Task ApplyMockData()
-    {
-        context.Students.Add(new Student()  
-        {
-            Name = "John Doe", AvatarUrl = "https://picsum.photos/200/300", DefaultPrice = 100, 
-            Description = "Описание", Id = Guid.NewGuid(), Lessons = [], IsArchived = false
-        });
-        await context.SaveChangesAsync();
-    }
 }
