@@ -35,8 +35,8 @@ export const api = {
   updateLesson: (lesson: Lesson) => http.post("/lesson/update", lesson),
   deleteLesson: (lessonId: string) => http.get("/lesson/delete/" + lessonId),
 
-  saveSettings: (data: SaveSettingsData) => http.post("/settings", data),
-  getSettings: (data: SaveSettingsData) => http.get("/settings", data),
+  getSettings: () => http.get("/settings"),
+  saveSettings: (data: SaveSettingsData) => http.post("/settings/save", data),
 
   deleteAllLessons: () => http.get("/admin/delete-all-lessons"),
   deleteAllStudents: () => http.get("/admin/delete-all-students"),

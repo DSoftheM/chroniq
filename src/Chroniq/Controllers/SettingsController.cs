@@ -6,17 +6,17 @@ namespace Chroniq.Controllers;
 
 [Route("api/settings")]
 [ApiController]
-public class SettingsController(SettingsService settingsService)
+public class SettingsController(SettingsService settingsService) : ControllerBase
 {
-    [Route("{userId:guid}")]
-    public object GetSettings(Guid userId)
+    [Route("")]
+    public object GetSettings()
     {
-        return settingsService.Get(userId);
+        return settingsService.Get(HttpContext);
     }
     
-    [Route("update")]
-    public object UpdateSettings(SettingsDto dto)
+    [Route("save")]
+    public object SaveSettings(SettingsDto dto)
     {
-        return settingsService.Update(dto);
+        return settingsService.Save(dto, HttpContext);
     }
 }

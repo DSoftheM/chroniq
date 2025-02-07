@@ -1,17 +1,22 @@
 import { Button, Flex, Form, Input, InputNumber, Switch } from "antd"
 import { useState } from "react"
-import { useSaveSettingsMutation } from "./use-save-settings-mutation"
+import { useGetSettingsQuery, useSaveSettingsMutation } from "./use-save-settings-mutation"
 import { TimeSpan } from "../main/types/lib"
 
 export function SettingsPage() {
-  const [telegramLogin, setTelegramLogin] = useState("")
+  const [telegramChatId, setTelegramChatId] = useState("")
   const [minutes, setMinutes] = useState(5)
   const [hours, setHours] = useState(0)
   const [enabled, setEnabled] = useState(false)
 
-  const isValid = telegramLogin && minutes >= 1 && minutes <= 600 && hours <= 24
+  const isValid = telegramChatId && minutes >= 1 && minutes <= 600 && hours <= 24
 
   const saveMutation = useSaveSettingsMutation()
+  const settingsQuery = useGetSettingsQuery()
+
+  if (settingsQuery.isLoading) {
+    return null
+  }
 
   return (
     <Form layout="vertical">
@@ -21,8 +26,8 @@ export function SettingsPage() {
       <Form.Item label="Chat ID в телеграм" required>
         <Input
           placeholder="Например, 260095664"
-          value={telegramLogin}
-          onChange={(e) => setTelegramLogin(e.target.value)}
+          value={telegramChatId}
+          onChange={(e) => setTelegramChatId(e.target.value)}
         />
       </Form.Item>
       <Form.Item label="За сколько отправлять уведомление">
@@ -50,7 +55,7 @@ export function SettingsPage() {
         disabled={!isValid}
         onClick={() =>
           saveMutation.mutate({
-            telegramLogin,
+            telegramChatId,
             enableNotifications: enabled,
             notifyIn: toTimeSpan(hours, minutes),
           })
