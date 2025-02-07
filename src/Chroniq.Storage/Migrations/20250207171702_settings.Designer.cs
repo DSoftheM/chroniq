@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Chroniq.Storage.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250207160222_settings")]
+    [Migration("20250207171702_settings")]
     partial class settings
     {
         /// <inheritdoc />
@@ -102,7 +102,12 @@ namespace Chroniq.Storage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Students");
                 });
@@ -152,6 +157,17 @@ namespace Chroniq.Storage.Migrations
                     b.HasOne("Chroniq.Models.User", "User")
                         .WithOne("Settings")
                         .HasForeignKey("Chroniq.Models.Settings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Chroniq.Models.Student", b =>
+                {
+                    b.HasOne("Chroniq.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
