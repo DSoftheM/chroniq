@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Student> Students { get; set; }
     public DbSet<Lesson> Lessons { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Settings> Settings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

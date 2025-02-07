@@ -60,8 +60,15 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
             RefreshTokenExpiryTime = RefreshTokenExpiryTime,
             PasswordSalt = salt
         };
+        
+        var settings = new Settings
+        {
+            Id = Guid.NewGuid(), UserId = user.Id, EnableNotifications = true,
+            NotifyBefore = TimeSpan.FromMinutes(15), TelegramChatId = null
+        };
 
         context.Users.Add(user);
+        context.Settings.Add(settings);
         await context.SaveChangesAsync();
 
         return new AuthTokens

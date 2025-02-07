@@ -6,3 +6,9 @@ export function useSaveSettingsMutation() {
     mutationFn: api.saveSettings,
   })
 }
+
+export function useSaveSettingsMutation() {
+  return useMutation({
+    mutationFn: api.saveSettings,
+  })
+}

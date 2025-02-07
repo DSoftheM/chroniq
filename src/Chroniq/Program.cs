@@ -25,6 +25,7 @@ builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<WorkCalendarService>();
 builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<SettingsService>();
 
 builder.Services.AddAppHealthChecks(connectionString, workCalendarUrl);
 builder.Services.AddAppAuthentication(jwtSecret);

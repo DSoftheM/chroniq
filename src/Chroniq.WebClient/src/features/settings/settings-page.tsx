@@ -18,10 +18,9 @@ export function SettingsPage() {
       <Form.Item label="Включить уведомления">
         <Switch checked={enabled} onChange={setEnabled} />
       </Form.Item>
-      <Form.Item label="Логин в телеграм" required>
+      <Form.Item label="Chat ID в телеграм" required>
         <Input
-          placeholder="Логин в телеграм"
-          prefix="@"
+          placeholder="Например, 260095664"
           value={telegramLogin}
           onChange={(e) => setTelegramLogin(e.target.value)}
         />
