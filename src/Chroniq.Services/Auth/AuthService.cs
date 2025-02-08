@@ -12,6 +12,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Chroniq.Services.Auth;
 
+// 1) таблица связей
+// 2) студенты видны все пользователям
+// 3) как лучше доставать userId
+
 public class AuthService(AppDbContext context, IConfiguration configuration)
 {
     private readonly string _secret = configuration.GetJwtSecretOrThrow();
