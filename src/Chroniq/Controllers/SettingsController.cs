@@ -1,4 +1,5 @@
 using Chroniq.DTOs;
+using Chroniq.DTOs.Extensions;
 using Chroniq.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,14 +10,14 @@ namespace Chroniq.Controllers;
 public class SettingsController(SettingsService settingsService) : ControllerBase
 {
     [Route("")]
-    public object GetSettings()
+    public async Task<SettingsDto?> GetSettings()
     {
-        return settingsService.Get(HttpContext);
+        return (await settingsService.Get(HttpContext))?.ToSiteDto() ?? null;
     }
     
     [Route("save")]
-    public object SaveSettings(SettingsDto dto)
+    public async Task SaveSettings(SettingsDto dto)
     {
-        return settingsService.Save(dto, HttpContext);
+        await settingsService.Save(dto, HttpContext);
     }
 }

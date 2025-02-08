@@ -63,7 +63,7 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
         
         var settings = new Settings
         {
-            Id = Guid.NewGuid(), UserId = user.Id, EnableNotifications = true,
+            Id = Guid.NewGuid(), UserId = user.Id, EnableNotifications = false,
             NotifyBefore = TimeSpan.FromMinutes(15), TelegramChatId = null
         };
 

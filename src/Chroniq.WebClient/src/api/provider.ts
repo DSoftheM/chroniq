@@ -3,9 +3,9 @@ import { Schedule } from "../features/main/types/schedule"
 import { Student } from "../features/main/types/student"
 import { Lesson } from "../features/main/types/lesson"
 import { Period } from "../features/main/types/period"
-import { SaveSettingsData } from "./save-settings-data"
 import { nav } from "@/lib/nav"
 import { WordCalendar } from "./types/word-calendar"
+import { Settings } from "./types/settings"
 
 const http = axios.create({
   baseURL: "/api",
@@ -35,8 +35,8 @@ export const api = {
   updateLesson: (lesson: Lesson) => http.post("/lesson/update", lesson),
   deleteLesson: (lessonId: string) => http.get("/lesson/delete/" + lessonId),
 
-  getSettings: () => http.get("/settings"),
-  saveSettings: (data: SaveSettingsData) => http.post("/settings/save", data),
+  getSettings: () => http.get<Settings>("/settings").then((res) => res.data),
+  saveSettings: (data: Settings) => http.post("/settings/save", data),
 
   deleteAllLessons: () => http.get("/admin/delete-all-lessons"),
   deleteAllStudents: () => http.get("/admin/delete-all-students"),

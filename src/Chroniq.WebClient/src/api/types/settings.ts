@@ -1,7 +1,7 @@
 import { TimeSpan } from "@/features/main/types/lib"
 
-export type SaveSettingsData = {
-  telegramChatId: string
+export type Settings = {
   enableNotifications: boolean
   notifyIn: TimeSpan
+  telegramChatId: number
 }

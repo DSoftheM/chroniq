@@ -10,4 +10,8 @@
       <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Chroniq.Models\Chroniq.Models.csproj" />
+    </ItemGroup>
+
 </Project>
