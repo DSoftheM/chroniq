@@ -31,7 +31,6 @@ export function SettingsPage() {
 
   return (
     <Form layout="vertical">
-      <pre>{JSON.stringify(settings, null, 2)}</pre>
       <Form.Item label="Включить уведомления">
         <Switch
           checked={settings?.enableNotifications}

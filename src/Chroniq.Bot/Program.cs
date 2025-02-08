@@ -34,8 +34,6 @@ while (true)
     var context = await server.GetContextAsync();
     context.Response.StatusCode = (int)HttpStatusCode.OK;
 
-    
-
     if (context.Request.Url.LocalPath == "/send")
     {
         HandleSend();

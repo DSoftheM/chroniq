@@ -1,16 +1,20 @@
 using Chroniq.Models;
+using Chroniq.Services.Extensions;
 using Chroniq.Storage;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chroniq.Services;
 
 public class ScheduleService(AppDbContext context, StudentService studentService, LessonService lessonService)
 {
-    public async Task<Schedule> GetAll(Period period, bool archived)
+    public async Task<Schedule> GetAll(Period period, bool archived, HttpContext httpContext)
     {
         var schedule = new Schedule();
+        var userId = httpContext.GetUserId();
 
-        var allStudents = await studentService.GetAll();
-        allStudents = allStudents.Where(x => x.IsArchived == archived).ToList();
+        var allStudents = await context.Students.Include(x => x.User).ToListAsync();
+        allStudents = allStudents.Where(x => x.User.Id == userId && x.IsArchived == archived).ToList();
         
         foreach (var student in allStudents)
         {
