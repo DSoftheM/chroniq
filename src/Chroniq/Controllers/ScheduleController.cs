@@ -7,7 +7,6 @@ namespace Chroniq.Controllers;
 
 [Route("api/schedule")]
 [ApiController]    
-[Authorize]
 public class ScheduleController(ScheduleService scheduleService)
 {
     [Route("")]

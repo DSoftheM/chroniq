@@ -1,6 +1,7 @@
 using Chroniq.DTOs;
 using Chroniq.DTOs.Extensions;
 using Chroniq.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chroniq.Controllers;
