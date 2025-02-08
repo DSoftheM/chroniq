@@ -81,7 +81,7 @@ export const RegisterPage: React.FC = () => {
             htmlType="submit"
             loading={loading}
             block
-            disabled={!isPasswordValid(password) || password !== confirm}
+            // disabled={!isPasswordValid(password) || password !== confirm}
           >
             Зарегистрироваться
           </Button>

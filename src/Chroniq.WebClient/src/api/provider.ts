@@ -11,9 +11,13 @@ const http = axios.create({
   baseURL: "/api",
 })
 
-http.interceptors.response.use(undefined, (err: AxiosError) => {
+http.interceptors.response.use(undefined, async (err: AxiosError) => {
   if (err.status === HttpStatusCode.Unauthorized) {
-    window.location.href = "#" + nav.login
+    await http.get("/auth/refresh").catch(() => {
+      window.location.href = "#" + nav.login
+    })
+
+    return http.request(err.config!)
   }
 
   return Promise.reject(err)

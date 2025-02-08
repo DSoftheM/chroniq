@@ -15,8 +15,7 @@ namespace Chroniq.Services.Auth;
 public class AuthService(AppDbContext context, IConfiguration configuration)
 {
     private readonly string _secret = configuration.GetJwtSecretOrThrow();
-    private static DateTime RefreshTokenExpiryTime => DateTime.UtcNow.AddDays(7);
-    private static TimeSpan AccessTokenExpiryDuration => TimeSpan.FromSeconds(600);
+    
 
     public async Task<AuthTokens> Login(AuthLoginPayload payload)
     {
@@ -31,7 +30,7 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
         var refreshToken = Guid.NewGuid().ToString();
 
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = RefreshTokenExpiryTime;
+        user.RefreshTokenExpiryTime = AuthOptions.RefreshTokenExpiryTime;
 
         await context.SaveChangesAsync();
 
@@ -57,7 +56,7 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
             Login = payload.Login,
             PasswordHash = CreateHash(payload.Password, salt),
             RefreshToken = Guid.NewGuid().ToString(),
-            RefreshTokenExpiryTime = RefreshTokenExpiryTime,
+            RefreshTokenExpiryTime = AuthOptions.RefreshTokenExpiryTime,
             PasswordSalt = salt
         };
         
@@ -88,7 +87,7 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
                 new Claim(ClaimTypes.Name, user.Login),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             ],
-            expires: DateTime.UtcNow.Add(AccessTokenExpiryDuration),
+            expires: DateTime.UtcNow.Add(AuthOptions.AccessTokenExpiryDuration),
             signingCredentials: new SigningCredentials(
                 AuthOptions.GetSymmetricSecurityKey(_secret),
                 SecurityAlgorithms.HmacSha256));
@@ -112,7 +111,7 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
             throw new ValidationException("Токен обновления недействителен");
 
         user.RefreshToken = Guid.NewGuid().ToString();
-        user.RefreshTokenExpiryTime = RefreshTokenExpiryTime;
+        user.RefreshTokenExpiryTime = AuthOptions.RefreshTokenExpiryTime;
 
         await context.SaveChangesAsync();
 

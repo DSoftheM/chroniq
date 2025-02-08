@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Chroniq.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
@@ -29,6 +30,7 @@ public static class AuthServiceCollectionExtensions
                 ValidateLifetime = true,
                 IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(jwtSecret),
                 ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero
             };
         });
     }
