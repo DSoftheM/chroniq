@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Chroniq.Models;
 using Chroniq.Services.Exceptions;
 using Chroniq.Storage;
+using Hangfire;
 
 namespace Chroniq.Services;
 
@@ -17,39 +18,37 @@ public class LessonService(AppDbContext context, StudentService studentService)
         return await context.Lessons.Where(x => x.Student.Id == id).ToListAsync();
     }
 
-    public async Task<Lesson> Create(CreateLessonSiteDto dto)
+    public async Task<Lesson> Create(CreateLessonSiteDto dto, Guid userId)
     {
-        var student = await studentService.GetById(dto.Student.Id);
-        if (student == null) throw new NotFoundException();
+        var student = await context.Students
+            .Include(student => student.User)
+            .Where(s => s.User.Id == userId)
+            .FirstOrDefaultAsync(x => x.Id == dto.Student.Id);
+
+        if (student == null)
+            throw new NotFoundException("Student not found");
+
         var lesson = new Lesson()
         {
             Id = dto.Id, Date = dto.Date, Duration = dto.Duration, Description = dto.Description, Student = student,
             Paid = dto.Paid,
         };
+
         context.Lessons.Add(lesson);
-        await context.SaveChangesAsync();
-        return lesson;
-    }
 
-    public async Task<Lesson> UpdateOld(LessonSiteDto dto)
-    {
-        var foundLesson = await context.Lessons
-            .Include(lesson => lesson.Student)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == dto.Id);
+        var settings = await context.Settings.FirstOrDefaultAsync(x => x.User.Id == userId);
+        if (settings == null)
+            throw new NotFoundException("Settings not found");  
 
-        if (foundLesson == null) throw new NotFoundException();
-
-        var lesson = new Lesson()
+        if (settings.TelegramChatId != null)
         {
-            Id = dto.Id, Date = dto.Date, Duration = dto.Duration, Description = dto.Description,
-            Student = foundLesson.Student,
-            Paid = dto.Paid,
-        };
-
-        context.Entry(lesson).State = EntityState.Modified;
+            BackgroundJob.Schedule<TelegramNotificationService>(
+                (service) => service.Send($"{student.Name} {lesson.Date:HH:mm} - {lesson.Date.Add(lesson.Duration):HH:mm}", settings.TelegramChatId.Value),
+                dto.Date.Add(settings.NotifyBefore * -1));
+        }
 
         await context.SaveChangesAsync();
+
         return lesson;
     }
 

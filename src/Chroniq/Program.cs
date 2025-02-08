@@ -2,10 +2,12 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Chroniq.Converters;
 using Chroniq.Extensions;
+using Chroniq.Filters;
 using Chroniq.Services;
 using Chroniq.Services.Auth;
 using Chroniq.Services.WorkCalendar;
 using Chroniq.Storage;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -26,10 +28,16 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<WorkCalendarService>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<SettingsService>();
+builder.Services.AddScoped<TelegramNotificationService>();
 
 builder.Services.AddAppHealthChecks(connectionString, workCalendarUrl);
 builder.Services.AddAppAuthentication(jwtSecret);
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddHangfire(configuration =>
+{
+    configuration.UseStorage(new Hangfire.PostgreSql.PostgreSqlStorage(connectionString));
+});
+builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
@@ -49,13 +57,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+{
+    Authorization = [new HangfireAuthorizationFilter()]
+});
 app.MapControllers().RequireAuthorization();
-
 app.UseDefaultFiles();
 app.UseStaticFiles();
-
-
 app.UseHttpsRedirection();
 
 app.Run();

@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Chroniq.Bot\Chroniq.Bot.csproj" />
       <ProjectReference Include="..\Chroniq.DTOs\Chroniq.DTOs.csproj" />
       <ProjectReference Include="..\Chroniq.Storage\Chroniq.Storage.csproj" />
     </ItemGroup>
@@ -20,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Hangfire.Core" Version="1.8.17" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     </ItemGroup>
 

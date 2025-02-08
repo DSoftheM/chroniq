@@ -27,7 +27,7 @@ bot.OnMessage += async (msg, type) =>
         await bot.SendMessage(msg.Chat, $"Chat ID: {msg.Chat.Id}");
 };
 
-Console.WriteLine("Bot started");
+Console.WriteLine($"Bot started on {config.TelegramBotPort}");
 
 while (true)
 {
@@ -44,7 +44,7 @@ while (true)
     async void HandleSend()
     {
         var message = await new StreamReader(context.Request.InputStream).ReadToEndAsync();
-        var sendMessageDto = JsonSerializer.Deserialize<SendMessageDto>(message);
+        var sendMessageDto = JsonSerializer.Deserialize<TelegramMessage>(message);
 
         if (sendMessageDto == null)
             throw new Exception("Invalid message");
@@ -61,10 +61,4 @@ while (true)
             Console.WriteLine(e);
         }
     }
-}
-
-class SendMessageDto
-{
-    public long ChatId { get; set; }
-    public string Text { get; set; }
 }

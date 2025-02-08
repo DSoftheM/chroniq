@@ -97,14 +97,14 @@ export const RegisterPage: React.FC = () => {
   )
 }
 
-function isPasswordValid(password: string): boolean {
-  const isValidLength = password.length >= 8
-  const hasUppercase = /[A-Z]/.test(password)
-  const hasNumber = /[0-9]/.test(password)
-  const hasSpecialChar = /[^A-Za-z0-9]/.test(password)
+// function isPasswordValid(password: string): boolean {
+//   const isValidLength = password.length >= 8
+//   const hasUppercase = /[A-Z]/.test(password)
+//   const hasNumber = /[0-9]/.test(password)
+//   const hasSpecialChar = /[^A-Za-z0-9]/.test(password)
 
-  return isValidLength && hasUppercase && hasNumber && hasSpecialChar
-}
+//   return isValidLength && hasUppercase && hasNumber && hasSpecialChar
+// }
 
 const PasswordRequirements: React.FC<{ password: string }> = ({ password }) => {
   const isValidLength = password.length >= 8
