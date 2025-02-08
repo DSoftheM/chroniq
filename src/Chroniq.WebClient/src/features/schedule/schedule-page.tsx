@@ -1,22 +1,15 @@
-import React, { useRef, useState } from "react"
-import { LessonView } from "../main/lesson-view"
-import { toDateOnly, classesToDictionary } from "../main/lib"
+import { useRef, useState } from "react"
+import { classesToDictionary } from "../main/lib"
 import { useScheduleQuery } from "../main/api/use-schedule-query"
-import { PlusOutlined } from "@ant-design/icons"
 import { ContentPlaceholder } from "../main/content-placeholder"
 import { CreateOrUpdateLessonModal } from "../main/create-or-update-lesson-modal"
 import { DateTime } from "../main/types/lib"
 import { CreateOrUpdateStudentModal } from "../main/create-or-update-student-modal"
-import { Button, Flex, Space } from "antd"
+import { Button, Space } from "antd"
 import { Lesson } from "../main/types/lesson"
-import dayjs from "dayjs"
-import { Period } from "../main/types/period"
 import { useApplyMockDataMutation, useDeleteAllLessonsMutation, useDeleteStudentsMutation } from "../main/api/admin-api"
-import { S } from "../main/styled"
-import { TableHeader } from "./table-header"
 import { useIsArchiveRoute } from "./use-is-archive-route"
-import { useWorkCalendar } from "../main/api/use-work-calendar-query"
-import { DateCell } from "./date-cell"
+import { ScheduleTable } from "./schedule-table"
 
 type SelectedLesson = {
   studentId: string
@@ -33,7 +26,6 @@ export function SchedulePage() {
   const deleteAllLessons = useDeleteAllLessonsMutation()
   const deleteAllStudents = useDeleteStudentsMutation()
   const applyMockData = useApplyMockDataMutation()
-  const { isHoliday } = useWorkCalendar()
 
   if (scheduleQuery.isPending) return <div>Загрузка...</div>
   if (scheduleQuery.isError) return <div>Ошибка {scheduleQuery.error.message}</div>
@@ -43,10 +35,6 @@ export function SchedulePage() {
   scheduleItems.forEach(({ student, lessons }) => {
     dict[student.id] = classesToDictionary(lessons)
   })
-
-  const firstDay = dayjs((scheduleQuery.data.pageParams[0] as Period).start)
-  const lastDay = dayjs((scheduleQuery.data.pageParams.at(-1) as Period).end)
-  const days = Array.from({ length: lastDay.diff(firstDay, "day") + 1 }, (_, i) => firstDay.add(i, "day"))
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -87,64 +75,18 @@ export function SchedulePage() {
           initialStudent={scheduleItems.find(({ student }) => student.id === selectedStudentId)?.student}
         />
       )}
-      <S.Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
-        <TableHeader items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
-      </S.Table>
-      <S.Table
-        $studentsCount={scheduleItems.length ?? 0}
-        style={{ height: "100%", overflow: "auto" }}
-        onReachEnd={() => scheduleQuery.hasNextPage && scheduleQuery.fetchNextPage()}
-        onReachStart={() => scheduleQuery.hasPreviousPage && scheduleQuery.fetchPreviousPage()}
-      >
-        <TableHeader hide items={scheduleItems ?? []} onEdit={(s) => setSelectedStudentId(s.id)} />
 
-        {days
-          .map((x) => x.toDate().getTime())
-          .map((today) => {
-            return (
-              <React.Fragment key={today}>
-                <DateCell date={today} isHoliday={isHoliday(today)} />
-
-                {scheduleItems.map(({ student }) => {
-                  const lessons2 = dict[student.id]?.[toDateOnly(today)] ?? []
-
-                  return (
-                    <React.Fragment key={student.name}>
-                      <S.Cell>
-                        <Flex gap={2} vertical>
-                          {lessons2
-                            .toSorted((x, y) => x.date - y.date)
-                            .map((x) => {
-                              return (
-                                <LessonView
-                                  key={x.id}
-                                  lesson={x}
-                                  onEdit={() => setSelectedLesson({ studentId: student.id, lessonId: x.id })}
-                                />
-                              )
-                            })}
-
-                          <S.AddLessonButton
-                            style={{ width: "100%" }}
-                            variant="link"
-                            color="green"
-                            onClick={() => {
-                              setSelectedLesson({ studentId: student.id, lessonId: null })
-                              selectedDateRef.current = today
-                            }}
-                            icon={<PlusOutlined />}
-                          >
-                            Добавить занятие
-                          </S.AddLessonButton>
-                        </Flex>
-                      </S.Cell>
-                    </React.Fragment>
-                  )
-                })}
-              </React.Fragment>
-            )
-          })}
-      </S.Table>
+      <ScheduleTable
+        scheduleQuery={scheduleQuery}
+        onLessonCreate={(data, date) => {
+          setSelectedLesson(data)
+          selectedDateRef.current = date
+        }}
+        onLessonEdit={setSelectedLesson}
+        items={scheduleItems}
+        onStudentEdit={(id) => setSelectedStudentId(id)}
+        isArchiveRoute={isArchiveRoute}
+      />
     </div>
   )
 }

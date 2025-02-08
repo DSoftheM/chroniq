@@ -1,4 +1,4 @@
-import { Button, Flex, Form, Input, InputNumber, Switch } from "antd"
+import { Button, Flex, Form, Input, InputNumber, Switch, Typography } from "antd"
 import { useEffect } from "react"
 import { useGetSettingsQuery, useSaveSettingsMutation } from "./use-save-settings-mutation"
 import { TimeSpan } from "../main/types/lib"
@@ -43,6 +43,14 @@ export function SettingsPage() {
           value={settings?.telegramChatId}
           onChange={(e) => updateSettings({ ...settings!, telegramChatId: Number(e.target.value) })}
         />
+        <Typography.Link
+          href="https://t.me/chroniq_bot"
+          underline
+          target="_blank"
+          style={{ marginTop: 4, display: "block" }}
+        >
+          Получить Chat ID
+        </Typography.Link>
       </Form.Item>
       <Form.Item label="За сколько отправлять уведомление">
         <Flex gap={12}>
@@ -64,9 +72,18 @@ export function SettingsPage() {
           />
         </Flex>
       </Form.Item>
-      <Button type="primary" disabled={!isValid} onClick={() => saveMutation.mutate(settings!)}>
+      <Button
+        type="primary"
+        disabled={!isValid}
+        onClick={() => saveMutation.mutate(settings!)}
+        loading={saveMutation.isPending}
+      >
         Сохранить
       </Button>
+      <div style={{ marginTop: 12 }}>
+        {saveMutation.isError && <Typography.Text type="danger">{saveMutation.error.message}</Typography.Text>}
+        {saveMutation.isSuccess && <Typography.Text type="success">Настройки сохранены</Typography.Text>}
+      </div>
     </Form>
   )
 }
