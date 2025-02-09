@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Chroniq.Models;
 using Chroniq.Services.Exceptions;
+using Chroniq.Services.Notifications;
 using Chroniq.Storage;
 using Hangfire;
 
@@ -38,12 +39,16 @@ public class LessonService(AppDbContext context, StudentService studentService)
 
         var settings = await context.Settings.FirstOrDefaultAsync(x => x.User.Id == userId);
         if (settings == null)
-            throw new NotFoundException("Settings not found");  
+            throw new NotFoundException("Settings not found");
 
         if (settings.TelegramChatId != null)
         {
+            // TODO: Удалить ToLocalTime
             BackgroundJob.Schedule<TelegramNotificationService>(
-                (service) => service.Send($"{student.Name} {lesson.Date:HH:mm} - {lesson.Date.Add(lesson.Duration):HH:mm}", settings.TelegramChatId.Value),
+                (service) =>
+                    service.Send(
+                        $"{student.Name} {lesson.Date.ToLocalTime():HH:mm} - {lesson.Date.Add(lesson.Duration).ToLocalTime():HH:mm}",
+                        settings.TelegramChatId.Value),
                 dto.Date.Add(settings.NotifyBefore * -1));
         }
 

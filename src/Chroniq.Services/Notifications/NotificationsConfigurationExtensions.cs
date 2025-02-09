@@ -4,6 +4,8 @@ namespace Chroniq.Services.Notifications;
 
 public static class NotificationsConfigurationExtensions
 {
-    public static string GetTelegramPortOrThrow(this IConfiguration configuration) =>
-        configuration.GetSection("TelegramBotPort").Value ?? throw new Exception("Telegram bot port not found");
+    public static string GetTelegramBotApiKeyOrThrow(this IConfiguration self)
+    {
+        return self.GetSection("TelegramBotApiKey").Value ?? throw new Exception("Telegram bot api key not found");
+    }
 }

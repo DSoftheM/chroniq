@@ -1,19 +1,35 @@
-using System.Text.Json;
-using Chroniq.Services.Notifications;
-using ChroniqBot;
 using Microsoft.Extensions.Configuration;
+using Telegram.Bot;
+using Telegram.Bot.Types;
 
-namespace Chroniq.Services;
+namespace Chroniq.Services.Notifications;
 
-public class TelegramNotificationService(IConfiguration configuration)
+public class TelegramNotificationService
 {
+    private readonly TelegramBotClient _bot;
+
+    public TelegramNotificationService(IConfiguration configuration)
+    {
+        _bot = new(configuration.GetTelegramBotApiKeyOrThrow());
+        _bot.OnMessage += async (msg, type) =>
+        {
+            if (msg.Text is null) return;
+            Console.WriteLine($"Received {type} '{msg.Text}' in {msg.Chat}");
+        
+            if (msg.Text == "/start")
+                await _bot.SendMessage(msg.Chat, $"Chat ID: {msg.Chat.Id}");
+        };
+    }
+
     public async Task Send(string message, long chatId)
     {
-        var client = new HttpClient();
-        var telegramPort = configuration.GetTelegramPortOrThrow();
-        var msg = new TelegramMessage() { ChatId = chatId, Text = message };
-
-        await client.PostAsync($"http://localhost:{telegramPort}/send",
-            new StringContent(JsonSerializer.Serialize(msg)));
+        try
+        {
+            await _bot.SendMessage(new ChatId(chatId), message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

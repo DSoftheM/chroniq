@@ -5,6 +5,7 @@ using Chroniq.Extensions;
 using Chroniq.Filters;
 using Chroniq.Services;
 using Chroniq.Services.Auth;
+using Chroniq.Services.Notifications;
 using Chroniq.Services.WorkCalendar;
 using Chroniq.Storage;
 using Hangfire;
@@ -20,6 +21,8 @@ builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     x.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 });
+
+builder.Services.AddSingleton<TelegramNotificationService>();
 builder.Services.AddScoped<ScheduleService>();
 builder.Services.AddScoped<LessonService>();
 builder.Services.AddScoped<StudentService>();
@@ -28,7 +31,6 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<WorkCalendarService>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<SettingsService>();
-builder.Services.AddScoped<TelegramNotificationService>();
 
 builder.Services.AddAppHealthChecks(connectionString, workCalendarUrl);
 builder.Services.AddAppAuthentication(jwtSecret);
