@@ -43,11 +43,10 @@ public class LessonService(AppDbContext context, StudentService studentService)
 
         if (settings.TelegramChatId != null)
         {
-            // TODO: Удалить ToLocalTime
             BackgroundJob.Schedule<TelegramNotificationService>(
                 (service) =>
                     service.Send(
-                        $"{student.Name} {lesson.Date.ToLocalTime():HH:mm} - {lesson.Date.Add(lesson.Duration).ToLocalTime():HH:mm}",
+                        $"{student.Name} через {settings.NotifyBefore} минут",
                         settings.TelegramChatId.Value),
                 dto.Date.Add(settings.NotifyBefore * -1));
         }
