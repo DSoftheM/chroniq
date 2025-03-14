@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Chroniq.Models;
 using Chroniq.Services.Exceptions;
+using Chroniq.Services.Extensions;
 using Chroniq.Services.Notifications;
 using Chroniq.Storage;
 using Hangfire;
@@ -41,7 +42,7 @@ public class LessonService(AppDbContext context, StudentService studentService)
         if (settings == null)
             throw new NotFoundException("Settings not found");
 
-        if (settings.TelegramChatId != null)
+        if (settings.TelegramChatId != null && !dto.Date.IsPassed())
         {
             BackgroundJob.Schedule<TelegramNotificationService>(
                 (service) =>

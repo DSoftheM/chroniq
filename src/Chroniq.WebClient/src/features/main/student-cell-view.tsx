@@ -35,7 +35,7 @@ export function StudentCellView(props: Props) {
             </Avatar>
           )}
         </div>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div>{s.name}</div>
           <div>{s.defaultPrice}p</div>
           {s.description && <Ellipsis>{s.description}</Ellipsis>}
