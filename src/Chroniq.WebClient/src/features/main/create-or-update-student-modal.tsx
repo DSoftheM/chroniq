@@ -1,12 +1,26 @@
-import { Modal, InputNumber, Input, Form, notification, Flex, Avatar, Checkbox } from "antd"
+import {
+  Modal,
+  InputNumber,
+  Input,
+  Form,
+  notification,
+  Flex,
+  Avatar,
+  Checkbox,
+  Upload,
+  UploadFile,
+  message,
+} from "antd"
 import { createStudent, isStudentValid, Student } from "./types/student"
 import { useUpdateStudentMutation } from "./api/use-update-student-mutation"
 import { useCreateStudentMutation } from "./api/use-create-student-mutation"
 import { useImmer } from "use-immer"
 import { useScheduleQuery } from "./api/use-schedule-query"
 import { Nullish } from "./types/lib"
-import { SyncOutlined } from "@ant-design/icons"
+import { PlusOutlined, SyncOutlined } from "@ant-design/icons"
 import { useIsArchiveRoute } from "../schedule/use-is-archive-route"
+import { useState } from "react"
+import { api } from "@/api/provider"
 
 const { TextArea } = Input
 
@@ -19,16 +33,17 @@ export function CreateOrUpdateStudentModal(props: Props) {
   const isArchiveRoute = useIsArchiveRoute()
   const scheduleQuery = useScheduleQuery({ refetchOnMount: false, fetchArchived: isArchiveRoute })
 
+  const [fileList, setFileList] = useState<UploadFile[]>([])
   const [student, updateStudent] = useImmer<Student>(props.initialStudent ?? createStudent())
 
   const isEdit = Boolean(props.initialStudent)
   const updateStudentMutation = useUpdateStudentMutation()
   const createStudentMutation = useCreateStudentMutation()
 
-  const [api, contextHolder] = notification.useNotification()
+  const [{ info }, contextHolder] = notification.useNotification()
 
   const openNotification = () => {
-    api.info({
+    info({
       message: `Успешно`,
       type: "success",
       description: isEdit ? "Ученик обновлен" : "Ученик создан",
@@ -49,11 +64,13 @@ export function CreateOrUpdateStudentModal(props: Props) {
         title={isEdit ? `Редактировать ученика ${student.name}` : "Добавить"}
         open
         onOk={async () => {
-          if (isEdit) {
-            await updateStudentMutation.mutateAsync(student)
-          } else {
-            await createStudentMutation.mutateAsync(student)
+          const updated = {
+            ...student,
+            avatarUrl: fileList[0] ? api.getFileUrl(fileList[0].response.fileName) : student.avatarUrl,
           }
+          if (isEdit) await updateStudentMutation.mutateAsync(updated)
+          else await createStudentMutation.mutateAsync(updated)
+
           openNotification()
           props.close()
         }}
@@ -91,10 +108,10 @@ export function CreateOrUpdateStudentModal(props: Props) {
                   <SyncOutlined
                     onClick={() => {
                       updateStudent((draft) => {
-                        draft.avatarUrl = `https://api.dicebear.com/9.x/adventurer/svg?seed=${
-                          student.id + "-" + Date.now()
-                        }`
+                        const seed = student.id + "-" + Date.now()
+                        draft.avatarUrl = `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}`
                       })
+                      setFileList([])
                     }}
                   />
                 </div>
@@ -105,14 +122,42 @@ export function CreateOrUpdateStudentModal(props: Props) {
               <div style={{ flex: 1 }}>
                 <Input
                   value={student.avatarUrl}
-                  onChange={(e) =>
+                  placeholder="Ссылка на фото"
+                  onChange={(e) => {
                     updateStudent((draft) => {
                       draft.avatarUrl = e.target.value
                     })
-                  }
+                    setFileList([])
+                  }}
                 />
               </div>
-              <Avatar src={student.avatarUrl} size={150} />
+              <Upload
+                accept="image/*"
+                action="api/files/upload"
+                listType="picture-circle"
+                maxCount={1}
+                fileList={fileList}
+                onChange={async (x) => {
+                  updateStudent((draft) => {
+                    draft.avatarUrl = ""
+                  })
+                  setFileList(x.fileList)
+                  if (x.file.error && x.fileList.length) {
+                    message.error(x.file.response)
+                  }
+                }}
+              >
+                {(() => {
+                  if (fileList[0]) return null
+                  if (student.avatarUrl) return <Avatar src={student.avatarUrl} size={100} />
+                  return (
+                    <Flex gap={4}>
+                      <PlusOutlined />
+                      <div>Upload</div>
+                    </Flex>
+                  )
+                })()}
+              </Upload>
             </Flex>
           </Form.Item>
 

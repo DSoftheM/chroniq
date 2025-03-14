@@ -31,6 +31,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<WorkCalendarService>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<SettingsService>();
+builder.Services.AddScoped<FileService>();
 
 builder.Services.AddAppHealthChecks(connectionString, workCalendarUrl);
 builder.Services.AddAppAuthentication(jwtSecret);
@@ -65,7 +66,6 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions()
 });
 app.MapControllers().RequireAuthorization();
 app.UseDefaultFiles();
-app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.Run();

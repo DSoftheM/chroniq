@@ -24,6 +24,7 @@ http.interceptors.response.use(undefined, async (err: AxiosError) => {
 })
 
 export const api = {
+  getFileUrl: (fileName: string) => `/api/files/download/${fileName}`,
   login: (login: string, password: string) => http.post("/auth/login", { login, password }),
   register: (login: string, password: string) =>
     http.post("/auth/register", { login, password }, { withCredentials: true }),

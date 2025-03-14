@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Lesson> Lessons { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Settings> Settings { get; set; }
+    public DbSet<UserFile> Files { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
