@@ -63,6 +63,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions()
 });
 app.MapControllers().RequireAuthorization();
 app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.Run();
