@@ -1,32 +1,29 @@
 import { PropsWithChildren } from "react"
-import styled from "styled-components"
+import { useScrollDirection } from "./use-scroll-direction"
 
 type Props = {
   onReachEnd?: () => void
   onReachStart?: () => void
 } & React.HTMLAttributes<HTMLDivElement>
 
-const Root = styled.div``
-
 export function Scroll(props: PropsWithChildren<Props>) {
   const { children, onReachStart, onReachEnd, ...rest } = props
 
+  const detect = useScrollDirection()
+
   return (
-    <Root
+    <div
       {...rest}
-      onScroll={({ target }) => {
-        const t = target as HTMLDivElement
+      onScroll={(ev) => {
+        const { isVerticalScroll, reachTop, reachBottom } = detect(ev)
 
-        if (Math.round(t.scrollHeight - t.scrollTop) <= t.clientHeight + 1) {
-          onReachEnd?.()
-        }
-
-        if (t.scrollTop === 0) {
-          onReachStart?.()
+        if (isVerticalScroll) {
+          if (reachTop) onReachStart?.()
+          if (reachBottom) onReachEnd?.()
         }
       }}
     >
       {children}
-    </Root>
+    </div>
   )
 }

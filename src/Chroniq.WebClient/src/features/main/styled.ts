@@ -5,7 +5,7 @@ import { HideScroll } from "@/lib/styled.lib"
 
 const Table = styled(Scroll)<{ $studentsCount: number }>`
   display: grid;
-  grid-template-columns: 150px repeat(${(props) => props.$studentsCount}, minmax(100px, 1fr));
+  grid-template-columns: 150px repeat(${(props) => props.$studentsCount}, minmax(400px, 1fr));
   position: relative;
 
   ${HideScroll}

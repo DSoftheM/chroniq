@@ -4,25 +4,31 @@ import { StudentCellView } from "../main/student-cell-view"
 import { S } from "../main/styled"
 import { ScheduleItem } from "../main/types/schedule"
 import { Student } from "../main/types/student"
+import styled from "styled-components"
+import { ZIndex } from "@/lib/styled.lib"
 
-export function TableHeader({
-  items,
-  onEdit,
-  hide,
-}: {
-  items: ScheduleItem[]
-  onEdit: (s: Student) => void
-  hide?: boolean
-}) {
+const Root = styled.div`
+  display: grid;
+  grid-template-columns: 150px repeat(9, minmax(400px, 1fr));
+  grid-column: 1 / -1;
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: ${ZIndex.TableHeader};
+  background-color: #fff;
+  padding: 0;
+`
+
+export function TableHeader({ items, onEdit }: { items: ScheduleItem[]; onEdit: (s: Student) => void }) {
   const changeOrderMutation = useChangeStudentOrderMutation()
 
   return (
-    <>
-      <S.EmptyCell style={{ height: hide ? "0" : "auto", border: "none" }} />
+    <Root>
+      <S.EmptyCell style={{ border: "none" }} />
 
       {items.map(({ student, order }, i) => {
         return (
-          <div style={{ height: hide ? "0" : "auto", overflow: "hidden", padding: 0, border: "none" }} key={student.id}>
+          <div style={{ overflow: "hidden", padding: 0, border: "none" }} key={student.id}>
             <StudentCellView
               isFirst={i === 0}
               isLast={i === items.length - 1}
@@ -58,7 +64,7 @@ export function TableHeader({
           </div>
         )
       })}
-    </>
+    </Root>
   )
 }
 

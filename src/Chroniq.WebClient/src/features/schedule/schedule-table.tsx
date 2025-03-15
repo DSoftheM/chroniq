@@ -10,6 +10,7 @@ import { useWorkCalendar } from "../main/api/use-work-calendar-query"
 import { useScheduleQuery } from "../main/api/use-schedule-query"
 import { DateTime } from "../main/types/lib"
 import { getDaysForView, processScheduleItems } from "./lib"
+import { Scroll } from "@/components/scroll"
 
 type Props = {
   items: ScheduleItem[]
@@ -30,17 +31,13 @@ export function ScheduleTable(props: Props) {
   const { getLessons } = processScheduleItems(scheduleItems)
 
   return (
-    <>
-      <S.Table $studentsCount={scheduleItems.length ?? 0} style={{ position: "sticky" }}>
+    <Scroll
+      style={{ maxHeight: "100%", overflow: "auto" }}
+      onReachEnd={() => props.scheduleQuery.hasNextPage && props.scheduleQuery.fetchNextPage()}
+      onReachStart={() => props.scheduleQuery.hasPreviousPage && props.scheduleQuery.fetchPreviousPage()}
+    >
+      <S.Table $studentsCount={scheduleItems.length ?? 0}>
         <TableHeader items={scheduleItems ?? []} onEdit={(s) => props.onStudentEdit(s.id)} />
-      </S.Table>
-      <S.Table
-        $studentsCount={scheduleItems.length ?? 0}
-        style={{ height: "100%", overflow: "auto" }}
-        onReachEnd={() => props.scheduleQuery.hasNextPage && props.scheduleQuery.fetchNextPage()}
-        onReachStart={() => props.scheduleQuery.hasPreviousPage && props.scheduleQuery.fetchPreviousPage()}
-      >
-        <TableHeader hide items={scheduleItems ?? []} onEdit={(s) => props.onStudentEdit(s.id)} />
 
         {days
           .map((x) => x.toDate().getTime())
@@ -86,6 +83,6 @@ export function ScheduleTable(props: Props) {
             )
           })}
       </S.Table>
-    </>
+    </Scroll>
   )
 }

@@ -9,5 +9,6 @@ export const HideScroll = css`
 
 export enum ZIndex {
   _AntInput = 1,
-  Sider = 2,
+  TableHeader = 2,
+  Sider = 3,
 }
