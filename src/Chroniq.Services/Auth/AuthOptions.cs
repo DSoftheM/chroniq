@@ -9,8 +9,7 @@ public static class AuthOptions
     public const string Audience = "ChroniqAuthClient";
     
     public static DateTime RefreshTokenExpiryTime => DateTime.UtcNow.AddDays(7);
-    // public static TimeSpan AccessTokenExpiryDuration => TimeSpan.FromMinutes(15);
-    public static TimeSpan AccessTokenExpiryDuration => TimeSpan.FromSeconds(15);
+    public static TimeSpan AccessTokenExpiryDuration => TimeSpan.FromMinutes(60);
     
     public static SymmetricSecurityKey GetSymmetricSecurityKey(string key) => new (Encoding.UTF8.GetBytes(key));
 }
