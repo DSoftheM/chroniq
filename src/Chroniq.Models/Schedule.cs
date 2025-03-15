@@ -8,5 +8,6 @@ public class Schedule
 public class ScheduleItemSiteDto
 {
     public StudentSiteDto Student { get; set; }
+    public int Order { get; set; }
     public List<LessonSiteDto> Lessons { get; set; }
 }

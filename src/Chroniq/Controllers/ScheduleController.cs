@@ -1,7 +1,7 @@
+using Chroniq.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Chroniq.Models;
 using Chroniq.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Chroniq.Controllers;
 
@@ -12,4 +12,10 @@ public class ScheduleController(ScheduleService scheduleService) : ControllerBas
     [Route("")]
     public async Task<Schedule> GetSchedule(Period period, bool archived) =>
         await scheduleService.GetAll(period, archived, HttpContext);
+    
+    [Route("change-order")]
+    [HttpPost]
+    public async Task ChangeOrder(ChangeOrderDto dto) =>
+        await scheduleService.ChangeOrder(dto);
 }
+

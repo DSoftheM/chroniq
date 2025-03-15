@@ -7,5 +7,6 @@ export type Schedule = {
 
 export type ScheduleItem = {
   student: Student
+  order: number
   lessons: Lesson[]
 }

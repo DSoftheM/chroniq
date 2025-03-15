@@ -7,6 +7,7 @@ using Chroniq.Services;
 using Chroniq.Services.Auth;
 using Chroniq.Services.Notifications;
 using Chroniq.Services.WorkCalendar;
+using Chroniq.Startup;
 using Chroniq.Storage;
 using Hangfire;
 
@@ -44,11 +45,7 @@ builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await context.Database.MigrateAsync();
-}
+await DbStartup.Run(app);
 
 if (app.Environment.IsDevelopment())
 {

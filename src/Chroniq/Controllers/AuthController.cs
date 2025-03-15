@@ -10,7 +10,12 @@ namespace Chroniq.Controllers;
 public class AuthController(AuthService authService) : Controller
 {
     private static CookieOptions AccessTokenCookiesOptions => new()
-        { HttpOnly = true, Expires = DateTime.UtcNow.Add(AuthOptions.AccessTokenExpiryDuration) };
+    {
+        HttpOnly = true,
+        Expires = DateTime.UtcNow.Add(AuthOptions.AccessTokenExpiryDuration),
+        SameSite = SameSiteMode.None,
+        Secure = true
+    };
 
     private static CookieOptions RefreshTokenCookiesOptions =>
         new() { Path = "api/auth/refresh", HttpOnly = true, Expires = AuthOptions.RefreshTokenExpiryTime };

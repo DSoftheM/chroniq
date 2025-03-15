@@ -18,6 +18,10 @@ public class StudentService(AppDbContext context)
         var student = ToModel(dto, user);
 
         context.Students.Add(student);
+
+        var maxOrder = context.Orders.Max(x => x.Order);
+        context.Orders.Add(new StudentOrder() { Student = student, Order = maxOrder + 1 });
+
         await context.SaveChangesAsync();
 
         return student.ToSiteDto();
@@ -32,8 +36,8 @@ public class StudentService(AppDbContext context)
 
         var userId = httpContext.GetUserId();
         var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-        
-        if (user == null) 
+
+        if (user == null)
             throw new NotFoundException();
 
         student.Name = dto.Name;

@@ -18,7 +18,6 @@ namespace Chroniq.Services.Auth;
 public class AuthService(AppDbContext context, IConfiguration configuration)
 {
     private readonly string _secret = configuration.GetJwtSecretOrThrow();
-    
 
     public async Task<AuthTokens> Login(AuthLoginPayload payload)
     {

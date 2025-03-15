@@ -6,6 +6,7 @@ import { Period } from "../features/main/types/period"
 import { nav } from "@/lib/nav"
 import { WordCalendar } from "./types/word-calendar"
 import { Settings } from "./types/settings"
+import { ChangeOrderDTO } from "./types/change-order-dto"
 
 const http = axios.create({
   baseURL: "/api",
@@ -32,6 +33,7 @@ export const api = {
 
   getSchedule: (period: Period, archived: boolean) =>
     http.post<Schedule>(`/schedule${archived ? "?archived=true" : ""}`, period).then((res) => res.data),
+  changeStudentsOrders: (dto: ChangeOrderDTO) => http.post("/schedule/change-order", dto),
 
   createStudent: (student: Student) => http.post("/student", student),
   updateStudent: (student: Student) => http.post("/student/update", student),

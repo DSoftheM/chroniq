@@ -43,10 +43,14 @@ export function useScheduleQuery(options: { refetchOnMount?: boolean; fetchArchi
       return {
         pageParams: data.pageParams,
         pages: data.pages,
-        items: [...studentIds].map((id) => ({
-          student: data.pages[0].items.find(({ student }) => student.id === id)!.student,
-          lessons: d[id],
-        })),
+        items: [...studentIds].map((id) => {
+          const item = data.pages[0].items.find(({ student }) => student.id === id)!
+          return {
+            student: item.student,
+            order: item.order,
+            lessons: d[id],
+          }
+        }),
       }
     },
     queryKey: [QueryName.ScheduleQuery, options.fetchArchived],
