@@ -14,7 +14,5 @@ public class StudentOrderConfiguration : IEntityTypeConfiguration<StudentOrder>
             .HasForeignKey<StudentOrder>(x => x.Id)
             .IsRequired()   
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasIndex(x => x.Order).IsUnique();
     }
 }
