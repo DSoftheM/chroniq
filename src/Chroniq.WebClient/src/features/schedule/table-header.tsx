@@ -23,9 +23,6 @@ export function TableHeader({
       {items.map(({ student, order }, i) => {
         return (
           <div style={{ height: hide ? "0" : "auto", overflow: "hidden", padding: 0, border: "none" }} key={student.id}>
-            {order}
-            <br />
-            {student.id}
             <StudentCellView
               isFirst={i === 0}
               isLast={i === items.length - 1}
