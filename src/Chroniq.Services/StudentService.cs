@@ -26,13 +26,15 @@ public class StudentService(AppDbContext context)
     public async Task<Student> Update(StudentSiteDto dto, HttpContext httpContext)
     {
         var student = await context.Students
-            .Include(student => student.Lessons)
             .FirstOrDefaultAsync(x => x.Id == dto.Id);
 
         if (student == null) throw new NotFoundException();
 
         var userId = httpContext.GetUserId();
-        var user = await context.Users.FirstAsync(x => x.Id == userId);
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        
+        if (user == null) 
+            throw new NotFoundException();
 
         student.Name = dto.Name;
         student.AvatarUrl = dto.AvatarUrl;
@@ -43,11 +45,6 @@ public class StudentService(AppDbContext context)
 
         await context.SaveChangesAsync();
         return student;
-    }
-
-    public async Task<Student?> GetById(Guid id)
-    {
-        return await context.Students.FirstOrDefaultAsync(x => x.Id == id);
     }
 
     private static Student ToModel(StudentSiteDto dto, User user)

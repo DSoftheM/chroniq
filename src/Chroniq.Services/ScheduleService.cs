@@ -14,8 +14,11 @@ public class ScheduleService(AppDbContext context, StudentService studentService
         var userId = httpContext.GetUserId();
 
         var allStudents = await context.Students.Include(x => x.User).ToListAsync();
-        allStudents = allStudents.Where(x => x.User.Id == userId && x.IsArchived == archived).ToList();
-        
+        allStudents = allStudents
+            .Where(x => x.User.Id == userId && x.IsArchived == archived)
+            .OrderBy(x => x.Name)
+            .ToList();
+
         foreach (var student in allStudents)
         {
             var lessons = (await lessonService.GetByStudentId(student.Id))

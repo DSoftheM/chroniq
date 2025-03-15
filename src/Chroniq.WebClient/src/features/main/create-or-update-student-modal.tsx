@@ -121,7 +121,7 @@ export function CreateOrUpdateStudentModal(props: Props) {
             <Flex gap={10} align="center">
               <div style={{ flex: 1 }}>
                 <Input
-                  value={student.avatarUrl}
+                  value={student.avatarUrl.startsWith("/api/files/download/") ? "" : student.avatarUrl}
                   placeholder="Ссылка на фото"
                   onChange={(e) => {
                     updateStudent((draft) => {
@@ -163,6 +163,7 @@ export function CreateOrUpdateStudentModal(props: Props) {
 
           <Form.Item label="Описание">
             <TextArea
+              autoSize
               value={student.description}
               onChange={(e) =>
                 updateStudent((draft) => {

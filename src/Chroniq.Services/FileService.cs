@@ -1,6 +1,8 @@
+using Chroniq.Models;
 using Chroniq.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chroniq.Services;
 
@@ -8,7 +10,7 @@ public class FileService(AppDbContext dbContext)
 {
     private const string UploadPath = "uploads";
 
-    public async Task<object> UploadFile(IFormFile file)
+    public async Task<object> UploadFile(IFormFile file, Guid userId)
     {
         if (file.Length == 0)
             throw new Exception("Пустой файл");
@@ -27,6 +29,14 @@ public class FileService(AppDbContext dbContext)
 
         await using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
+        
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        
+        if (user == null)
+            throw new Exception();
+        
+        dbContext.Files.Add(new UserFile() { FileName = fileName, User = user });
+        await dbContext.SaveChangesAsync();
 
         return new { FileName = fileName, Message = "Файл загружен успешно" };
     }

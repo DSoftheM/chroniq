@@ -11,7 +11,7 @@ public class FileController(FileService fileService) : ControllerBase
     [HttpPost("upload")]
     public async Task<IActionResult> UploadFile(IFormFile file)
     {
-        return Ok(await fileService.UploadFile(file));
+        return Ok(await fileService.UploadFile(file, HttpContext.GetUserId()));
     }
 
     [HttpGet("download/{fileName}")]
