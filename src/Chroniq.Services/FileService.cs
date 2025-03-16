@@ -1,14 +1,16 @@
 using Chroniq.Models;
+using Chroniq.Services.FileCleanup;
 using Chroniq.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Chroniq.Services;
 
-public class FileService(AppDbContext dbContext)
+public class FileService(AppDbContext dbContext, IConfiguration configuration)
 {
-    private const string UploadPath = "uploads";
+    private readonly string _uploadPath = configuration.GetFileStoragePath();
 
     public async Task<object> UploadFile(IFormFile file, Guid userId)
     {
@@ -18,14 +20,14 @@ public class FileService(AppDbContext dbContext)
         if (!file.ContentType.StartsWith("image/"))
             throw new Exception("Только изображения");
 
-        if (file.Length > 5_000_000)
+        if (file.Length > 5 * 1024 * 1024)
             throw new Exception("Максимум 5 MB");
 
-        if (!Directory.Exists(UploadPath))
-            Directory.CreateDirectory(UploadPath);
+        if (!Directory.Exists(_uploadPath))
+            Directory.CreateDirectory(_uploadPath);
 
         var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-        var filePath = Path.Combine(UploadPath, fileName);
+        var filePath = Path.Combine(_uploadPath, fileName);
 
         await using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
@@ -48,7 +50,7 @@ public class FileService(AppDbContext dbContext)
         if (userFile == null)
             throw new Exception();
 
-        var filePath = Path.Combine("uploads", userFile.FileName);
+        var filePath = Path.Combine(_uploadPath, userFile.FileName);
 
         if (!File.Exists(filePath))
             throw new Exception();

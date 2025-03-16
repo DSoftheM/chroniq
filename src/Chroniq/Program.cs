@@ -5,11 +5,13 @@ using Chroniq.Extensions;
 using Chroniq.Filters;
 using Chroniq.Services;
 using Chroniq.Services.Auth;
+using Chroniq.Services.FileCleanup;
 using Chroniq.Services.Notifications;
 using Chroniq.Services.WorkCalendar;
 using Chroniq.Startup;
 using Chroniq.Storage;
 using Hangfire;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -23,6 +25,15 @@ builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 });
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+Log.Information("Приложение запущено");
+Log.Warning("Это предупреждение");
+Log.Error("Это ошибка");
+
 builder.Services.AddSingleton<TelegramNotificationService>();
 builder.Services.AddScoped<ScheduleService>();
 builder.Services.AddScoped<LessonService>();
@@ -33,6 +44,7 @@ builder.Services.AddScoped<WorkCalendarService>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<SettingsService>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddHostedService<FileCleanupService>();
 
 builder.Services.AddAppHealthChecks(connectionString, workCalendarUrl);
 builder.Services.AddAppAuthentication(jwtSecret);
@@ -42,6 +54,8 @@ builder.Services.AddHangfire(configuration =>
     configuration.UseStorage(new Hangfire.PostgreSql.PostgreSqlStorage(connectionString));
 });
 builder.Services.AddHangfireServer();
+
+builder.Host.UseSerilog(); 
 
 var app = builder.Build();
 
