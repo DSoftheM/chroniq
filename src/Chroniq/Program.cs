@@ -6,6 +6,7 @@ using Chroniq.Filters;
 using Chroniq.Services;
 using Chroniq.Services.Auth;
 using Chroniq.Services.FileCleanup;
+using Chroniq.Services.FileService;
 using Chroniq.Services.Notifications;
 using Chroniq.Services.WorkCalendar;
 using Chroniq.Startup;

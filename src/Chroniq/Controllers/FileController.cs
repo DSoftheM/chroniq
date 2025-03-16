@@ -1,5 +1,6 @@
 using Chroniq.Services;
 using Chroniq.Services.Extensions;
+using Chroniq.Services.FileService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chroniq.Controllers;
@@ -15,9 +16,9 @@ public class FileController(FileService fileService) : ControllerBase
     }
 
     [HttpGet("download/{fileName}")]
-    public IActionResult DownloadFile(string fileName)
+    public async Task<FileResult> DownloadFile(string fileName)
     {
-        var bytes = fileService.DownloadFile(fileName, HttpContext.GetUserId());
+        var bytes = await fileService.DownloadFile(fileName, HttpContext.GetUserId());
         return File(bytes, "application/octet-stream", fileName);
     }
 }
