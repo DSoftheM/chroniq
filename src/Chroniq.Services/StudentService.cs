@@ -19,7 +19,7 @@ public class StudentService(AppDbContext context)
 
         context.Students.Add(student);
 
-        var maxOrder = context.Orders.Max(x => x.Order);
+        var maxOrder = context.Orders.Any() ? context.Orders.Max(x => x.Order) : 0;
         context.Orders.Add(new StudentOrder() { Student = student, Order = maxOrder + 1 });
 
         await context.SaveChangesAsync();

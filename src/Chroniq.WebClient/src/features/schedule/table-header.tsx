@@ -7,9 +7,9 @@ import { Student } from "../main/types/student"
 import styled from "styled-components"
 import { ZIndex } from "@/lib/styled.lib"
 
-const Root = styled.div`
+const Root = styled.div<{ $studentsCount: number }>`
   display: grid;
-  grid-template-columns: 150px repeat(9, minmax(400px, 1fr));
+  grid-template-columns: 150px repeat(${(props) => props.$studentsCount}, minmax(400px, 1fr));
   grid-column: 1 / -1;
   position: sticky;
   left: 0;
@@ -23,7 +23,7 @@ export function TableHeader({ items, onEdit }: { items: ScheduleItem[]; onEdit: 
   const changeOrderMutation = useChangeStudentOrderMutation()
 
   return (
-    <Root>
+    <Root $studentsCount={items.length}>
       <S.EmptyCell style={{ border: "none" }} />
 
       {items.map(({ student, order }, i) => {
