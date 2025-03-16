@@ -54,8 +54,9 @@ public class FileCleanupService(
 
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
-        var usedFiles = dbContext.Students.Select(x => x.AvatarUrl).AsEnumerable().Where(IsAbsolute);
+
+        var usedFiles = dbContext.Students.Select(x => x.AvatarUrl).AsEnumerable().Where(IsRelative)
+            .Select(Path.GetFileName).ToList();
         var allFiles = dbContext.Files.Select(x => x.FileName);
 
         var toDelete = allFiles.Except(usedFiles).ToList();
@@ -78,15 +79,11 @@ public class FileCleanupService(
         logger.LogInformation(JsonSerializer.Serialize(result));
     }
 
-    private static bool IsAbsolute(string? path)
+    private static bool IsRelative(string? path)
     {
         if (string.IsNullOrEmpty(path))
             return false;
-
-        if (Uri.TryCreate(path, UriKind.Absolute, out var uriResult) &&
-            (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
-            return true;
-
-        return false;
+        
+        return !Uri.TryCreate(path, UriKind.Absolute, out _);
     }
 }

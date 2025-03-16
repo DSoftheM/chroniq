@@ -58,7 +58,7 @@ export function StudentCellView(props: Props) {
         <Actions>
           {!props.isFirst && <Button type="text" icon={<CaretLeftOutlined />} onClick={() => props.onMove("left")} />}
           {!props.isLast && <Button type="text" icon={<CaretRightOutlined />} onClick={() => props.onMove("right")} />}
-          <Button type="text" icon={<EditOutlined onClick={() => props.onEdit()} />} />
+          <Button type="text" icon={<EditOutlined />} onClick={() => props.onEdit()} />
         </Actions>
       </Flex>
     </Cell>

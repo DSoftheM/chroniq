@@ -53,7 +53,7 @@ public class FileService(AppDbContext dbContext, IConfiguration configuration)
         var filePath = Path.Combine(_uploadPath, userFile.FileName);
 
         if (!File.Exists(filePath))
-            throw new Exception();
+            throw new Exception($"Файл {userFile.FileName} не найден");
 
         var fileBytes = File.ReadAllBytes(filePath);
 
