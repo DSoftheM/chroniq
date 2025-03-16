@@ -30,10 +30,6 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-Log.Information("Приложение запущено");
-Log.Warning("Это предупреждение");
-Log.Error("Это ошибка");
-
 builder.Services.AddSingleton<TelegramNotificationService>();
 builder.Services.AddScoped<ScheduleService>();
 builder.Services.AddScoped<LessonService>();
