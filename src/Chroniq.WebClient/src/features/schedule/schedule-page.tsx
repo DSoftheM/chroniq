@@ -9,6 +9,7 @@ import { Button, Space } from "antd"
 import { Lesson } from "../main/types/lesson"
 import { useIsArchiveRoute } from "./use-is-archive-route"
 import { ScheduleTable } from "./schedule-table"
+import { SaveGroupModal } from "../main/save-group-modal"
 
 type SelectedLesson = {
   studentId: string
@@ -18,6 +19,7 @@ type SelectedLesson = {
 export function SchedulePage() {
   const [selectedLesson, setSelectedLesson] = useState<SelectedLesson | null>(null)
   const [selectedStudentId, setSelectedStudentId] = useState<string | null | "create">(null)
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null | "create">(null)
   const selectedDateRef = useRef<DateTime | undefined>(undefined)
   const isArchiveRoute = useIsArchiveRoute()
   const scheduleQuery = useScheduleQuery({ fetchArchived: isArchiveRoute })
@@ -39,6 +41,9 @@ export function SchedulePage() {
         <Button type="primary" onClick={() => setSelectedStudentId("create")}>
           Добавить ученика
         </Button>
+        <Button type="primary" onClick={() => setSelectedGroupId("create")}>
+          Добавить группу
+        </Button>
       </Space>
 
       {selectedLesson && (
@@ -46,6 +51,21 @@ export function SchedulePage() {
           creationDate={selectedDateRef.current}
           close={() => setSelectedLesson(null)}
           student={scheduleItems.find(({ student }) => student.id === selectedLesson.studentId)!.student}
+          initialLesson={
+            selectedStudentId === "create"
+              ? null
+              : scheduleItems
+                  .find(({ student }) => student.id === selectedLesson.studentId)
+                  ?.lessons.find(({ id }) => id === selectedLesson.lessonId) ?? null
+          }
+        />
+      )}
+
+      {selectedGroupId && (
+        <SaveGroupModal
+          creationDate={selectedDateRef.current}
+          close={() => setSelectedGroupId(null)}
+          group={scheduleItems.find(({ student }) => student.id === selectedLesson.studentId)!.student}
           initialLesson={
             selectedStudentId === "create"
               ? null
