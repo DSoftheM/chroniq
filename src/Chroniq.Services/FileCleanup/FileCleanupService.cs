@@ -43,7 +43,7 @@ public class FileCleanupService(
         var directoryInfo = new DirectoryInfo(_uploadPath);
         FileCleanupResult result = new()
         {
-            InitialSize = directoryInfo.EnumerateFiles().Sum(file => file.Length)
+            InitialTotalSizeBytes = directoryInfo.EnumerateFiles().Sum(file => file.Length)
         };
 
         if (!directoryInfo.Exists)
@@ -55,7 +55,9 @@ public class FileCleanupService(
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        var usedFiles = dbContext.Students.Select(x => x.AvatarUrl).AsEnumerable().Where(IsRelative)
+        var usedFiles = dbContext.Students.Select(x => x.AvatarUrl)
+            .Where(url => url != null && (url.StartsWith("/") || !url.Contains("://")))
+            .AsEnumerable()
             .Select(Path.GetFileName).ToList();
         var allFiles = dbContext.Files.Select(x => x.FileName);
 
@@ -66,15 +68,15 @@ public class FileCleanupService(
             var filePath = Path.Combine(_uploadPath, path);
             if (File.Exists(filePath))
             {
-                result.FilesDeleted++;
-                result.SpaceSaved += new FileInfo(filePath).Length;
+                result.DeletedFilesCount++;
+                result.SpaceFreedBytes += new FileInfo(filePath).Length;
                 File.Delete(filePath);
                 logger.LogInformation($"{filePath} deleted.");
             }
         }
 
-        result.FinalSize = directoryInfo.EnumerateFiles().Sum(file => file.Length);
-        result.TimePassed = DateTime.UtcNow - start;
+        result.FinalTotalSizeBytes = directoryInfo.EnumerateFiles().Sum(file => file.Length);
+        result.ElapsedTime = DateTime.UtcNow - start;
 
         logger.LogInformation(JsonSerializer.Serialize(result));
     }
@@ -83,7 +85,7 @@ public class FileCleanupService(
     {
         if (string.IsNullOrEmpty(path))
             return false;
-        
+
         return !Uri.TryCreate(path, UriKind.Absolute, out _);
     }
 }

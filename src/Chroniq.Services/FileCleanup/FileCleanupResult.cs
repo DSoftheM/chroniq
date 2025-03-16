@@ -2,9 +2,9 @@ namespace Chroniq.Services.FileCleanup;
 
 public class FileCleanupResult
 {
-    public long InitialSize { get; set; }
-    public long FinalSize { get; set; }
-    public TimeSpan TimePassed { get; set; }
-    public long SpaceSaved { get; set; }
-    public int FilesDeleted { get; set; }
+    public long InitialTotalSizeBytes { get; set; }
+    public long FinalTotalSizeBytes { get; set; }
+    public TimeSpan ElapsedTime { get; set; }
+    public long SpaceFreedBytes { get; set; }
+    public int DeletedFilesCount { get; set; }
 }
