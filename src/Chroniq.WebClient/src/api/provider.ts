@@ -45,10 +45,6 @@ export const api = {
   getSettings: () => http.get<Settings>("/settings").then((res) => res.data),
   saveSettings: (data: Settings) => http.post("/settings/save", data),
 
-  deleteAllLessons: () => http.get("/admin/delete-all-lessons"),
-  deleteAllStudents: () => http.get("/admin/delete-all-students"),
-  applyMockData: () => http.get("/admin/apply-mock-data"),
-
   // getWorkCalendar: () =>
   //   axios.get<WordCalendar>("https://xmlcalendar.ru/data/ru/2025/calendar.json").then((res) => res.data),
 

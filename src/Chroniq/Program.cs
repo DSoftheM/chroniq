@@ -34,7 +34,6 @@ builder.Services.AddSingleton<TelegramNotificationService>();
 builder.Services.AddScoped<ScheduleService>();
 builder.Services.AddScoped<LessonService>();
 builder.Services.AddScoped<StudentService>();
-builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<WorkCalendarService>();
 builder.Services.AddScoped<HttpClient>();
