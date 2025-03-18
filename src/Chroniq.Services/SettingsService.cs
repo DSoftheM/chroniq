@@ -8,26 +8,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chroniq.Services;
 
-public class SettingsService(AppDbContext context)
+public class SettingsService(AppDbContext context, UserService userService)
 {
-    public async Task<Settings?> Get(HttpContext httpContext)
+    private readonly Guid _userId = userService.UserId;
+
+    public async Task<Settings?> Get()
     {
-        var userId = httpContext.GetUserId();
-        return await context.Settings.FirstOrDefaultAsync(x => x.User.Id == userId);
+        return await context.Settings.FirstOrDefaultAsync(x => x.User.Id == _userId);
     }
-    
-    public async Task<Settings?> Save(SettingsDto dto, HttpContext httpContext)
+
+    public async Task<Settings?> Save(SettingsDto dto)
     {
-        var userId = httpContext.GetUserId();
-        
-        var settings = await context.Settings.FirstOrDefaultAsync(x => x.User.Id == userId);
-        if (settings == null) 
+        var settings = await context.Settings.FirstOrDefaultAsync(x => x.User.Id == _userId);
+        if (settings == null)
             return null;
 
         settings.EnableNotifications = dto.EnableNotifications;
         settings.NotifyBefore = dto.NotifyIn;
         settings.TelegramChatId = dto.TelegramChatId;
-        
+
         await context.SaveChangesAsync();
         return settings;
     }

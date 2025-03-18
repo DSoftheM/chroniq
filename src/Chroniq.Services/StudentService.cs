@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace Chroniq.Services;
 
-public class StudentService(AppDbContext context)
+public class StudentService(AppDbContext context, UserService userService)
 {
-    public async Task<StudentSiteDto> Create(StudentSiteDto dto, HttpContext httpContext)
+    private readonly Guid _userId = userService.UserId;
+
+    public async Task<StudentSiteDto> Create(StudentSiteDto dto)
     {
-        var userId = httpContext.GetUserId();
-        var user = await context.Users.FirstAsync(x => x.Id == userId);
+        var user = await context.Users.FirstAsync(x => x.Id == _userId);
 
         var student = ToModel(dto, user);
 
@@ -27,15 +28,14 @@ public class StudentService(AppDbContext context)
         return student.ToSiteDto();
     }
 
-    public async Task<Student> Update(StudentSiteDto dto, HttpContext httpContext)
+    public async Task<Student> Update(StudentSiteDto dto)
     {
         var student = await context.Students
             .FirstOrDefaultAsync(x => x.Id == dto.Id);
 
         if (student == null) throw new NotFoundException();
 
-        var userId = httpContext.GetUserId();
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == _userId);
 
         if (user == null)
             throw new NotFoundException();

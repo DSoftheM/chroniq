@@ -8,8 +8,10 @@ using Hangfire;
 
 namespace Chroniq.Services;
 
-public class LessonService(AppDbContext context, StudentService studentService)
+public class LessonService(AppDbContext context, UserService userService)
 {
+    private readonly Guid _userId = userService.UserId;
+
     public async Task<List<Lesson>> GetAll()
     {
         return await context.Lessons.AsNoTracking().ToListAsync();
@@ -20,11 +22,11 @@ public class LessonService(AppDbContext context, StudentService studentService)
         return await context.Lessons.Where(x => x.Student.Id == id).ToListAsync();
     }
 
-    public async Task<Lesson> Create(CreateLessonSiteDto dto, Guid userId)
+    public async Task<Lesson> Create(CreateLessonSiteDto dto)
     {
         var student = await context.Students
             .Include(student => student.User)
-            .Where(s => s.User.Id == userId)
+            .Where(s => s.User.Id == _userId)
             .FirstOrDefaultAsync(x => x.Id == dto.Student.Id);
 
         if (student == null)
@@ -38,7 +40,7 @@ public class LessonService(AppDbContext context, StudentService studentService)
 
         context.Lessons.Add(lesson);
 
-        var settings = await context.Settings.FirstOrDefaultAsync(x => x.User.Id == userId);
+        var settings = await context.Settings.FirstOrDefaultAsync(x => x.User.Id == _userId);
         if (settings == null)
             throw new NotFoundException("Settings not found");
 

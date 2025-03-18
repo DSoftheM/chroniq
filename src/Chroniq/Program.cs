@@ -32,7 +32,9 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Services.AddSingleton<TelegramNotificationService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ScheduleService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LessonService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<AuthService>();

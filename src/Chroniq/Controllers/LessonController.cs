@@ -13,7 +13,7 @@ public class LessonController(LessonService lessonService) : ControllerBase
     
     [Route("")]
     [HttpPost]
-    public async Task CreateLesson(CreateLessonSiteDto dto) => await lessonService.Create(dto, HttpContext.GetUserId());
+    public async Task CreateLesson(CreateLessonSiteDto dto) => await lessonService.Create(dto);
     
     [Route("update")]
     [HttpPost]

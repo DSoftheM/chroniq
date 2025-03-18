@@ -8,11 +8,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Chroniq.Services.FileService;
 
-public class FileService(AppDbContext dbContext, IConfiguration configuration, ILogger<FileService> logger)
+public class FileService(
+    AppDbContext dbContext,
+    IConfiguration configuration,
+    ILogger<FileService> logger,
+    UserService userService)
 {
     private readonly string _uploadPath = configuration.GetFileStoragePath();
+    private readonly Guid _userId = userService.UserId;
 
-    public async Task<FileUploadResponse> UploadFile(IFormFile file, Guid userId)
+    public async Task<FileUploadResponse> UploadFile(IFormFile file)
     {
         if (file.Length == 0)
             throw new ArgumentException("Пустой файл");
@@ -23,7 +28,7 @@ public class FileService(AppDbContext dbContext, IConfiguration configuration, I
         if (file.Length > 5 * 1024 * 1024)
             throw new Exception("Максимум 5 MB");
 
-        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == _userId);
 
         if (user == null)
             throw new InvalidOperationException();
@@ -33,11 +38,11 @@ public class FileService(AppDbContext dbContext, IConfiguration configuration, I
 
         var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
         var filePath = Path.Combine(_uploadPath, fileName);
-        
+
         if (File.Exists(filePath))
             throw new InvalidOperationException("Файл с таким именем уже существует");
 
-        logger.LogInformation($"Начало загрузки файла для пользователя {userId}");
+        logger.LogInformation($"Начало загрузки файла для пользователя {_userId}");
 
         try
         {
@@ -58,9 +63,9 @@ public class FileService(AppDbContext dbContext, IConfiguration configuration, I
         return new FileUploadResponse() { FileName = fileName, Message = "Файл загружен успешно" };
     }
 
-    public async Task<byte[]> DownloadFile(string fileName, Guid userId)
+    public async Task<byte[]> DownloadFile(string fileName)
     {
-        var userFile = dbContext.Files.FirstOrDefault(f => f.FileName == fileName && f.User.Id == userId);
+        var userFile = dbContext.Files.FirstOrDefault(f => f.FileName == fileName && f.User.Id == _userId);
 
         if (userFile == null)
             throw new FileNotFoundException();
