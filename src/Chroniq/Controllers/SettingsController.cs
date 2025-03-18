@@ -13,12 +13,12 @@ public class SettingsController(SettingsService settingsService) : ControllerBas
     [Route("")]
     public async Task<SettingsDto?> GetSettings()
     {
-        return (await settingsService.Get(HttpContext))?.ToSiteDto() ?? null;
+        return (await settingsService.Get())?.ToSiteDto() ?? null;
     }
     
     [Route("save")]
     public async Task SaveSettings(SettingsDto dto)
     {
-        await settingsService.Save(dto, HttpContext);
+        await settingsService.Save(dto);
     }
 }

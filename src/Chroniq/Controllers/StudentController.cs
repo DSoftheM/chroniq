@@ -13,13 +13,13 @@ public class StudentController(StudentService studentService) : ControllerBase
     [HttpPost]
     public Task CreateStudent(StudentSiteDto student)
     {
-        return studentService.Create(student, HttpContext);
+        return studentService.Create(student);
     }
 
     [Route("update")]
     [HttpPost]
     public Task UpdateStudent(StudentSiteDto student)
     {
-        return studentService.Update(student, HttpContext);
+        return studentService.Update(student);
     }
 }

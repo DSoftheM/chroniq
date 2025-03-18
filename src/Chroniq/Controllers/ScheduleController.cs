@@ -11,7 +11,7 @@ public class ScheduleController(ScheduleService scheduleService) : ControllerBas
 {
     [Route("")]
     public async Task<Schedule> GetSchedule(Period period, bool archived) =>
-        await scheduleService.GetAll(period, archived, HttpContext);
+        await scheduleService.GetAll(period, archived);
     
     [Route("change-order")]
     [HttpPost]
