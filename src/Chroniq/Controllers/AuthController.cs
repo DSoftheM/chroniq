@@ -1,5 +1,6 @@
 using Chroniq.DTOs.Auth;
 using Chroniq.Services.Auth;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,6 +51,15 @@ public class AuthController(AuthService authService) : Controller
         Response.Cookies.Append("refresh_token", tokens.RefreshToken, RefreshTokenCookiesOptions);
     }
 
+    [Route("test")]
+    [AllowAnonymous]
+    [HttpPost]
+    public ClubMember Test(ClubMember data)
+    {
+        Console.WriteLine(ModelState.IsValid);
+        return data;
+    }
+
     [Route("logout")]
     [HttpGet]
     public IActionResult Logout()
@@ -57,5 +67,35 @@ public class AuthController(AuthService authService) : Controller
         Response.Cookies.Delete("refresh_token");
         Response.Cookies.Delete("access_token");
         return Ok();
+    }
+}
+
+public class ClubMember
+{
+    public string Role { get; set; }
+    public required int Number { get; set; }
+    public Data Data { get; set; }
+}
+
+public class Data
+{
+    public required int Value { get; set; }
+}
+
+public class ClubMemberValidator : AbstractValidator<ClubMember>
+{
+    public ClubMemberValidator()
+    {
+        RuleFor(x => x.Role).Length(3, 25);
+        RuleFor(x => x.Number).InclusiveBetween(1, 100);
+        RuleFor(x => x.Data).SetValidator(new DataValidator());
+    }
+}
+
+public class DataValidator : AbstractValidator<Data>
+{
+    public DataValidator()
+    {
+        RuleFor(x => x.Value).NotNull().InclusiveBetween(20, 30);
     }
 }

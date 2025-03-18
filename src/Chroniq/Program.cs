@@ -11,6 +11,8 @@ using Chroniq.Services.Notifications;
 using Chroniq.Services.WorkCalendar;
 using Chroniq.Startup;
 using Chroniq.Storage;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Hangfire;
 using Serilog;
 
@@ -32,6 +34,8 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Services.AddSingleton<TelegramNotificationService>();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ScheduleService>();
 builder.Services.AddScoped<UserService>();
