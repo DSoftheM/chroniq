@@ -12,6 +12,5 @@ public static class HttpContextExtensions
             throw new UnauthorizedAccessException("User ID is missing in the token");
 
         return Guid.Parse(userIdClaim.Value);
-
     }
 }
