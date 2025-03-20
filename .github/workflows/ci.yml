@@ -6,6 +6,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug with tmate
+        uses: mxschmitt/action-tmate@v3
+
       - name: Log
         run: echo "Hello World"
 
