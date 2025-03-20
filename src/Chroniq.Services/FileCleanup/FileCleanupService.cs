@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Text.Json;
 using Chroniq.Storage;
 using Microsoft.Extensions.Configuration;
@@ -56,7 +57,7 @@ public class FileCleanupService(
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         var usedFiles = dbContext.Students.Select(x => x.AvatarUrl)
-            .Where(url => url != null && (url.StartsWith("/") || !url.Contains("://")))
+            .Where(IsRelative())
             .AsEnumerable()
             .Select(Path.GetFileName).ToList();
         var allFiles = dbContext.Files.Select(x => x.FileName);
@@ -81,11 +82,8 @@ public class FileCleanupService(
         logger.LogInformation(JsonSerializer.Serialize(result));
     }
 
-    private static bool IsRelative(string? path)
+    private static Expression<Func<string?, bool>> IsRelative()
     {
-        if (string.IsNullOrEmpty(path))
-            return false;
-
-        return !Uri.TryCreate(path, UriKind.Absolute, out _);
+        return url => url != null && (url.StartsWith("/") || !url.Contains("://"));
     }
 }
