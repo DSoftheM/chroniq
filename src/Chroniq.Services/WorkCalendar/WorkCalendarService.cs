@@ -24,9 +24,11 @@ public class WorkCalendarService(
 
     private async Task<WorkCalendarSiteDto> GetWorkCalendarFromApi()
     {
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token;
+        
         try
         {
-            var response = await httpClient.GetAsync(configuration.GetWorkCalendarUrlOrThrow());
+            var response = await httpClient.GetAsync(configuration.GetWorkCalendarUrlOrThrow(), cts);
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
 

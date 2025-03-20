@@ -16,11 +16,11 @@ public class FileCleanupService(
     private readonly string _uploadPath = configuration.GetFileStoragePath();
     private readonly TimeSpan _taskDelay = TimeSpan.FromHours(24);
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("File Cleanup Service is starting.");
 
-        while (!stoppingToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
@@ -31,7 +31,7 @@ public class FileCleanupService(
                 logger.LogError(ex, "An error occurred while cleaning up files.");
             }
 
-            await Task.Delay(_taskDelay, stoppingToken);
+            await Task.Delay(_taskDelay, cancellationToken);
         }
 
         logger.LogInformation("File Cleanup Service is stopping.");
