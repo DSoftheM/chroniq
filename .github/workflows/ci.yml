@@ -14,8 +14,8 @@ jobs:
         with:
           node-version: latest
 
-      - name: Debug with tmate
-        uses: mxschmitt/action-tmate@v3
+      #   - name: Debug with tmate
+      #     uses: mxschmitt/action-tmate@v3
 
       - name: install deps
         run: npm install
