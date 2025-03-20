@@ -14,13 +14,10 @@ jobs:
         with:
           node-version: latest
 
-      #   - name: Debug with tmate
-      #     uses: mxschmitt/action-tmate@v3
-
       - name: install deps
         run: npm install
         working-directory: ./src/Chroniq.WebClient
 
       - name: lint
-        run: npm run lint
+        run: npm run lint:fix
         working-directory: ./src/Chroniq.WebClient
