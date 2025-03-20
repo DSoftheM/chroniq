@@ -33,6 +33,10 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
+builder.Services.AddHttpClient<WorkCalendarService>(client =>
+{
+    client.BaseAddress = new Uri(workCalendarUrl);
+});
 builder.Services.AddSingleton<TelegramNotificationService>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
@@ -43,7 +47,6 @@ builder.Services.AddScoped<LessonService>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<WorkCalendarService>();
-builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<SettingsService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddHostedService<FileCleanupService>();
