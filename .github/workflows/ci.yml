@@ -19,6 +19,7 @@ jobs:
 
       - name: install deps
         run: npm install
+        working-directory: ./src/Chroniq.WebClient
 
       - name: lint
         run: npm run lint
