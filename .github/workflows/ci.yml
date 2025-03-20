@@ -8,6 +8,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: setup node
         uses: actions/setup-node@v4
@@ -21,3 +23,11 @@ jobs:
       - name: lint
         run: npm run lint:fix
         working-directory: ./src/Chroniq.WebClient
+
+      - name: Commit lint fixes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git commit -m "GitHub Actions: eslint fixes" || echo "No changes to commit"
+          git push
