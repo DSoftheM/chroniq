@@ -17,11 +17,6 @@ public class LessonService(AppDbContext context, UserService userService)
         return await context.Lessons.AsNoTracking().ToListAsync();
     }
 
-    public async Task<List<Lesson>> GetByStudentId(Guid id)
-    {
-        return await context.Lessons.Where(x => x.Student.Id == id).ToListAsync();
-    }
-
     public async Task<Lesson> Create(CreateLessonSiteDto dto)
     {
         var student = await context.Students

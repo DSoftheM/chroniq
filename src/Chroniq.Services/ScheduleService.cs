@@ -33,8 +33,9 @@ public class ScheduleService(
             if (!studentOrders.TryGetValue(student.Id, out var studentOrder))
                 throw new NotFoundException($"Order not found for student {student.Id}");
 
-            var lessons = (await lessonService.GetByStudentId(student.Id))
-                .Where(x => x.Date >= period.Start && x.Date <= period.End);
+            var lessons = await context.Lessons
+                .Where(x => x.Student.Id == student.Id && x.Date >= period.Start && x.Date <= period.End)
+                .ToListAsync();
 
             schedule.Items.Add(new ScheduleItemSiteDto()
             {
