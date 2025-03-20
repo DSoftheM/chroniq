@@ -16,12 +16,12 @@ jobs:
         with:
           node-version: latest
 
-      - name: install deps
-        run: npm install
+      - name: npm install -g yarn && yarn
+        run: npm install -g yarn && yarn
         working-directory: ./src/Chroniq.WebClient
 
-      - name: lint
-        run: npm run lint:fix
+      - name: yarn lint:fix
+        run: yarn lint:fix
         working-directory: ./src/Chroniq.WebClient
 
       - name: Commit lint fixes
