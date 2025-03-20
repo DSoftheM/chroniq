@@ -18,7 +18,7 @@ jobs:
           node-version: latest
 
       - name: change dir
-        run: cd src/Chroniq.WebClient
+        run: cd ./src/Chroniq.WebClient
 
       - name: ls
         run: ls
