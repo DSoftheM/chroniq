@@ -8,3 +8,14 @@ jobs:
     steps:
       - name: Log
         run: echo "Hello World"
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: log node version
+        run: node --version
