@@ -15,6 +15,8 @@ const client = new QueryClient({
   },
 })
 
+let x = 1
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={client}>
