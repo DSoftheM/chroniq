@@ -20,6 +20,9 @@ jobs:
       - name: change dir
         run: cd src/Chroniq.WebClient
 
+      - name: ls
+        run: ls
+
       - name: log node version
         run: node --version
 
