@@ -12,10 +12,9 @@ public class ScheduleController(ScheduleService scheduleService) : ControllerBas
     [Route("")]
     public async Task<Schedule> GetSchedule(Period period, bool archived) =>
         await scheduleService.GetAll(period, archived);
-    
+
     [Route("change-order")]
     [HttpPost]
     public async Task ChangeOrder(ChangeOrderDto dto) =>
         await scheduleService.ChangeOrder(dto);
 }
-

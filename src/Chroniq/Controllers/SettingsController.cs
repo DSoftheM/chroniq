@@ -15,7 +15,7 @@ public class SettingsController(SettingsService settingsService) : ControllerBas
     {
         return (await settingsService.Get())?.ToSiteDto() ?? null;
     }
-    
+
     [Route("save")]
     public async Task SaveSettings(SettingsDto dto)
     {
