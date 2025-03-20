@@ -6,12 +6,6 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Debug with tmate
-        uses: mxschmitt/action-tmate@v3
-
-      - name: Log
-        run: echo "Hello World"
-
       - name: checkout
         uses: actions/checkout@v4
 
@@ -20,17 +14,12 @@ jobs:
         with:
           node-version: latest
 
-      - name: change dir
-        run: cd ./src/Chroniq.WebClient
-
-      - name: ls
-        run: ls
-
-      - name: log node version
-        run: node --version
+      - name: Debug with tmate
+        uses: mxschmitt/action-tmate@v3
 
       - name: install deps
         run: npm install
 
       - name: lint
         run: npm run lint
+        working-directory: ./src/Chroniq.WebClient
