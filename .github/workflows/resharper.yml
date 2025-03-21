@@ -19,6 +19,7 @@ jobs:
       - name: Download ReSharper CLI
         if: steps.cache-resharper.outputs.cache-hit != 'true'
         run: |
+          pwd
           cd ..
           pwd
           cd ..
