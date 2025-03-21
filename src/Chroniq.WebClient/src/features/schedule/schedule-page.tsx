@@ -61,7 +61,7 @@ export function SchedulePage() {
         />
       )}
 
-      {selectedGroupId && (
+      {/* {selectedGroupId && (
         <SaveGroupModal
           creationDate={selectedDateRef.current}
           close={() => setSelectedGroupId(null)}
@@ -74,7 +74,7 @@ export function SchedulePage() {
                   ?.lessons.find(({ id }) => id === selectedLesson.lessonId) ?? null
           }
         />
-      )}
+      )} */}
 
       {selectedStudentId && (
         <CreateOrUpdateStudentModal
