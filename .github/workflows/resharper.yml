@@ -26,4 +26,5 @@ jobs:
         run: chmod +x resharper/cleanupcode.sh
 
       - name: Run CleanupCode
-        run: ./resharper/cleanupcode.sh YourSolution.sln
+        run: ./resharper/cleanupcode.sh Chroniq.sln
+        working-directory: ./src
