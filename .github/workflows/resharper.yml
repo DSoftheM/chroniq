@@ -1,0 +1,35 @@
+name: Run ReSharper CleanupCode
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Cache ReSharper CLI
+        id: cache-resharper
+        uses: actions/cache@v3
+        with:
+          path: resharper
+          key: resharper-2024.3.6
+
+      - name: Download ReSharper CLI
+        if: steps.cache-resharper.outputs.cache-hit != 'true'
+        run: |
+          wget -O resharper.zip "https://download.jetbrains.com/resharper/dotUltimate.2024.3.6/JetBrains.ReSharper.CommandLineTools.2024.3.6.zip"
+          unzip resharper.zip -d resharper
+
+      - name: Make CleanupCode Executable
+        run: chmod +x resharper/CleanupCode.sh
+
+      - name: Run CleanupCode
+        run: ./resharper/CleanupCode.sh YourSolution.sln
