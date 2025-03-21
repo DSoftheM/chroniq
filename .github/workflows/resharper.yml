@@ -20,6 +20,7 @@ jobs:
         if: steps.cache-resharper.outputs.cache-hit != 'true'
         run: |
           cd ..
+          pwd
           wget -O resharper.zip "https://download.jetbrains.com/resharper/dotUltimate.2024.3.6/JetBrains.ReSharper.CommandLineTools.2024.3.6.zip"
           unzip resharper.zip -d resharper
 
