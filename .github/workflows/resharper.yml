@@ -19,6 +19,7 @@ jobs:
       - name: Download ReSharper CLI
         if: steps.cache-resharper.outputs.cache-hit != 'true'
         run: |
+          cd ..
           wget -O resharper.zip "https://download.jetbrains.com/resharper/dotUltimate.2024.3.6/JetBrains.ReSharper.CommandLineTools.2024.3.6.zip"
           unzip resharper.zip -d resharper
 
@@ -26,4 +27,13 @@ jobs:
         run: chmod +x resharper/cleanupcode.sh
 
       - name: Run CleanupCode
-        run: ./resharper/cleanupcode.sh ./src/Chroniq.sln
+        run: ../resharper/cleanupcode.sh ./src/Chroniq.sln
+
+      - name: Commit lint fixes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          git pull
+          git add .
+          git commit -m "GitHub Actions: resharper fixes" || echo "No changes to commit"
+          git push
