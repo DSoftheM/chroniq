@@ -14,7 +14,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: resharper
-          key: resharper-2024.3.6-1
+          key: resharper-2024.3.6-2
 
       - name: Download ReSharper CLI
         if: steps.cache-resharper.outputs.cache-hit != 'true'
