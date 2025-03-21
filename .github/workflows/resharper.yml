@@ -23,7 +23,7 @@ jobs:
           unzip resharper.zip -d resharper
 
       - name: Make CleanupCode Executable
-        run: chmod +x resharper/CleanupCode.sh
+        run: chmod +x resharper/cleanupcode.sh
 
       - name: Run CleanupCode
-        run: ./resharper/CleanupCode.sh YourSolution.sln
+        run: ./resharper/cleanupcode.sh YourSolution.sln
