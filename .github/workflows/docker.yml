@@ -1,8 +1,6 @@
 name: Builder Docker Image
 
-on:
-  push:
-    branches: ["main"]
+on: [push]
 
 # on:
 #   workflow_run:
