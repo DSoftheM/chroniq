@@ -1,10 +1,14 @@
 name: Builder Docker Image
 
 on:
-  workflow_run:
-    workflows: ["ESLint", "Run ReSharper CleanupCode"]
-    types:
-      - completed
+  push:
+    branches: ["main"]
+
+# on:
+#   workflow_run:
+#     workflows: ["ESLint", "Run ReSharper CleanupCode"]
+#     types:
+#       - completed
 
 jobs:
   deploy:
