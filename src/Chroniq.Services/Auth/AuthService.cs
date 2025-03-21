@@ -52,7 +52,7 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
 
         using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(salt));
 
-        var user = new User()
+        var user = new User
         {
             Id = Guid.NewGuid(),
             Login = payload.Login,
@@ -61,7 +61,7 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
             RefreshTokenExpiryTime = AuthOptions.RefreshTokenExpiryTime,
             PasswordSalt = salt
         };
-        
+
         var settings = new Settings
         {
             Id = Guid.NewGuid(), UserId = user.Id, EnableNotifications = false,
@@ -82,12 +82,11 @@ public class AuthService(AppDbContext context, IConfiguration configuration)
     private string GenerateAccessToken(User user)
     {
         var jwt = new JwtSecurityToken(
-            issuer: AuthOptions.Issuer,
-            audience: AuthOptions.Audience,
-            claims:
+            AuthOptions.Issuer,
+            AuthOptions.Audience,
             [
                 new Claim(ClaimTypes.Name, user.Login),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             ],
             expires: DateTime.UtcNow.Add(AuthOptions.AccessTokenExpiryDuration),
             signingCredentials: new SigningCredentials(

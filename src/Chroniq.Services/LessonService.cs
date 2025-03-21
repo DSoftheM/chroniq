@@ -1,10 +1,10 @@
-using Microsoft.EntityFrameworkCore;
 using Chroniq.Models;
 using Chroniq.Services.Exceptions;
 using Chroniq.Services.Extensions;
 using Chroniq.Services.Notifications;
 using Chroniq.Storage;
 using Hangfire;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chroniq.Services;
 
@@ -27,10 +27,10 @@ public class LessonService(AppDbContext context, UserService userService)
         if (student == null)
             throw new NotFoundException("Student not found");
 
-        var lesson = new Lesson()
+        var lesson = new Lesson
         {
             Id = dto.Id, Date = dto.Date, Duration = dto.Duration, Description = dto.Description, Student = student,
-            Paid = dto.Paid,
+            Paid = dto.Paid
         };
 
         context.Lessons.Add(lesson);
@@ -40,14 +40,12 @@ public class LessonService(AppDbContext context, UserService userService)
             throw new NotFoundException("Settings not found");
 
         if (settings.TelegramChatId != null && !dto.Date.IsPassed())
-        {
             BackgroundJob.Schedule<TelegramNotificationService>(
-                (service) =>
+                service =>
                     service.Send(
                         $"{student.Name} через {settings.NotifyBefore} минут",
                         settings.TelegramChatId.Value),
                 dto.Date.Add(settings.NotifyBefore * -1));
-        }
 
         await context.SaveChangesAsync();
 

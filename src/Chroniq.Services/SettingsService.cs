@@ -1,9 +1,6 @@
-using System.Security.Claims;
 using Chroniq.DTOs;
 using Chroniq.Models;
-using Chroniq.Services.Extensions;
 using Chroniq.Storage;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chroniq.Services;

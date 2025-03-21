@@ -32,8 +32,8 @@ public static class DbStartup
         {
             var order = await context.Orders.FirstOrDefaultAsync(x => x.Id == student.Id);
             if (order != null) continue;
-            
-            var studentOrder = new StudentOrder()
+
+            var studentOrder = new StudentOrder
             {
                 Id = student.Id,
                 Student = student,

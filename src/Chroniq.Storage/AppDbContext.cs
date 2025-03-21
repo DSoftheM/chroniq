@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
 using Chroniq.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chroniq.Storage;
 

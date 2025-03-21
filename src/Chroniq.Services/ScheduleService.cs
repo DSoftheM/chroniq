@@ -1,9 +1,7 @@
 using Chroniq.DTOs;
 using Chroniq.Models;
 using Chroniq.Services.Exceptions;
-using Chroniq.Services.Extensions;
 using Chroniq.Storage;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chroniq.Services;
@@ -37,7 +35,7 @@ public class ScheduleService(
                 .Where(x => x.Student.Id == student.Id && x.Date >= period.Start && x.Date <= period.End)
                 .ToListAsync();
 
-            schedule.Items.Add(new ScheduleItemSiteDto()
+            schedule.Items.Add(new ScheduleItemSiteDto
             {
                 Student = student.ToSiteDto(), Lessons = lessons.Select(x => x.ToSiteDto()).ToList(),
                 Order = studentOrder.Order

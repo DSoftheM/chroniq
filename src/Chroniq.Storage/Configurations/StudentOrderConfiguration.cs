@@ -1,6 +1,6 @@
+using Chroniq.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Chroniq.Models;
 
 namespace Chroniq.Storage.Configurations;
 
@@ -12,7 +12,7 @@ public class StudentOrderConfiguration : IEntityTypeConfiguration<StudentOrder>
             .HasOne(x => x.Student)
             .WithOne()
             .HasForeignKey<StudentOrder>(x => x.Id)
-            .IsRequired()   
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

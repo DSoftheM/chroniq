@@ -39,7 +39,7 @@ public static class LessonExtensions
             Duration = lesson.Duration,
             Date = lesson.Date,
             Description = lesson.Description,
-            Paid = lesson.Paid,
+            Paid = lesson.Paid
         };
     }
 }

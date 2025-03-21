@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Chroniq.Services.Extensions;
 using Microsoft.AspNetCore.Http;
 

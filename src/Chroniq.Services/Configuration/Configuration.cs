@@ -19,7 +19,6 @@ public class LogLevelConfiguration
     public required string MicrosoftAspNetCore { get; set; }
 }
 
-
 public class ConnectionStringsConfiguration
 {
     public required string DefaultConnection { get; set; }

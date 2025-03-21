@@ -49,7 +49,7 @@ public class FileService(
             await using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
 
-            dbContext.Files.Add(new UserFile() { FileName = fileName, User = user });
+            dbContext.Files.Add(new UserFile { FileName = fileName, User = user });
             await dbContext.SaveChangesAsync();
 
             logger.LogInformation("Файл {FileName} успешно загружен", fileName);
@@ -60,7 +60,7 @@ public class FileService(
             throw;
         }
 
-        return new FileUploadResponse() { FileName = fileName, Message = "Файл загружен успешно" };
+        return new FileUploadResponse { FileName = fileName, Message = "Файл загружен успешно" };
     }
 
     public async Task<byte[]> DownloadFile(string fileName)

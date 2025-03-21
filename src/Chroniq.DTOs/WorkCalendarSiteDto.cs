@@ -5,7 +5,7 @@ public class WorkCalendarSiteDto
     public int Year { get; set; }
     public List<MonthItem> Months { get; set; }
     public List<Transition> Transitions { get; set; }
-    public Statistic Statistic { get; set; } 
+    public Statistic Statistic { get; set; }
 }
 
 public class MonthItem

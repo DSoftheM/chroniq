@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
 using Chroniq.Converters;
 using Chroniq.Extensions;
 using Chroniq.Filters;
@@ -14,6 +13,8 @@ using Chroniq.Storage;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
+using Hangfire.PostgreSql;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder();
@@ -33,10 +34,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-builder.Services.AddHttpClient<WorkCalendarService>(client =>
-{
-    client.BaseAddress = new Uri(workCalendarUrl);
-});
+builder.Services.AddHttpClient<WorkCalendarService>(client => { client.BaseAddress = new Uri(workCalendarUrl); });
 builder.Services.AddSingleton<TelegramNotificationService>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
@@ -54,29 +52,24 @@ builder.Services.AddHostedService<FileCleanupService>();
 builder.Services.AddAppHealthChecks(connectionString, workCalendarUrl);
 builder.Services.AddAppAuthentication(jwtSecret);
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-builder.Services.AddHangfire(configuration =>
-{
-    configuration.UseStorage(new Hangfire.PostgreSql.PostgreSqlStorage(connectionString));
-});
+builder.Services.AddHangfire(configuration => { configuration.UseStorage(new PostgreSqlStorage(connectionString)); });
 builder.Services.AddHangfireServer();
 
-builder.Host.UseSerilog(); 
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
 await DbStartup.Run(app);
 
 if (app.Environment.IsDevelopment())
-{
     app.UseCors(policyBuilder =>
     {
-        policyBuilder.AllowAnyHeader().AllowAnyMethod().WithOrigins(["http://localhost:5173"]).AllowCredentials();
+        policyBuilder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:5173").AllowCredentials();
     });
-}
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = [new HangfireAuthorizationFilter()]
 });

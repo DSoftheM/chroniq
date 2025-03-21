@@ -14,8 +14,8 @@ public class FileCleanupService(
     IServiceProvider serviceProvider)
     : BackgroundService
 {
-    private readonly string _uploadPath = configuration.GetFileStoragePath();
     private readonly TimeSpan _taskDelay = TimeSpan.FromHours(24);
+    private readonly string _uploadPath = configuration.GetFileStoragePath();
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {

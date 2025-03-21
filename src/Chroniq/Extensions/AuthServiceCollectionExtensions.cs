@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using Chroniq.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Chroniq.Extensions;
@@ -12,7 +10,7 @@ public static class AuthServiceCollectionExtensions
     {
         self.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
-            options.Events = new JwtBearerEvents()
+            options.Events = new JwtBearerEvents
             {
                 OnMessageReceived = context =>
                 {
@@ -21,7 +19,7 @@ public static class AuthServiceCollectionExtensions
                 }
             };
 
-            options.TokenValidationParameters = new TokenValidationParameters()
+            options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidIssuer = AuthOptions.Issuer,

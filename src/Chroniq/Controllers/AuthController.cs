@@ -1,6 +1,5 @@
 using Chroniq.DTOs.Auth;
 using Chroniq.Services.Auth;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

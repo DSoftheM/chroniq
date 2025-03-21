@@ -8,13 +8,13 @@ public class WorkCalendarService(
     HttpClient httpClient,
     IConfiguration configuration)
 {
-    private static readonly JsonSerializerOptions Options = new() { PropertyNameCaseInsensitive = true };
     private const string FileName = "work-calendar.json";
-    
+    private static readonly JsonSerializerOptions Options = new() { PropertyNameCaseInsensitive = true };
+
     public async Task<WorkCalendarSiteDto?> GetWorkCalendar()
     {
         var file = new FileInfo(FileName);
-        
+
         if (!file.Exists)
             return await SaveFile();
 
@@ -25,7 +25,7 @@ public class WorkCalendarService(
     private async Task<WorkCalendarSiteDto> GetWorkCalendarFromApi()
     {
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token;
-        
+
         try
         {
             var response = await httpClient.GetAsync(configuration.GetWorkCalendarUrlOrThrow(), cts);

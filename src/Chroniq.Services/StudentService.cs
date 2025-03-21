@@ -1,10 +1,7 @@
-﻿using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using Chroniq.Models;
+﻿using Chroniq.Models;
 using Chroniq.Services.Exceptions;
-using Chroniq.Services.Extensions;
 using Chroniq.Storage;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chroniq.Services;
 
@@ -21,7 +18,7 @@ public class StudentService(AppDbContext context, UserService userService)
         context.Students.Add(student);
 
         var maxOrder = context.Orders.Any() ? context.Orders.Max(x => x.Order) : 0;
-        context.Orders.Add(new StudentOrder() { Student = student, Order = maxOrder + 1 });
+        context.Orders.Add(new StudentOrder { Student = student, Order = maxOrder + 1 });
 
         await context.SaveChangesAsync();
 
@@ -53,7 +50,7 @@ public class StudentService(AppDbContext context, UserService userService)
 
     private static Student ToModel(StudentSiteDto dto, User user)
     {
-        return new Student()
+        return new Student
         {
             Id = dto.Id, Name = dto.Name, AvatarUrl = dto.AvatarUrl, Description = dto.Description, Lessons = [],
             DefaultPrice = dto.DefaultPrice, IsArchived = false, User = user

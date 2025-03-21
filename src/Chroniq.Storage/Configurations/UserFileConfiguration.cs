@@ -1,6 +1,6 @@
+using Chroniq.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Chroniq.Models;
 
 namespace Chroniq.Storage.Configurations;
 

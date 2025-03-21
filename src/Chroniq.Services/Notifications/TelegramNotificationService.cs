@@ -10,12 +10,12 @@ public class TelegramNotificationService
 
     public TelegramNotificationService(IConfiguration configuration)
     {
-        _bot = new(configuration.GetTelegramBotApiKeyOrThrow());
+        _bot = new TelegramBotClient(configuration.GetTelegramBotApiKeyOrThrow());
         _bot.OnMessage += async (msg, type) =>
         {
             if (msg.Text is null) return;
             Console.WriteLine($"Received {type} '{msg.Text}' in {msg.Chat}");
-        
+
             if (msg.Text == "/start")
                 await _bot.SendMessage(msg.Chat, $"Chat ID: {msg.Chat.Id}");
         };

@@ -6,7 +6,7 @@ public static class SettingsExtensions
 {
     public static SettingsDto ToSiteDto(this Settings settings)
     {
-        return new SettingsDto()
+        return new SettingsDto
         {
             EnableNotifications = settings.EnableNotifications,
             NotifyIn = settings.NotifyBefore,

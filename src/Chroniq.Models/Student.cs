@@ -12,7 +12,6 @@ public class Student
     public required User User { get; set; }
 }
 
-
 public class StudentSiteDto
 {
     public required Guid Id { get; set; }
@@ -21,8 +20,7 @@ public class StudentSiteDto
     public required string? AvatarUrl { get; set; }
     public required int DefaultPrice { get; set; }
     public required bool IsArchived { get; set; }
-}   
-
+}
 
 public static class StudentExtensions
 {
