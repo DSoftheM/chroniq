@@ -34,6 +34,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./src/docker-compose.production.yaml"
           target: "/var/www/docker-compose.production.yaml"
+          strip_components: 1
 
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1
