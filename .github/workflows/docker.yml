@@ -19,12 +19,12 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build Docker image
-        run: docker build -t mezdpg2klj9nag/chroniq:latest .
-        working-directory: ./src
+      # - name: Build Docker image
+      #   run: docker build -t mezdpg2klj9nag/chroniq:latest .
+      #   working-directory: ./src
 
-      - name: Push Docker image
-        run: docker push mezdpg2klj9nag/chroniq
+      # - name: Push Docker image
+      #   run: docker push mezdpg2klj9nag/chroniq
 
       - name: Copy docker-compose.production.yml to VM
         uses: appleboy/scp-action@v0.1.7
@@ -33,7 +33,7 @@ jobs:
           username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./src/docker-compose.production.yaml"
-          target: "/var/www"
+          target: "/var/www/docker-compose.production.yaml"
 
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1
