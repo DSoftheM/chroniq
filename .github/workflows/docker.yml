@@ -44,5 +44,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker pull mezdpg2klj9nag/chroniq:latest
-            docker compose -f /var/www/docker-compose.yml down || true
-            docker compose -f /var/www/docker-compose.yml up -d
+            docker compose -f /var/www/docker-compose.production.yml down || true
+            docker compose -f /var/www/docker-compose.production.yml up -d
