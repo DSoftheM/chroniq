@@ -48,7 +48,7 @@ namespace Chroniq.Storage.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Lessons");
+                    b.ToTable("Lessons", (string)null);
                 });
 
             modelBuilder.Entity("Chroniq.Models.Settings", b =>
@@ -74,7 +74,7 @@ namespace Chroniq.Storage.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Settings");
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("Chroniq.Models.Student", b =>
@@ -106,7 +106,7 @@ namespace Chroniq.Storage.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Students");
+                    b.ToTable("Students", (string)null);
                 });
 
             modelBuilder.Entity("Chroniq.Models.StudentOrder", b =>
@@ -119,7 +119,7 @@ namespace Chroniq.Storage.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Chroniq.Models.User", b =>
@@ -148,7 +148,7 @@ namespace Chroniq.Storage.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Chroniq.Models.UserFile", b =>
@@ -163,7 +163,7 @@ namespace Chroniq.Storage.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Files");
+                    b.ToTable("Files", (string)null);
                 });
 
             modelBuilder.Entity("Chroniq.Models.Lesson", b =>
