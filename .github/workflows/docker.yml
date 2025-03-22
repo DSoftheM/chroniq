@@ -26,7 +26,7 @@ jobs:
       # - name: Push Docker image
       #   run: docker push mezdpg2klj9nag/chroniq
 
-      - name: Copy docker-compose.production.yml to VM
+      - name: Copy docker-compose.production.yaml to VM
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_IP }}
@@ -44,5 +44,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker pull mezdpg2klj9nag/chroniq:latest
-            docker compose -f /var/www/docker-compose.production.yml down || true
-            docker compose -f /var/www/docker-compose.production.yml up -d
+            docker compose -f /var/www/docker-compose.production.yaml down || true
+            docker compose -f /var/www/docker-compose.production.yaml up -d
