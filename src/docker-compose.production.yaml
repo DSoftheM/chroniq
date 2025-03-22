@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: chroniq
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./pgdata:/var/lib/postgresql/data
   chroniq:
     restart: unless-stopped
     image: mezdpg2klj9nag/chroniq
@@ -18,9 +18,5 @@ services:
     depends_on:
       - chroniq-postgres
     volumes:
-      - uploads:/app/uploads
+      - ./uploads:/app/uploads
       - ./appsettings.json:/app/appsettings.json
-
-volumes:
-  pgdata:
-  uploads:
