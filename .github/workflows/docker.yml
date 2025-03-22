@@ -26,14 +26,14 @@ jobs:
       - name: Push Docker image
         run: docker push mezdpg2klj9nag/chroniq
 
-      - name: Copy docker-compose.yml to VM
+      - name: Copy docker-compose.production.yml to VM
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_IP }}
           username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./src/docker-compose.production.yaml"
-          target: "/var/www/docker-compose.yml"
+          target: "/var/www"
 
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1
