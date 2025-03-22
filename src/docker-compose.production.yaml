@@ -12,7 +12,7 @@ services:
       - pgdata:/var/lib/postgresql/data
   chroniq:
     restart: unless-stopped
-    image: chroniq
+    image: mezdpg2klj9nag/chroniq
     ports:
       - "8080:8080"
     depends_on:
