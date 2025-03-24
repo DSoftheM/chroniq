@@ -35,6 +35,15 @@ jobs:
           target: "/var/www"
           strip_components: 2
 
+      - name: Rename docker-compose.production.yaml to docker-compose.yaml
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_IP }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mv /var/www/docker-compose.production.yaml /var/www/docker-compose.yaml
+
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1
         with:
