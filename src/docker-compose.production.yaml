@@ -19,7 +19,8 @@ services:
       - chroniq-postgres
     volumes:
       - uploads:/app/uploads
-      
+      - ./appsettings.json:/app/appsettings.json
+
 volumes:
   pgdata:
   uploads:
