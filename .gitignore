@@ -12,3 +12,4 @@ src/Chroniq.Bot/appsettings.json
 src/Chroniq/appsettings.Development.json
 src/Chroniq/uploads
 src/Chroniq/logs
+src/.idea
