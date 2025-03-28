@@ -1,8 +1,8 @@
 import { Button, Flex, Form, Input, InputNumber, Switch, Typography } from "antd"
 import { useEffect } from "react"
 import { useGetSettingsQuery, useSaveSettingsMutation } from "../api/use-save-settings-mutation"
-import { TimeSpan } from "../../main/types/lib"
-import { Settings } from "@/api/types/settings"
+import { TimeSpan } from "@/shared/types/lib"
+import { Settings } from "@/shared/api/types/settings"
 import { useImmer } from "use-immer"
 
 export function SettingsPage() {

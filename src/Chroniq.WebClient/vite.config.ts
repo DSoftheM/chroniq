@@ -14,10 +14,10 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": "/src",
-        "@api": "/src/api",
-        "@components": "/src/components",
+        "@shared": "/src/shared",
+        "@app": "/src/app",
         "@features": "/src/features",
-        "@lib": "/src/lib",
+        "@assets": "/src/assets",
       },
     },
     // build: { outDir: "../Chroniq/wwwroot" },

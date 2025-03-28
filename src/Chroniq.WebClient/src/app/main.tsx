@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { GlobalStyles } from "./styles/global-styles.ts"
 import { ThemeProvider } from "styled-components"
 import { ConfigProvider, theme } from "antd"
-import { NotificationProvider } from "./providers/notification-provider.tsx"
+import { NotificationProvider } from "@/global/notification-provider.tsx"
 
 const client = new QueryClient({
   defaultOptions: {

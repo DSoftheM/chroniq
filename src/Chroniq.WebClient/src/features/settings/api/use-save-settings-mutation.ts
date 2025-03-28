@@ -1,4 +1,4 @@
-import { api } from "@/api/provider"
+import { api } from "@/shared/api/provider"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 export function useSaveSettingsMutation() {

@@ -52,14 +52,18 @@ export function LoginPage() {
 
         <Form layout="vertical" onFinish={onFinish}>
           <Form.Item name="login" label="Логин" required>
-            <Input placeholder="Введите логин" value={login} onChange={(e) => setLogin(e.target.value)} />
+            <Input
+              placeholder="Введите логин"
+              value={login}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)}
+            />
           </Form.Item>
 
           <Form.Item name="password" label="Пароль" required>
             <Input.Password
               placeholder="Введите пароль"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             />
           </Form.Item>
 

@@ -56,13 +56,17 @@ export const RegisterPage: React.FC = () => {
 
         <Form layout="vertical" onFinish={onFinish}>
           <Form.Item name="login" label="Логин" required>
-            <Input placeholder="Введите логин" onChange={(e) => setLogin(e.target.value)} value={login} />
+            <Input
+              placeholder="Введите логин"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)}
+              value={login}
+            />
           </Form.Item>
 
           <Form.Item name="password" label="Пароль" required>
             <Input.Password
               placeholder="Введите пароль"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               value={password}
             />
           </Form.Item>
@@ -71,7 +75,7 @@ export const RegisterPage: React.FC = () => {
           <Form.Item name="confirm" label="Подтвердите пароль" required>
             <Input.Password
               placeholder="Повторите пароль"
-              onChange={(e) => setConfirm(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirm(e.target.value)}
               value={confirm}
             />
           </Form.Item>
