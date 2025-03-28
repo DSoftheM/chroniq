@@ -1,6 +1,6 @@
-import { isToday, toDateOnly } from "../main/lib"
-import { S } from "../main/styled"
-import { DateTime } from "../main/types/lib"
+import { isToday, toDateOnly } from "../../main/lib"
+import { S } from "../../main/ui/styled"
+import { DateTime } from "../../main/types/lib"
 
 type Props = {
   date: DateTime

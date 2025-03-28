@@ -1,15 +1,14 @@
 import { useRef, useState } from "react"
-import { classesToDictionary } from "../main/lib"
-import { useScheduleQuery } from "../main/api/use-schedule-query"
-import { ContentPlaceholder } from "../main/content-placeholder"
-import { CreateOrUpdateLessonModal } from "../main/create-or-update-lesson-modal"
-import { DateTime } from "../main/types/lib"
-import { CreateOrUpdateStudentModal } from "../main/create-or-update-student-modal"
+import { classesToDictionary } from "../../main/lib"
+import { useScheduleQuery } from "../../main/api/use-schedule-query"
+import { ContentPlaceholder } from "../../main/ui/content-placeholder"
+import { CreateOrUpdateLessonModal } from "../../main/ui/create-or-update-lesson-modal"
+import { DateTime } from "../../main/types/lib"
+import { CreateOrUpdateStudentModal } from "../../main/ui/create-or-update-student-modal"
 import { Button, Space } from "antd"
-import { Lesson } from "../main/types/lesson"
-import { useIsArchiveRoute } from "./use-is-archive-route"
+import { Lesson } from "../../main/types/lesson"
+import { useIsArchiveRoute } from "../lib/use-is-archive-route"
 import { ScheduleTable } from "./schedule-table"
-import { SaveGroupModal } from "../main/save-group-modal"
 
 type SelectedLesson = {
   studentId: string
@@ -42,7 +41,7 @@ export function SchedulePage() {
           Добавить ученика
         </Button>
         <Button type="primary" onClick={() => setSelectedGroupId("create")}>
-          Добавить группу
+          Добавить группу {selectedGroupId}
         </Button>
       </Space>
 
@@ -60,21 +59,6 @@ export function SchedulePage() {
           }
         />
       )}
-
-      {/* {selectedGroupId && (
-        <SaveGroupModal
-          creationDate={selectedDateRef.current}
-          close={() => setSelectedGroupId(null)}
-          group={scheduleItems.find(({ student }) => student.id === selectedLesson.studentId)!.student}
-          initialLesson={
-            selectedStudentId === "create"
-              ? null
-              : scheduleItems
-                  .find(({ student }) => student.id === selectedLesson.studentId)
-                  ?.lessons.find(({ id }) => id === selectedLesson.lessonId) ?? null
-          }
-        />
-      )} */}
 
       {selectedStudentId && (
         <CreateOrUpdateStudentModal
