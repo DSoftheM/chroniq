@@ -1,4 +1,4 @@
-import { nav } from "@/lib/nav"
+import { nav } from "@/shared/lib/nav"
 import { useMatches } from "react-router-dom"
 
 export function useIsArchiveRoute() {

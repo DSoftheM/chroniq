@@ -1,7 +1,7 @@
 import { Button, Input, Form, Card, Typography, Alert } from "antd"
 import { useState } from "react"
-import { api } from "@/api/provider"
-import { nav } from "@/lib/nav"
+import { api } from "@/shared/api/provider"
+import { nav } from "@/shared/lib/nav"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 

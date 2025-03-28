@@ -18,7 +18,7 @@ import { useImmer } from "use-immer"
 import { useScheduleQuery } from "../api/use-schedule-query"
 import { Nullish } from "../types/lib"
 import { PlusOutlined, SyncOutlined } from "@ant-design/icons"
-import { useIsArchiveRoute } from "@/features/schedule/use-is-archive-route"
+import { useIsArchiveRoute } from "../../schedule/lib/use-is-archive-route"
 import { useState } from "react"
 import { api } from "@/shared/api/provider"
 
@@ -102,7 +102,7 @@ export function CreateOrUpdateStudentModal(props: Props) {
           <Form.Item
             label="Ссылка на фото"
             tooltip={{
-              title: "Случайный аватар",
+              title: "Случайный аватар",
               icon: (
                 <div>
                   <SyncOutlined

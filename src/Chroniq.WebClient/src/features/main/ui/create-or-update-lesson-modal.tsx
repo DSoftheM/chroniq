@@ -9,7 +9,7 @@ import { DateTime, TimeSpan } from "../types/lib"
 import { useCreateLessonMutation, useDeleteLessonMutation, useUpdateLessonMutation } from "../api/lesson-api"
 import { useNotification } from "@/app/providers/notification-provider"
 import { Student } from "../types/student"
-import { useIsArchiveRoute } from "@/features/schedule/use-is-archive-route"
+import { useIsArchiveRoute } from "../../schedule/lib/use-is-archive-route"
 
 const { TextArea } = Input
 

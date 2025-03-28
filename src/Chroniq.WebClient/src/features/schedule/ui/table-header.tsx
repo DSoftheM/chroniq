@@ -1,11 +1,11 @@
-import { ChangeOrderItemDTO } from "@/api/types/change-order-dto"
-import { useChangeStudentOrderMutation } from "../../main/api/use-change-student-order-mutation"
-import { StudentCellView } from "../../main/ui/student-cell-view"
-import { S } from "../../main/ui/styled"
-import { ScheduleItem } from "../../main/types/schedule"
-import { Student } from "../../main/types/student"
+import { ChangeOrderItemDTO } from "@/shared/api/types/change-order-dto"
+import { useChangeStudentOrderMutation } from "@/features/main/api/use-change-student-order-mutation"
+import { StudentCellView } from "@/features/main/ui/student-cell-view"
+import { S } from "@/features/main/ui/styled"
+import { ScheduleItem } from "@/features/main/types/schedule"
+import { Student } from "@/features/main/types/student"
 import styled from "styled-components"
-import { ZIndex } from "@/lib/styled.lib"
+import { ZIndex } from "@/shared/lib/styled.lib"
 
 const Root = styled.div<{ $studentsCount: number }>`
   display: grid;

@@ -1,10 +1,10 @@
 import dayjs from "dayjs"
-import { classesToDictionary, toDateOnly } from "../../main/lib"
-import { Lesson } from "../../main/types/lesson"
-import { DateTime } from "../../main/types/lib"
-import { Period } from "../../main/types/period"
-import { ScheduleItem } from "../../main/types/schedule"
-import { Student } from "../../main/types/student"
+import { classesToDictionary, toDateOnly } from "@/features/main/lib"
+import { Lesson } from "@/features/main/types/lesson"
+import { DateTime } from "@/features/main/types/lib"
+import { Period } from "@/features/main/types/period"
+import { ScheduleItem } from "@/features/main/types/schedule"
+import { Student } from "@/features/main/types/student"
 
 export function processScheduleItems(scheduleItems: ScheduleItem[]) {
   const dict: { [studentId: string]: { [dateOnly: string]: Lesson[] } } = {}
