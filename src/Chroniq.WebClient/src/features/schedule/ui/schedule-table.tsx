@@ -3,14 +3,14 @@ import { LessonView } from "../../main/ui/lesson-view"
 import { PlusOutlined } from "@ant-design/icons"
 import { Flex } from "antd"
 import { S } from "../../main/ui/styled"
-import { TableHeader } from "./table-header"
-import { DateCell } from "./date-cell"
 import { ScheduleItem } from "../../main/types/schedule"
 import { useWorkCalendar } from "../../main/api/use-work-calendar-query"
 import { useScheduleQuery } from "../../main/api/use-schedule-query"
 import { DateTime } from "../../main/types/lib"
 import { getDaysForView, processScheduleItems } from "../lib"
 import { Scroll } from "@/shared/ui/scroll"
+import { TableHeader } from "./table-header"
+import { DateCell } from "./date-cell"
 
 type Props = {
   items: ScheduleItem[]

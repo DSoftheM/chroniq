@@ -1,7 +1,7 @@
 import { Button, Input, Form, Card, Typography, Alert, Col, Row } from "antd"
 import { useState } from "react"
-import { api } from "../../api/provider"
-import { nav } from "../../lib/nav"
+import { api } from "@/api/provider"
+import { nav } from "@/lib/nav"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons"
@@ -96,15 +96,6 @@ export const RegisterPage: React.FC = () => {
     </Wrapper>
   )
 }
-
-// function isPasswordValid(password: string): boolean {
-//   const isValidLength = password.length >= 8
-//   const hasUppercase = /[A-Z]/.test(password)
-//   const hasNumber = /[0-9]/.test(password)
-//   const hasSpecialChar = /[^A-Za-z0-9]/.test(password)
-
-//   return isValidLength && hasUppercase && hasNumber && hasSpecialChar
-// }
 
 const PasswordRequirements: React.FC<{ password: string }> = ({ password }) => {
   const isValidLength = password.length >= 8

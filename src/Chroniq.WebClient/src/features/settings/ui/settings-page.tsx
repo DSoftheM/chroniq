@@ -1,7 +1,7 @@
 import { Button, Flex, Form, Input, InputNumber, Switch, Typography } from "antd"
 import { useEffect } from "react"
-import { useGetSettingsQuery, useSaveSettingsMutation } from "./use-save-settings-mutation"
-import { TimeSpan } from "../main/types/lib"
+import { useGetSettingsQuery, useSaveSettingsMutation } from "../api/use-save-settings-mutation"
+import { TimeSpan } from "../../main/types/lib"
 import { Settings } from "@/api/types/settings"
 import { useImmer } from "use-immer"
 
@@ -82,7 +82,7 @@ export function SettingsPage() {
       </Button>
       <div style={{ marginTop: 12 }}>
         {saveMutation.isError && <Typography.Text type="danger">{saveMutation.error.message}</Typography.Text>}
-        {saveMutation.isSuccess && <Typography.Text type="success">Настройки сохранены</Typography.Text>}
+        {saveMutation.isSuccess && <Typography.Text type="success">Настройки сохранены</Typography.Text>}
       </div>
     </Form>
   )
