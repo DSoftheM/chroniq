@@ -32,4 +32,9 @@
       <ProjectReference Include="..\Chroniq.Storage\Chroniq.Storage.csproj" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    </PropertyGroup>
+
 </Project>
